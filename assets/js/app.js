@@ -4,12 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalText = document.getElementById('comingText');
   const closeBtn = document.getElementById('closeModal');
   const triggers = document.querySelectorAll('[data-coming]');
+  const teaserLinks = document.querySelectorAll('.teaser-link');
+  const pageType = document.body.getAttribute('data-page');
 
   const defaultTitle = 'العدد القادم قادم';
   const defaultText = 'هذا الباب محفوظ حالياً لحين صدور العدد الأول.';
 
   function openModal(title = defaultTitle, text = defaultText) {
-    if (!modal) return;
+    if (!modal || !modalTitle || !modalText) return;
     modalTitle.textContent = title;
     modalText.textContent = text;
     modal.classList.add('show');
@@ -48,4 +50,27 @@ document.addEventListener('DOMContentLoaded', () => {
       closeModal();
     }
   });
+
+  teaserLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      let count = Number(sessionStorage.getItem('teaserClicks') || '0');
+      count += 1;
+      sessionStorage.setItem('teaserClicks', String(count));
+    });
+  });
+
+  if (pageType === 'teaser') {
+    const count = Number(sessionStorage.getItem('teaserClicks') || '0');
+
+    if (count >= 3) {
+      setTimeout(() => {
+        openModal('تنويه أخير', 'يزم محنا حكينا قادم، مش حتلاقي اشي');
+        sessionStorage.setItem('teaserClicks', '0');
+      }, 250);
+    }
+  }
+
+  if (pageType === 'home' || pageType === 'about' || pageType === 'archive' || pageType === 'contact') {
+    sessionStorage.removeItem('teaserClicks');
+  }
 });
