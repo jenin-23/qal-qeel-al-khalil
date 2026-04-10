@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalText = document.getElementById('comingText');
   const closeBtn = document.getElementById('closeModal');
   const triggers = document.querySelectorAll('[data-coming]');
-  const teaserLinks = document.querySelectorAll('.teaser-link');
-  const pageType = document.body.getAttribute('data-page');
+  const toast = document.getElementById('copyToast');
 
   const defaultTitle = 'العدد القادم قادم';
   const defaultText = 'هذا الباب محفوظ حالياً لحين صدور العدد الأول.';
@@ -51,26 +50,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  teaserLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      let count = Number(sessionStorage.getItem('teaserClicks') || '0');
-      count += 1;
-      sessionStorage.setItem('teaserClicks', String(count));
+  const toggleButtons = document.querySelectorAll('.story-toggle-btn');
+
+  toggleButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const article = button.closest('.story-card');
+      const body = article.querySelector('.story-body');
+      if (!body) return;
+
+      const collapsed = body.classList.contains('is-collapsed');
+      body.classList.toggle('is-collapsed');
+      button.classList.toggle('is-open');
+
+      if (!collapsed) {
+        article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
 
-  if (pageType === 'teaser') {
-    const count = Number(sessionStorage.getItem('teaserClicks') || '0');
+  const copyButtons = document.querySelectorAll('.copy-btn');
 
-    if (count >= 3) {
-      setTimeout(() => {
-        openModal('تنويه أخير', 'يزم محنا حكينا قادم، مش حتلاقي اشي');
-        sessionStorage.setItem('teaserClicks', '0');
-      }, 250);
-    }
+  function showToast(message) {
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 1800);
   }
 
-  if (pageType === 'home' || pageType === 'about' || pageType === 'archive' || pageType === 'contact') {
-    sessionStorage.removeItem('teaserClicks');
-  }
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const article = button.closest('.story-card');
+      if (!article) return;
+
+      const title = article.querySelector('.story-title')?.innerText?.trim() || '';
+      const meta = article.querySelector('.story-meta')?.innerText?.trim() || '';
+      const body = article.querySelector('.story-body')?.innerText?.trim() || '';
+
+      const fullText = `${title}\n${meta}\n\n${body}`;
+
+      try {
+        await navigator.clipboard.writeText(fullText);
+        button.classList.add('copied');
+        button.textContent = 'تم النسخ';
+        showToast('تم نسخ المقال. استخدمه بحذر.');
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.textContent = 'انسخ المقال';
+        }, 1800);
+      } catch (error) {
+        showToast('تعذّر النسخ حالياً.');
+      }
+    });
+  });
 });
