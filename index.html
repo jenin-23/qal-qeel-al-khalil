@@ -34,9 +34,9 @@
             <div class="nav-wrap">
               <div class="nav-links">
                 <a class="nav-link primary" href="index.html">الرئيسية</a>
-                <a class="nav-link teaser-link" href="news.html">الأخبار</a>
-                <a class="nav-link teaser-link" href="columns.html">الأعمدة</a>
-                <a class="nav-link teaser-link" href="entertainment.html">المنوعات</a>
+                <a class="nav-link" href="news.html">الأخبار</a>
+                <a class="nav-link" href="columns.html">الأعمدة</a>
+                <a class="nav-link" href="entertainment.html">المنوعات</a>
                 <a class="nav-link" href="#" data-coming>التحقيقات</a>
                 <a class="nav-link" href="archive.html">الأرشيف</a>
               </div>
@@ -46,40 +46,94 @@
       </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <div class="container">
-          <article class="panel hero-panel">
-            <span class="kicker">بيان تمهيدي</span>
-            <h1 class="hero-title">العدد القادم قادم</h1>
-            <p class="hero-subtitle">
-              تحتفظ هيئة التحرير بمحتوى العدد الأول لحين لحظة النشر المناسبة،
-              وتدعو القرّاء الكرام إلى التحلّي بدرجة معقولة من الفضول والانضباط.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section ads-section">
-        <div class="container">
-          <div class="ad-grid">
-            <article class="ad-box">
-              <h3 class="ad-title">اعلن هنا</h3>
-              <a class="ad-phone" href="tel:+962791432787">+962791432787</a>
-            </article>
-
-            <article class="ad-box">
-              <h3 class="ad-title">اعلن هنا</h3>
-              <a class="ad-phone" href="tel:+962791432787">+962791432787</a>
-            </article>
-
-            <article class="ad-box">
-              <h3 class="ad-title">اعلن هنا</h3>
-              <a class="ad-phone" href="tel:+962791432787">+962791432787</a>
-            </article>
+    <section class="ticker-wrap" aria-label="شريط المتابعة">
+      <div class="container">
+        <div class="ticker">
+          <div class="ticker-label">شريط المتابعة</div>
+          <div class="ticker-viewport">
+            <div class="ticker-track">
+              <span>نسخة رقمية تصدر بهدوء لا يخلو من النية</span>
+              <span>•</span>
+              <span>بعض المواد نُشرت بدافع التوثيق لا بدافع الحكمة</span>
+              <span>•</span>
+              <span>الجريدة عائلية، لكن الأثر قد يتجاوز ذلك دون تنسيق مسبق</span>
+              <span>•</span>
+              <span>يرجى قراءة الأبواب التالية بدرجة مناسبة من ضبط النفس</span>
+              <span>•</span>
+              <span>نسخة رقمية تصدر بهدوء لا يخلو من النية</span>
+              <span>•</span>
+              <span>بعض المواد نُشرت بدافع التوثيق لا بدافع الحكمة</span>
+              <span>•</span>
+              <span>الجريدة عائلية، لكن الأثر قد يتجاوز ذلك دون تنسيق مسبق</span>
+              <span>•</span>
+              <span>يرجى قراءة الأبواب التالية بدرجة مناسبة من ضبط النفس</span>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+
+    <main class="news-main">
+      <div class="container">
+        <section class="welcome-hero story-card">
+          <div class="story-content welcome-content">
+            <div class="lead-kicker">الواجهة الرسمية للعدد الأول</div>
+            <h1 class="lead-title">أهلاً بكم في النسخة الرقمية من قال قيل ال خليل</h1>
+            <p class="lead-subtitle">
+              هنا تُفتح أبواب العدد تباعاً، وتُترك للقارئ فرصة الدخول بهدوء
+              إلى المواد التي كان يمكن أن تبقى داخل العائلة… لولا قرار النشر.
+            </p>
+          </div>
+        </section>
+
+        <section class="toc-card">
+          <div class="section-heading">
+            <h2>أبواب الجريدة</h2>
+            <p>اختاري الباب، وسيتولى الباقي ترتيب نفسه لاحقاً</p>
+          </div>
+
+          <div class="home-sections-grid">
+            <a class="home-section-card" href="news.html">
+              <span class="home-section-label">الأخبار</span>
+              <h3>ملفات العائلة والمجتمع</h3>
+              <p>هنا توضع المواد التي فُتحت لأن أحدهم قرر أنها تستحق التوثيق، أو لأنها لم تترك خياراً آخر.</p>
+            </a>
+
+            <a class="home-section-card" href="columns.html">
+              <span class="home-section-label">الأعمدة</span>
+              <h3>تحليلات ومصطلحات وتأملات</h3>
+              <p>مواد أقل استعجالاً، وأكثر ميلاً للشرح، والتفسير، وإعطاء التفاصيل الصغيرة حجماً أكبر من اللازم.</p>
+            </a>
+
+            <a class="home-section-card" href="entertainment.html">
+              <span class="home-section-label">المنوعات</span>
+              <h3>الأبراج والفتاوى وما لا يساعد</h3>
+              <p>القسم الذي يجمع ما لا يمكن إدراجه ضمن الأخبار، ومع ذلك لا يمكن الاستغناء عنه بأي حال.</p>
+            </a>
+
+            <a class="home-section-card" href="archive.html">
+              <span class="home-section-label">الأرشيف</span>
+              <h3>ما نُشر… وما سيُفتح لاحقاً</h3>
+              <p>باب للرجوع إلى ما صدر، وإلى ما قد يعود للظهور عند أول حاجة تحريرية أو عائلية مناسبة.</p>
+            </a>
+          </div>
+        </section>
+
+        <section class="toc-card">
+          <div class="section-heading">
+            <h2>تنويه تحريري</h2>
+            <p>لأغراض التوضيح فقط</p>
+          </div>
+
+          <div class="editor-note">
+            <p>
+              الدخول إلى الأبواب التالية يتم على مسؤولية القارئ،
+              وما قد ينتج عن التعرّف على الذات داخل بعض المواد
+              لا تتحمله هيئة التحرير، ولو جزئياً.
+            </p>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">
@@ -88,12 +142,13 @@
           <div class="footer-top">
             <div class="footer-brand">
               <h3>قال قيل ال خليل</h3>
-              <p>نسخة تمهيدية للموقع الرسمي قبل صدور العدد الأول.</p>
+              <p>نسخة رقمية عائلية بطابع صحفي، تُدار بقدر مناسب من الجدية وما يتبعها.</p>
             </div>
 
             <div class="footer-actions">
               <a class="footer-link" href="about.html">من نحن</a>
               <a class="footer-link" href="contact.html">تواصل معنا</a>
+              <a class="footer-link" href="archive.html">الأرشيف</a>
             </div>
           </div>
 
@@ -113,6 +168,8 @@
       <p id="comingText">هذا الباب محفوظ حالياً لحين صدور العدد الأول.</p>
     </div>
   </div>
+
+  <div class="toast" id="copyToast">تم نسخ المقال. استخدمه بحذر.</div>
 
   <script src="assets/js/app.js"></script>
 </body>
