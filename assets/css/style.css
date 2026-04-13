@@ -1168,4 +1168,29 @@ textarea{
     order:2;
   }
 }
+/* ENTERTAINMENT PERFECTED */ .ent-page-grid{ display:grid; grid-template-columns:minmax(0, 1fr) 320px; gap:18px; align-items:start; } .ent-main-column{ display:grid; gap:18px; min-width:0; } .ent-sidebar{ display:grid; gap:18px; position:sticky; top:18px; } .ent-top-grid{ display:grid; grid-template-columns:1fr 1.15fr; gap:18px; align-items:start; } .ent-fatwa-big .fatwa-card h3{ margin:0 0 18px; font-family:"Amiri", serif; font-size:34px; line-height:1.45; color:var(--ink); } .ent-fatwa-big .fatwa-card p, .ent-fatwa-big .fatwa-card li{ font-size:20px; line-height:2.05; } .zodiac-display{ border:1px solid var(--line); border-radius:16px; background:linear-gradient(180deg, #fffdf9, #f8f1e7); padding:22px; } .zodiac-sign-name{ margin-bottom:10px; color:var(--red-dark); font-family:"Cairo", sans-serif; font-size:16px; font-weight:700; } .zodiac-sign-text{ font-size:24px; line-height:1.9; color:#3f372f; } .coin-area{ display:grid; justify-items:center; gap:18px; } .coin-wrapper{ perspective:1200px; } .coin{ width:170px; height:170px; position:relative; transform-style:preserve-3d; transition:transform 1s ease; } .coin.flipped{ transform:rotateY(180deg) rotateZ(8deg); } .coin-face{ position:absolute; inset:0; border-radius:50%; border:2px solid #ccb9a3; background:radial-gradient(circle at 30% 30%, #fffdf9 0%, #f2e7d9 100%); display:flex; align-items:center; justify-content:center; font-family:"Amiri", serif; font-size:52px; color:var(--red-dark); box-shadow:var(--shadow); backface-visibility:hidden; } .coin-back{ transform:rotateY(180deg); } .coin-result{ font-size:22px; line-height:1.8; color:#3f372f; text-align:center; } .quiz-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; } .quiz-question{ border:1px solid var(--line); border-radius:16px; padding:16px 18px; background:#fffdfa; } .quiz-question h3{ margin:0 0 12px; font-family:"Amiri", serif; font-size:30px; line-height:1.45; color:var(--ink); } .quiz-question label{ display:block; margin-bottom:12px; font-size:18px; line-height:1.9; cursor:pointer; } .quiz-question input{ margin-left:8px; } .quiz-actions{ margin-top:16px; display:flex; justify-content:center; } .birthday-form{ margin-top:18px; } .birthday-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; } .birthday-field{ display:grid; gap:6px; text-align:right; } .birthday-field label{ font-size:14px; color:#5e5349; font-family:"Cairo", sans-serif; font-weight:700; } .birthday-field input, .birthday-field select{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:#fffdfa; color:var(--ink); font-size:16px; } @media (max-width: 1100px){ .ent-page-grid{ grid-template-columns:1fr; } .ent-sidebar{ position:static; } } @media (max-width: 980px){ .ent-top-grid, .quiz-grid, .birthday-grid{ grid-template-columns:1fr; } } @media (max-width: 640px){ .coin{ width:140px; height:140px; } .coin-face{ font-size:42px;
+  }
+
+  .coin-result{
+    font-size:19px;
+  }
+
+  .zodiac-sign-text{
+    font-size:20px;
+  }
+
+  .ent-fatwa-big .fatwa-card h3{
+    font-size:28px;
+  }
+
+  .ent-fatwa-big .fatwa-card p,
+  .ent-fatwa-big .fatwa-card li,
+  .quiz-question label{
+    font-size:17px;
+  }
+
+  .quiz-question h3{
+    font-size:26px;
+  }
+}
 }
