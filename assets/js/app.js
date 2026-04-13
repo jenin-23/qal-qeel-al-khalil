@@ -95,8 +95,29 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('تعذّر النسخ حالياً.');
       }
     });
+    
   });
+  /* Copy phone buttons */
+  const phoneButtons = document.querySelectorAll('.copy-phone-btn');
+  phoneButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const phone = button.dataset.phone || button.textContent.trim();
 
+      try {
+        await navigator.clipboard.writeText(phone);
+        const oldText = button.textContent;
+        button.classList.add('copied');
+        button.textContent = 'تم نسخ الرقم';
+        showToast('تم نسخ الرقم.');
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.textContent = oldText;
+        }, 1600);
+      } catch {
+        showToast('تعذّر نسخ الرقم حالياً.');
+      }
+    });
+  });
   /* Entertainment page */
   if (document.body.dataset.page === 'entertainment') {
     const birthdayModal = document.getElementById('birthdayModal');
