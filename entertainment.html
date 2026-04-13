@@ -61,6 +61,8 @@
               <span>الكلمات المتقاطعة التالية قد تكشف أكثر مما ينبغي عن الحياة الداخلية للعائلة</span>
               <span>•</span>
               <span>الأسئلة أدناه لا تقيس شيئاً مثبتاً، لكنها قد تزعجك بدقة غير مريحة</span>
+              <span>•</span>
+              <span>إذا خرجت من هذه الصفحة بأسئلة أكثر من الأجوبة، فهذا تصميم مقصود</span>
             </div>
           </div>
         </div>
@@ -71,100 +73,86 @@
       <div class="container">
         <section class="home-hero-card entertainment-hero">
           <div class="home-hero-kicker">قسم المنوعات</div>
-          <h1 class="home-hero-title">الفلك، الفتوى، الاختبارات، وما يتبعها</h1>
-          <p class="home-hero-text">هذا القسم لا يعدك بشيء مفيد، ومع ذلك تم إعداده بعناية.</p>
+          <h1 class="home-hero-title">الأبراج، الفتوى، الاختبارات، وما لا يساعد</h1>
+          <p class="home-hero-text">صفحة أُعدّت بعناية، رغم عدم وجود سبب مطمئن لذلك.</p>
         </section>
 
-        <section class="entertainment-grid">
-          <article class="story-card">
+        <section class="ent-top-grid">
+          <article class="story-card ent-zodiac-card">
             <div class="story-content">
               <div class="section-heading">
-                <h2>توقعك الشخصي لهذا العدد</h2>
-                <p>يظهر هنا برج واحد فقط، بحسب الشهر الذي اخترته عند الدخول.</p>
+                <h2>توقعك لهذا العدد</h2>
+                <p>يظهر هنا البرج الصحيح بحسب تاريخ الميلاد الذي أدخلته.</p>
               </div>
 
               <div class="zodiac-display" id="zodiacDisplay">
-                <div class="zodiac-sign-name" id="zodiacName">بانتظار اختيار الشهر</div>
+                <div class="zodiac-sign-name" id="zodiacName">بانتظار اعتماد البرج</div>
                 <div class="zodiac-sign-text" id="zodiacText">
-                  لم يتم اعتماد برجك بعد. وهذا بحد ذاته مؤشر.
+                  لم تُحتسب وضعيتك الفلكية بعد. وهذا بحد ذاته وضعية.
                 </div>
               </div>
             </div>
           </article>
 
-          <article class="story-card">
+          <article class="story-card ent-fatwa-card">
             <div class="story-content">
               <div class="section-heading">
                 <h2>فتاوى قال قيل ال خليل</h2>
-                <p>سؤال واحد يكفي لإفساد اليوم بشكل مهذب.</p>
+                <p>سؤال واحد يكفي لإعادة ترتيب الحيرة.</p>
               </div>
 
               <div class="fatwa-card">
                 <h3>هل يجوز للإنسان أن يطلب إشارة… ثم يصمت عنها حتى تزول، بحجة أنها كانت واضحة أكثر من اللازم؟</h3>
-                <p>
-                  وردنا هذا السؤال من القارئ الكريم (ع.م)، يستفتي فيه عن حكم طلب الإشارة في أمرٍ ما، ثم الامتناع عن التعامل معها عند ظهورها، والاكتفاء بالصمت إلى أن تفقد أثرها أو يُنسى وجودها.
-                </p>
-                <p>
-                  بسم الله الرحمن الرحيم، ولا حول ولا قوة إلا بالله، وأما بعد…
-                </p>
-                <p>
-                  فإن الإشارة، في أصلها، ما وُجدت إلا لتُرى، فإن طُلبت، ثم ظهرت، فقد تمّت الحجة على طالبها من غير حاجةٍ إلى تأكيد إضافي أو طبعةٍ ثانية أقل وضوحاً.
-                </p>
-                <p>
-                  فإن سكت المرء عنها، لا إنكاراً لها، ولا جهلاً بها، بل انتظاراً أن “تمرّ”، أو أن “تخفّ حدّتها”، أو أن “تصير أقل مباشرة”، فقد انتقل من باب الاسترشاد، إلى باب إدارة الواقع بالصمت.
-                </p>
-                <p>
-                  وقد اعتاد بعض الناس أن يطلبوا الإشارة وهم يقصدون:
-                </p>
+                <p>وردنا هذا السؤال من القارئ الكريم (ع.م)، يستفتي فيه عن حكم طلب الإشارة في أمرٍ ما، ثم الامتناع عن التعامل معها عند ظهورها، والاكتفاء بالصمت إلى أن تفقد أثرها أو يُنسى وجودها.</p>
+                <p>بسم الله الرحمن الرحيم، ولا حول ولا قوة إلا بالله، وأما بعد…</p>
+                <p>فإن الإشارة، في أصلها، ما وُجدت إلا لتُرى، فإن طُلبت، ثم ظهرت، فقد تمّت الحجة على طالبها من غير حاجةٍ إلى تأكيد إضافي أو طبعةٍ ثانية أقل وضوحاً.</p>
+                <p>فإن سكت المرء عنها، لا إنكاراً لها، ولا جهلاً بها، بل انتظاراً أن “تمرّ”، أو أن “تخفّ حدّتها”، أو أن “تصير أقل مباشرة”، فقد انتقل من باب الاسترشاد، إلى باب إدارة الواقع بالصمت.</p>
+                <p>وقد اعتاد بعض الناس أن يطلبوا الإشارة وهم يقصدون:</p>
                 <ul>
                   <li>إشارة قابلة للتأجيل</li>
                   <li>أو قابلة لإعادة التفسير</li>
                   <li>أو على الأقل… قابلة للتجاهل دون آثار جانبية واضحة</li>
                 </ul>
-                <p>
-                  فإن جاءت الإشارة على غير هذا الوجه، صريحةً لا تحتاج إلى تأويل، استُقبلت بصمتٍ محسوب، يُراد منه إعطاء الواقع فرصةً للتراجع… دون مواجهة مباشرة.
-                </p>
-                <p>
-                  وعليه، فإن الصمت عن الإشارة لا يُبطلها، بل يمدّد حضورها بشكلٍ غير مريح، ويؤجل التعامل معها إلى وقتٍ يُظنّ فيه أنها أصبحت أقل إلحاحاً… وهي لم تفعل.
-                </p>
-                <p>
-                  ولا حرج على المرء أن يحتار، لكن لا يُستحب له أن يطلب البيان، ثم يتعامل معه كأنه لم يُطلب أصلاً.
-                </p>
-                <p class="fatwa-end">
-                  والله أعلم، وهو أعلم بمن يرى… ثم يختار الصمت حتى يطمئن أن ما رآه لم يعد موجوداً.
-                </p>
+                <p>فإن جاءت الإشارة على غير هذا الوجه، صريحةً لا تحتاج إلى تأويل، استُقبلت بصمتٍ محسوب، يُراد منه إعطاء الواقع فرصةً للتراجع… دون مواجهة مباشرة.</p>
+                <p>وعليه، فإن الصمت عن الإشارة لا يُبطلها، بل يمدّد حضورها بشكلٍ غير مريح، ويؤجل التعامل معها إلى وقتٍ يُظنّ فيه أنها أصبحت أقل إلحاحاً… وهي لم تفعل.</p>
+                <p>ولا حرج على المرء أن يحتار، لكن لا يُستحب له أن يطلب البيان، ثم يتعامل معه كأنه لم يُطلب أصلاً.</p>
+                <p class="fatwa-end">والله أعلم، وهو أعلم بمن يرى… ثم يختار الصمت حتى يطمئن أن ما رآه لم يعد موجوداً.</p>
               </div>
             </div>
           </article>
 
-          <article class="story-card">
+          <article class="story-card ent-coin-card">
             <div class="story-content">
               <div class="section-heading">
                 <h2>اكتشف حظك اليوم</h2>
-                <p>محاولة قديمة لمعرفة ما إذا كان اليوم يستحق الاستمرار.</p>
+                <p>خدمة قديمة ما زالت تعمل رغم النتائج الثابتة.</p>
               </div>
 
               <div class="coin-area">
                 <button class="coin-button" id="flipCoinBtn" type="button">اقلب العملة</button>
+
                 <div class="coin-wrapper">
                   <div class="coin" id="coin">
                     <div class="coin-face coin-front">خرا</div>
                     <div class="coin-face coin-back">خرا</div>
                   </div>
                 </div>
+
                 <div class="coin-result" id="coinResult">النتيجة بانتظار قرارك الخاطئ بالضغط.</div>
               </div>
             </div>
           </article>
+        </section>
 
-          <article class="story-card">
-            <div class="story-content">
-              <div class="section-heading">
-                <h2>اختبر نفسك</h2>
-                <p>أسئلة لا تغيّر شيئاً… لكنها قد ترتّبك قليلاً.</p>
-              </div>
+        <section class="story-card quiz-card">
+          <div class="story-content">
+            <div class="section-heading">
+              <h2>اختبر نفسك</h2>
+              <p>أسئلة ذكية بما يكفي لإزعاجك، وغير مفيدة بما يكفي لتبقى معنا.</p>
+            </div>
 
-              <form class="quiz-form" id="quizForm">
+            <form class="quiz-form" id="quizForm">
+              <div class="quiz-grid">
                 <div class="quiz-question">
                   <h3>1. أين يكمن الأمل؟</h3>
                   <label><input type="radio" name="q1" value="a"> على أبواب السفارات</label>
@@ -212,121 +200,72 @@
                   <label><input type="radio" name="q6" value="c"> معلقة</label>
                   <label><input type="radio" name="q6" value="d"> جارية المراجعة منذ أشهر</label>
                 </div>
-
-                <div class="story-actions">
-                  <button class="story-toggle-btn" type="submit">
-                    <span class="more-text">اعرف النتيجة</span>
-                    <span class="less-text">اعرف النتيجة</span>
-                  </button>
-                </div>
-              </form>
-
-              <div class="quiz-result" id="quizResult">
-                لم تُحتسب النتيجة بعد. وهذا غالباً أفضل.
               </div>
+
+              <div class="story-actions">
+                <button class="story-toggle-btn" type="submit">
+                  <span class="more-text">اعرف النتيجة</span>
+                  <span class="less-text">اعرف النتيجة</span>
+                </button>
+              </div>
+            </form>
+
+            <div class="quiz-result" id="quizResult">
+              لم تُحتسب النتيجة بعد. وهذا غالباً أفضل.
             </div>
-          </article>
+          </div>
+        </section>
 
-          <article class="story-card">
-            <div class="story-content">
-              <div class="section-heading">
-                <h2>الكلمات المتقاطعة</h2>
-                <p>استعن بذاكرتك العائلية، أو تظاهر أنك تعرف أكثر مما تعرف.</p>
+        <section class="story-card crossword-card">
+          <div class="story-content">
+            <div class="section-heading">
+              <h2>الكلمات المتقاطعة</h2>
+              <p>هذه المرة لعبة فعلية. اكتب داخل المربعات نفسها، ثم افحص النتيجة.</p>
+            </div>
+
+            <div class="crossword-layout">
+              <div class="crossword-board-wrap">
+                <div class="crossword-board" id="crosswordBoard"></div>
               </div>
 
-              <div class="crossword-wrapper">
-                <div class="crossword-grid" id="crosswordGrid"></div>
-
-                <div class="crossword-clues">
-                  <div class="clue-group">
-                    <h3>أفقياً</h3>
-                    <ol>
-                      <li>مصطلح عائلي يبدأ بدهشة وينتهي بتهديد لطيف (4)</li>
-                      <li>الشيء الذي يُحمَّل مسؤولية المزاج العام عند الحاجة (5)</li>
-                      <li>الوسيط الذي يعود منه الناس بهدوء غير مبرر (6)</li>
-                      <li>الوعد الرمضاني السنوي بتركه (6)</li>
-                      <li>حالة يقال إنها ارتفعت داخل العائلة (4)</li>
-                      <li>مادة تفسيرية لا تُستخدم دون كلمة “رحلة” (5)</li>
-                    </ol>
-                  </div>
-
-                  <div class="clue-group">
-                    <h3>عمودياً</h3>
-                    <ol>
-                      <li>شيء يُطلب ثم يُرفض إذا جاء واضحاً (5)</li>
-                      <li>الفعل المفضل عند تعذر المواجهة (4)</li>
-                      <li>قسم كامل مخصص للأبراج والنتائج غير الملزمة (7)</li>
-                      <li>وصف شائع لأي وضع كوني غير مفهوم (5)</li>
-                      <li>صفة أساسية في “حباب تتلقفك”: يوصل الفكرة بدون أن يفتح ____ (4)</li>
-                      <li>حالة السلام الغامض بعد العودة من الخلوة (4)</li>
-                    </ol>
-                  </div>
+              <div class="crossword-side">
+                <div class="clue-group">
+                  <h3>أفقياً</h3>
+                  <ol>
+                    <li>حالة يقال إنها ارتفعت داخل العائلة (5)</li>
+                    <li>وصف متكرر لأي وضع كوني غير مفهوم (5)</li>
+                    <li>الشيء الذي يفعله البعض عند تعذر الكلام (3)</li>
+                    <li>القسم الذي لا يمكن إدراجه ضمن الأخبار ومع ذلك لا يُستغنى عنه (6)</li>
+                    <li>مصطلح عائلي يبدأ بدهشة وينتهي بنبرة لطيفة (4)</li>
+                    <li>شيء مرغوب بعد كل هذا كله (4)</li>
+                  </ol>
                 </div>
 
-                <div class="crossword-inputs">
-                  <div class="crossword-word">
-                    <label>1. حباب</label>
-                    <input type="text" data-answer="حباب">
-                  </div>
-                  <div class="crossword-word">
-                    <label>2. القمر</label>
-                    <input type="text" data-answer="القمر">
-                  </div>
-                  <div class="crossword-word">
-                    <label>3. التنوير</label>
-                    <input type="text" data-answer="التنوير">
-                  </div>
-                  <div class="crossword-word">
-                    <label>4. التدخين</label>
-                    <input type="text" data-answer="التدخين">
-                  </div>
-                  <div class="crossword-word">
-                    <label>5. الوعي</label>
-                    <input type="text" data-answer="الوعي">
-                  </div>
-                  <div class="crossword-word">
-                    <label>6. طاقة</label>
-                    <input type="text" data-answer="طاقة">
-                  </div>
-                  <div class="crossword-word">
-                    <label>7. إشارة</label>
-                    <input type="text" data-answer="إشارة">
-                  </div>
-                  <div class="crossword-word">
-                    <label>8. صمت</label>
-                    <input type="text" data-answer="صمت">
-                  </div>
-                  <div class="crossword-word">
-                    <label>9. منوعات</label>
-                    <input type="text" data-answer="منوعات">
-                  </div>
-                  <div class="crossword-word">
-                    <label>10. غريب</label>
-                    <input type="text" data-answer="غريب">
-                  </div>
-                  <div class="crossword-word">
-                    <label>11. مشكلة</label>
-                    <input type="text" data-answer="مشكلة">
-                  </div>
-                  <div class="crossword-word">
-                    <label>12. سلام</label>
-                    <input type="text" data-answer="سلام">
-                  </div>
-                </div>
-
-                <div class="story-actions">
-                  <button class="story-toggle-btn" id="checkCrosswordBtn" type="button">
-                    <span class="more-text">افحص الإجابات</span>
-                    <span class="less-text">افحص الإجابات</span>
-                  </button>
-                </div>
-
-                <div class="crossword-result" id="crosswordResult">
-                  النتيجة لم تُحتسب بعد. لا تتسرع في الإحباط.
+                <div class="clue-group">
+                  <h3>عمودياً</h3>
+                  <ol>
+                    <li>حالة يقال إنها تعيد تعريف كل شيء… ثم تتركك معه (7)</li>
+                    <li>الجهة التي تتحمل مسؤولية المزاج العام عند الحاجة (5)</li>
+                    <li>الوضع الافتراضي الذي لا يحب أحد فتحه (5)</li>
+                    <li>الوعد الرمضاني السنوي بتركه (7)</li>
+                    <li>مادة تفسيرية متعبة لكنها محبوبة (4)</li>
+                    <li>شيء يُطلب ثم يُعاد تأجيل التعامل معه (5)</li>
+                  </ol>
                 </div>
               </div>
             </div>
-          </article>
+
+            <div class="story-actions">
+              <button class="story-toggle-btn" id="checkCrosswordBtn" type="button">
+                <span class="more-text">افحص الإجابات</span>
+                <span class="less-text">افحص الإجابات</span>
+              </button>
+            </div>
+
+            <div class="crossword-result" id="crosswordResult">
+              النتيجة لم تُحتسب بعد. لا داعي للاستباق العاطفي.
+            </div>
+          </div>
         </section>
       </div>
     </main>
@@ -356,29 +295,55 @@
     </footer>
   </div>
 
-  <!-- Month popup -->
+  <!-- Birthday modal -->
   <div class="modal show" id="birthdayModal">
     <div class="modal-card">
       <h2>قبل الدخول</h2>
-      <p>متى عيد ميلادك؟</p>
-      <div class="month-grid">
-        <button class="month-btn" data-month="يناير">يناير</button>
-        <button class="month-btn" data-month="فبراير">فبراير</button>
-        <button class="month-btn" data-month="مارس">مارس</button>
-        <button class="month-btn" data-month="أبريل">أبريل</button>
-        <button class="month-btn" data-month="مايو">مايو</button>
-        <button class="month-btn" data-month="يونيو">يونيو</button>
-        <button class="month-btn" data-month="يوليو">يوليو</button>
-        <button class="month-btn" data-month="أغسطس">أغسطس</button>
-        <button class="month-btn" data-month="سبتمبر">سبتمبر</button>
-        <button class="month-btn" data-month="أكتوبر">أكتوبر</button>
-        <button class="month-btn" data-month="نوفمبر">نوفمبر</button>
-        <button class="month-btn" data-month="ديسمبر">ديسمبر</button>
-      </div>
+      <p>أدخل تاريخ ميلادك لنمنحك التوقع الصحيح… أو ما يشبهه.</p>
+
+      <form id="birthdayForm" class="birthday-form">
+        <div class="birthday-grid">
+          <div class="birthday-field">
+            <label for="birthDay">اليوم</label>
+            <input id="birthDay" type="number" min="1" max="31" required>
+          </div>
+
+          <div class="birthday-field">
+            <label for="birthMonth">الشهر</label>
+            <select id="birthMonth" required>
+              <option value="">اختر</option>
+              <option value="1">يناير</option>
+              <option value="2">فبراير</option>
+              <option value="3">مارس</option>
+              <option value="4">أبريل</option>
+              <option value="5">مايو</option>
+              <option value="6">يونيو</option>
+              <option value="7">يوليو</option>
+              <option value="8">أغسطس</option>
+              <option value="9">سبتمبر</option>
+              <option value="10">أكتوبر</option>
+              <option value="11">نوفمبر</option>
+              <option value="12">ديسمبر</option>
+            </select>
+          </div>
+
+          <div class="birthday-field">
+            <label for="birthYear">السنة</label>
+            <input id="birthYear" type="number" min="1900" max="2100" required>
+          </div>
+        </div>
+
+        <div class="story-actions centered-actions">
+          <button class="story-toggle-btn" type="submit">
+            <span class="more-text">اعتمد التاريخ</span>
+            <span class="less-text">اعتمد التاريخ</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- April popup -->
+  <!-- April modal -->
   <div class="modal" id="aprilModal">
     <div class="modal-card">
       <h2>كل عام وأنت بخير</h2>

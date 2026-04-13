@@ -29,7 +29,7 @@ body{
 }
 
 a{ color:inherit; text-decoration:none; }
-button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
+button, input, select{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 
 .site-shell{
   min-height:100vh;
@@ -124,7 +124,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   border:1px solid var(--line);
   border-radius:999px;
   background:#fff;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:14px;
   font-weight:600;
   transition:.18s ease;
@@ -160,7 +159,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   padding:12px 16px;
   background:var(--blue);
   color:#fff;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:13px;
   font-weight:700;
 }
@@ -178,7 +176,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   padding-inline:16px;
   min-width:max-content;
   animation:tickerMove 26s linear infinite;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:14px;
   color:#425466;
 }
@@ -190,176 +187,16 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 
 .news-main{ padding:20px 0 40px; }
 
-/* HOME */
-.home-hero-card{
-  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
-  border:1px solid var(--line);
-  border-radius:24px;
-  box-shadow:var(--shadow);
-  padding:44px 34px 38px;
-  text-align:center;
-  margin-bottom:18px;
-}
-
-.home-hero-kicker,
-.lead-kicker{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 12px;
-  border-radius:999px;
-  background:var(--blue-soft);
-  color:var(--blue);
-  border:1px solid rgba(29,78,216,.14);
-  font-size:12px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-weight:700;
-}
-
-.home-hero-title{
-  margin:16px 0 10px;
-  font-size:clamp(34px, 5vw, 58px);
-  line-height:1.08;
-}
-
-.home-hero-text{
-  margin:0;
-  font-size:20px;
-  color:#556274;
-  line-height:1.9;
-}
-
-.home-doors{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:16px;
-  margin-bottom:18px;
-}
-
-.door-card{
-  background:var(--paper);
-  border:1px solid var(--line);
-  border-radius:20px;
-  box-shadow:var(--shadow);
-  padding:24px 22px;
-  transition:.18s ease;
-}
-
-.door-card:hover{
-  transform:translateY(-2px);
-  border-color:rgba(29,78,216,.26);
-}
-
-.door-label{
-  display:block;
-  margin-bottom:10px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:12px;
-  color:var(--blue);
-  font-weight:700;
-}
-
-.door-card h2{
-  margin:0;
-  font-size:28px;
-  line-height:1.4;
-}
-
-.home-note-card{
-  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
-  border:1px solid var(--line);
-  border-radius:20px;
-  box-shadow:var(--shadow);
-  padding:20px 22px;
-}
-
-.home-note-title{
-  margin-bottom:8px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:13px;
-  color:var(--blue);
-  font-weight:700;
-}
-
-.home-note-card p{
-  margin:0;
-  font-size:18px;
-  color:#4b5563;
-  line-height:1.9;
-}
-
-/* NEWS/COLUMNS/ENT */
-.news-hero{
-  display:grid;
-  grid-template-columns:1.6fr 1fr;
-  gap:18px;
-  margin-bottom:18px;
-}
-
-.lead-story,
-.headline-stack,
-.toc-card,
+/* shared cards */
 .story-card{
   background:var(--paper);
   border:1px solid var(--line);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
+  overflow:hidden;
 }
 
-.lead-story{ padding:28px 24px; }
-
-.lead-title{
-  margin:14px 0 10px;
-  font-size:40px;
-  line-height:1.12;
-}
-
-.lead-subtitle{
-  margin:0;
-  font-size:18px;
-  line-height:1.9;
-  color:#556274;
-}
-
-.headline-stack{
-  padding:18px;
-  display:grid;
-  gap:12px;
-}
-
-.headline-chip{
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fff;
-  padding:14px;
-  transition:.18s ease;
-}
-
-.headline-chip:hover{
-  border-color:rgba(29,78,216,.26);
-  transform:translateY(-1px);
-}
-
-.chip-label{
-  display:block;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:12px;
-  color:var(--blue);
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.chip-title{
-  display:block;
-  font-size:18px;
-  line-height:1.5;
-  color:var(--ink);
-}
-
-.toc-card{
-  padding:20px;
-  margin-bottom:18px;
-}
+.story-content{ padding:22px; }
 
 .section-heading h2{
   margin:0 0 4px;
@@ -369,128 +206,7 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 .section-heading p{
   margin:0 0 14px;
   color:var(--muted);
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:14px;
-}
-
-.toc-links{
-  display:grid;
-  gap:10px;
-}
-
-.toc-links a{
-  padding:12px 14px;
-  border-radius:12px;
-  background:#fff;
-  border:1px solid var(--line);
-  font-size:18px;
-  line-height:1.5;
-  transition:.18s ease;
-}
-
-.toc-links a:hover{
-  color:var(--blue);
-  border-color:rgba(29,78,216,.26);
-}
-
-.articles-grid{
-  display:grid;
-  gap:18px;
-}
-
-.story-card{ overflow:hidden; }
-
-.story-image{
-  height:280px;
-  border-bottom:1px solid var(--line);
-}
-
-.image-placeholder{
-  background:
-    linear-gradient(135deg, rgba(29,78,216,.06), rgba(29,78,216,.02)),
-    repeating-linear-gradient(
-      45deg,
-      rgba(29,78,216,.06),
-      rgba(29,78,216,.06) 10px,
-      transparent 10px,
-      transparent 20px
-    );
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.image-placeholder-label{
-  padding:10px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,.92);
-  border:1px solid rgba(29,78,216,.12);
-  color:var(--blue);
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:13px;
-  font-weight:700;
-}
-
-.story-content{ padding:22px; }
-
-.story-meta{
-  margin-bottom:8px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:13px;
-  color:#7a8699;
-}
-
-.story-title{
-  margin:0 0 16px;
-  font-size:34px;
-  line-height:1.2;
-}
-
-.story-body{
-  font-size:19px;
-  line-height:2;
-  color:#344054;
-  position:relative;
-  transition:max-height .32s ease;
-  overflow:hidden;
-}
-
-.story-body.is-collapsed{ max-height:420px; }
-.story-body:not(.is-collapsed){ max-height:4000px; }
-
-.story-body.is-collapsed::after{
-  content:"";
-  position:absolute;
-  inset-inline:0;
-  bottom:0;
-  height:90px;
-  background:linear-gradient(to top, #fff 22%, rgba(255,255,255,0));
-  pointer-events:none;
-}
-
-.story-body h3{
-  margin:18px 0 10px;
-  font-size:22px;
-  color:var(--ink);
-}
-
-.story-body p{ margin:0 0 14px; }
-
-.story-body ul,
-.story-body ol{
-  margin:0 0 16px;
-  padding-right:22px;
-}
-
-.story-body li{ margin-bottom:8px; }
-
-.story-body blockquote{
-  margin:16px 0;
-  padding:14px 16px;
-  border-right:4px solid var(--blue);
-  background:var(--blue-soft);
-  color:#1f2a37;
-  font-size:20px;
 }
 
 .story-actions{
@@ -509,7 +225,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 .story-toggle-btn,
 .copy-btn,
 .footer-link,
-.month-btn,
 .coin-button{
   display:inline-flex;
   align-items:center;
@@ -518,7 +233,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   border-radius:999px;
   border:1px solid var(--line);
   background:#fff;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:14px;
   font-weight:700;
   cursor:pointer;
@@ -528,7 +242,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 .story-toggle-btn:hover,
 .copy-btn:hover,
 .footer-link:hover,
-.month-btn:hover,
 .coin-button:hover{
   color:var(--blue);
   border-color:rgba(29,78,216,.26);
@@ -544,14 +257,68 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   color:#fff;
 }
 
-/* Entertainment */
+/* hero */
+.home-hero-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:44px 34px 38px;
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.home-hero-kicker{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--blue-soft);
+  color:var(--blue);
+  border:1px solid rgba(29,78,216,.14);
+  font-size:12px;
+  font-weight:700;
+}
+
+.home-hero-title{
+  margin:16px 0 10px;
+  font-size:clamp(34px, 5vw, 58px);
+  line-height:1.08;
+}
+
+.home-hero-text{
+  margin:0;
+  font-size:20px;
+  color:#556274;
+  line-height:1.9;
+}
+
+/* Entertainment layout */
 .entertainment-hero{
   margin-bottom:18px;
 }
 
-.entertainment-grid{
+.ent-top-grid{
   display:grid;
+  grid-template-columns:1.05fr 1.4fr;
   gap:18px;
+  align-items:start;
+  margin-bottom:18px;
+}
+
+.ent-zodiac-card,
+.ent-coin-card{
+  grid-column:1;
+}
+
+.ent-fatwa-card{
+  grid-column:2;
+  grid-row:1 / span 2;
+}
+
+.ent-coin-card{
+  margin-top:0;
 }
 
 .zodiac-display{
@@ -562,7 +329,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 }
 
 .zodiac-sign-name{
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:16px;
   color:var(--blue);
   font-weight:700;
@@ -570,7 +336,7 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 }
 
 .zodiac-sign-text{
-  font-size:22px;
+  font-size:24px;
   line-height:1.9;
   color:#374151;
 }
@@ -583,9 +349,13 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 
 .fatwa-card p,
 .fatwa-card li{
-  font-size:19px;
+  font-size:18px;
   line-height:2;
   color:#374151;
+}
+
+.fatwa-card ul{
+  padding-right:22px;
 }
 
 .fatwa-end{
@@ -630,9 +400,7 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   box-shadow:var(--shadow);
 }
 
-.coin-back{
-  transform:rotateY(180deg);
-}
+.coin-back{ transform:rotateY(180deg); }
 
 .coin-result{
   font-size:18px;
@@ -640,9 +408,15 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   text-align:center;
 }
 
-.quiz-form{
+.quiz-card,
+.crossword-card{
+  margin-bottom:18px;
+}
+
+.quiz-grid{
   display:grid;
-  gap:18px;
+  grid-template-columns:repeat(2, 1fr);
+  gap:16px;
 }
 
 .quiz-question{
@@ -690,25 +464,77 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   to{ opacity:1; transform:translateY(0); }
 }
 
-.crossword-wrapper{
+/* Real crossword */
+.crossword-layout{
   display:grid;
+  grid-template-columns:1.1fr .9fr;
   gap:18px;
+  align-items:start;
 }
 
-.crossword-grid{
+.crossword-board-wrap{
+  overflow:auto;
+  padding-bottom:8px;
+}
+
+.crossword-board{
+  --grid-size: 12;
   display:grid;
-  grid-template-columns:repeat(10, 1fr);
-  gap:6px;
+  grid-template-columns:repeat(var(--grid-size), 44px);
+  gap:4px;
+  width:max-content;
+  margin-inline:auto;
 }
 
-.crossword-cell{
-  aspect-ratio:1/1;
+.cw-cell{
+  width:44px;
+  height:44px;
+  position:relative;
+  border-radius:8px;
+}
+
+.cw-cell.blocked{
+  background:#0f172a;
+  border:1px solid #0f172a;
+}
+
+.cw-cell.active{
   border:1px solid var(--line);
-  border-radius:6px;
   background:#fff;
 }
 
-.crossword-clues{
+.cw-cell input{
+  width:100%;
+  height:100%;
+  border:none;
+  outline:none;
+  background:transparent;
+  text-align:center;
+  font-size:22px;
+  color:var(--ink);
+  border-radius:8px;
+}
+
+.cw-cell input.correct{
+  background:#f0fdf4;
+  color:#166534;
+}
+
+.cw-cell input.wrong{
+  background:#fef2f2;
+  color:#991b1b;
+}
+
+.cw-number{
+  position:absolute;
+  top:2px;
+  left:4px;
+  font-size:10px;
+  color:#64748b;
+  font-family:"IBM Plex Sans Arabic", sans-serif;
+}
+
+.crossword-side{
   display:grid;
   gap:18px;
 }
@@ -731,105 +557,7 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   line-height:1.8;
 }
 
-.crossword-inputs{
-  display:grid;
-  grid-template-columns:repeat(2, 1fr);
-  gap:12px;
-}
-
-.crossword-word{
-  display:grid;
-  gap:6px;
-}
-
-.crossword-word label{
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:14px;
-  color:#475467;
-  font-weight:700;
-}
-
-.crossword-word input{
-  width:100%;
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-size:16px;
-}
-
-.crossword-word input.correct{
-  border-color:#16a34a;
-  background:#f0fdf4;
-}
-
-.crossword-word input.wrong{
-  border-color:#dc2626;
-  background:#fef2f2;
-}
-
-.month-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:10px;
-  margin-top:18px;
-}
-
-/* Footer / modal / toast */
-.site-footer{
-  margin-top:auto;
-  padding:10px 0 28px;
-}
-
-.footer-card{
-  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
-  border:1px solid var(--line);
-  border-radius:24px;
-  box-shadow:var(--shadow);
-  padding:22px;
-}
-
-.footer-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-.footer-brand h3{
-  margin:0 0 4px;
-  font-size:24px;
-  font-weight:700;
-}
-
-.footer-brand p{
-  margin:0;
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.8;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-}
-
-.footer-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.footer-bottom{
-  margin-top:16px;
-  padding-top:14px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  color:#7a8699;
-  font-size:13px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-}
-
+/* Modals */
 .modal{
   position:fixed;
   inset:0;
@@ -884,6 +612,91 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   cursor:pointer;
 }
 
+.birthday-form{
+  margin-top:18px;
+}
+
+.birthday-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+}
+
+.birthday-field{
+  display:grid;
+  gap:6px;
+  text-align:right;
+}
+
+.birthday-field label{
+  font-size:14px;
+  color:#475467;
+  font-weight:700;
+}
+
+.birthday-field input,
+.birthday-field select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:16px;
+}
+
+/* footer */
+.site-footer{
+  margin-top:auto;
+  padding:10px 0 28px;
+}
+
+.footer-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+
+.footer-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.footer-brand h3{
+  margin:0 0 4px;
+  font-size:24px;
+  font-weight:700;
+}
+
+.footer-brand p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.8;
+}
+
+.footer-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.footer-bottom{
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  color:#7a8699;
+  font-size:13px;
+}
+
 .toast{
   position:fixed;
   left:50%;
@@ -893,7 +706,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   color:#fff;
   padding:12px 16px;
   border-radius:999px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
   font-size:14px;
   opacity:0;
   pointer-events:none;
@@ -908,11 +720,18 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 
 @media (max-width: 980px){
   .masthead-grid,
-  .news-hero,
-  .home-doors,
-  .crossword-inputs,
-  .month-grid{
+  .ent-top-grid,
+  .quiz-grid,
+  .crossword-layout,
+  .birthday-grid{
     grid-template-columns:1fr;
+  }
+
+  .ent-fatwa-card,
+  .ent-zodiac-card,
+  .ent-coin-card{
+    grid-column:auto;
+    grid-row:auto;
   }
 
   .brand-box{
@@ -925,10 +744,6 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   .meta-left{
     text-align:right;
   }
-
-  .story-image{
-    height:220px;
-  }
 }
 
 @media (max-width: 640px){
@@ -936,31 +751,19 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
     width:min(calc(100% - 20px), var(--max));
   }
 
-  .masthead-grid{
-    padding:16px;
-  }
-
-  .lead-story,
-  .headline-stack,
-  .toc-card,
+  .masthead-grid,
+  .home-hero-card,
   .story-content,
   .footer-card,
-  .modal-card,
-  .home-hero-card,
-  .home-note-card,
-  .door-card{
+  .modal-card{
     padding:18px;
   }
-
-  .lead-title{ font-size:30px; }
-  .story-title{ font-size:28px; }
-  .story-body{ font-size:18px; }
 
   .ticker{ gap:0; }
   .ticker-label{ display:none; }
 
   .home-hero-title{ font-size:36px; }
-  .door-card h2{ font-size:24px; }
+  .home-hero-text{ font-size:18px; }
 
   .coin{
     width:140px;
@@ -978,5 +781,18 @@ button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
   .quiz-result,
   .crossword-result{
     font-size:17px;
+  }
+
+  .crossword-board{
+    grid-template-columns:repeat(var(--grid-size), 34px);
+  }
+
+  .cw-cell{
+    width:34px;
+    height:34px;
+  }
+
+  .cw-cell input{
+    font-size:18px;
   }
 }
