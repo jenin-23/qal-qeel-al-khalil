@@ -15,13 +15,8 @@
   --max:1180px;
 }
 
-*{
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
 
 body{
   margin:0;
@@ -33,14 +28,8 @@ body{
   font-family:"Noto Naskh Arabic", serif;
 }
 
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-button{
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-}
+a{ color:inherit; text-decoration:none; }
+button{ font-family:"IBM Plex Sans Arabic", sans-serif; }
 
 .site-shell{
   min-height:100vh;
@@ -53,9 +42,7 @@ button{
   margin-inline:auto;
 }
 
-.topbar{
-  padding:16px 0 0;
-}
+.topbar{ padding:16px 0 0; }
 
 .masthead{
   background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(251,253,255,.99));
@@ -94,9 +81,7 @@ button{
   color:#8391a6;
 }
 
-.meta-left{
-  text-align:left;
-}
+.meta-left{ text-align:left; }
 
 .brand-box{
   text-align:center;
@@ -123,9 +108,7 @@ button{
   background:rgba(248,251,255,.7);
 }
 
-.nav-wrap{
-  padding:11px 16px;
-}
+.nav-wrap{ padding:11px 16px; }
 
 .nav-links{
   display:flex;
@@ -159,9 +142,7 @@ button{
   color:#fff;
 }
 
-.ticker-wrap{
-  padding:12px 0 0;
-}
+.ticker-wrap{ padding:12px 0 0; }
 
 .ticker{
   display:flex;
@@ -207,9 +188,7 @@ button{
   100%{ transform:translateX(35%); }
 }
 
-.news-main{
-  padding:20px 0 40px;
-}
+.news-main{ padding:20px 0 40px; }
 
 /* HOME */
 .home-hero-card{
@@ -222,7 +201,8 @@ button{
   margin-bottom:18px;
 }
 
-.home-hero-kicker{
+.home-hero-kicker,
+.lead-kicker{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -308,7 +288,7 @@ button{
   line-height:1.9;
 }
 
-/* NEWS/COLUMNS */
+/* NEWS/COLUMNS/ENT */
 .news-hero{
   display:grid;
   grid-template-columns:1.6fr 1fr;
@@ -326,23 +306,7 @@ button{
   box-shadow:var(--shadow);
 }
 
-.lead-story{
-  padding:28px 24px;
-}
-
-.lead-kicker{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 11px;
-  border-radius:999px;
-  background:var(--blue-soft);
-  color:var(--blue);
-  border:1px solid rgba(29,78,216,.14);
-  font-size:12px;
-  font-family:"IBM Plex Sans Arabic", sans-serif;
-  font-weight:700;
-}
+.lead-story{ padding:28px 24px; }
 
 .lead-title{
   margin:14px 0 10px;
@@ -434,9 +398,7 @@ button{
   gap:18px;
 }
 
-.story-card{
-  overflow:hidden;
-}
+.story-card{ overflow:hidden; }
 
 .story-image{
   height:280px;
@@ -469,9 +431,7 @@ button{
   font-weight:700;
 }
 
-.story-content{
-  padding:22px;
-}
+.story-content{ padding:22px; }
 
 .story-meta{
   margin-bottom:8px;
@@ -495,13 +455,8 @@ button{
   overflow:hidden;
 }
 
-.story-body.is-collapsed{
-  max-height:420px;
-}
-
-.story-body:not(.is-collapsed){
-  max-height:4000px;
-}
+.story-body.is-collapsed{ max-height:420px; }
+.story-body:not(.is-collapsed){ max-height:4000px; }
 
 .story-body.is-collapsed::after{
   content:"";
@@ -519,9 +474,7 @@ button{
   color:var(--ink);
 }
 
-.story-body p{
-  margin:0 0 14px;
-}
+.story-body p{ margin:0 0 14px; }
 
 .story-body ul,
 .story-body ol{
@@ -529,9 +482,7 @@ button{
   padding-right:22px;
 }
 
-.story-body li{
-  margin-bottom:8px;
-}
+.story-body li{ margin-bottom:8px; }
 
 .story-body blockquote{
   margin:16px 0;
@@ -551,9 +502,15 @@ button{
   border-top:1px solid var(--line);
 }
 
+.centered-actions{
+  justify-content:center;
+}
+
 .story-toggle-btn,
 .copy-btn,
-.footer-link{
+.footer-link,
+.month-btn,
+.coin-button{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -570,22 +527,16 @@ button{
 
 .story-toggle-btn:hover,
 .copy-btn:hover,
-.footer-link:hover{
+.footer-link:hover,
+.month-btn:hover,
+.coin-button:hover{
   color:var(--blue);
   border-color:rgba(29,78,216,.26);
 }
 
-.story-toggle-btn .less-text{
-  display:none;
-}
-
-.story-toggle-btn.is-open .more-text{
-  display:none;
-}
-
-.story-toggle-btn.is-open .less-text{
-  display:inline;
-}
+.story-toggle-btn .less-text{ display:none; }
+.story-toggle-btn.is-open .more-text{ display:none; }
+.story-toggle-btn.is-open .less-text{ display:inline; }
 
 .copy-btn.copied{
   background:var(--blue);
@@ -593,6 +544,238 @@ button{
   color:#fff;
 }
 
+/* Entertainment */
+.entertainment-hero{
+  margin-bottom:18px;
+}
+
+.entertainment-grid{
+  display:grid;
+  gap:18px;
+}
+
+.zodiac-display{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:linear-gradient(180deg, #fff, #f8fbff);
+  padding:22px;
+}
+
+.zodiac-sign-name{
+  font-family:"IBM Plex Sans Arabic", sans-serif;
+  font-size:16px;
+  color:var(--blue);
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.zodiac-sign-text{
+  font-size:22px;
+  line-height:1.9;
+  color:#374151;
+}
+
+.fatwa-card h3{
+  margin:0 0 14px;
+  font-size:28px;
+  line-height:1.5;
+}
+
+.fatwa-card p,
+.fatwa-card li{
+  font-size:19px;
+  line-height:2;
+  color:#374151;
+}
+
+.fatwa-end{
+  font-weight:700;
+  color:var(--ink);
+}
+
+.coin-area{
+  display:grid;
+  justify-items:center;
+  gap:18px;
+}
+
+.coin-wrapper{
+  perspective:1200px;
+}
+
+.coin{
+  width:180px;
+  height:180px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 1s ease;
+}
+
+.coin.flipped{
+  transform:rotateY(180deg);
+}
+
+.coin-face{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, #fff, #eef5ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  font-weight:700;
+  backface-visibility:hidden;
+  box-shadow:var(--shadow);
+}
+
+.coin-back{
+  transform:rotateY(180deg);
+}
+
+.coin-result{
+  font-size:18px;
+  color:#4b5563;
+  text-align:center;
+}
+
+.quiz-form{
+  display:grid;
+  gap:18px;
+}
+
+.quiz-question{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  background:#fff;
+}
+
+.quiz-question h3{
+  margin:0 0 12px;
+  font-size:24px;
+}
+
+.quiz-question label{
+  display:block;
+  margin-bottom:10px;
+  font-size:18px;
+  line-height:1.8;
+  cursor:pointer;
+}
+
+.quiz-question input{
+  margin-left:8px;
+}
+
+.quiz-result,
+.crossword-result{
+  margin-top:18px;
+  padding:16px;
+  border-radius:16px;
+  background:var(--blue-soft);
+  border:1px solid rgba(29,78,216,.14);
+  color:#1f2a37;
+  font-size:18px;
+  line-height:1.9;
+}
+
+.show-result{
+  animation:fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.crossword-wrapper{
+  display:grid;
+  gap:18px;
+}
+
+.crossword-grid{
+  display:grid;
+  grid-template-columns:repeat(10, 1fr);
+  gap:6px;
+}
+
+.crossword-cell{
+  aspect-ratio:1/1;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:#fff;
+}
+
+.crossword-clues{
+  display:grid;
+  gap:18px;
+}
+
+.clue-group{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  background:#fff;
+}
+
+.clue-group h3{
+  margin:0 0 12px;
+  font-size:22px;
+}
+
+.clue-group li{
+  margin-bottom:8px;
+  font-size:17px;
+  line-height:1.8;
+}
+
+.crossword-inputs{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+}
+
+.crossword-word{
+  display:grid;
+  gap:6px;
+}
+
+.crossword-word label{
+  font-family:"IBM Plex Sans Arabic", sans-serif;
+  font-size:14px;
+  color:#475467;
+  font-weight:700;
+}
+
+.crossword-word input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  font-family:"IBM Plex Sans Arabic", sans-serif;
+  font-size:16px;
+}
+
+.crossword-word input.correct{
+  border-color:#16a34a;
+  background:#f0fdf4;
+}
+
+.crossword-word input.wrong{
+  border-color:#dc2626;
+  background:#fef2f2;
+}
+
+.month-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+/* Footer / modal / toast */
 .site-footer{
   margin-top:auto;
   padding:10px 0 28px;
@@ -663,7 +846,7 @@ button{
 }
 
 .modal-card{
-  width:min(560px, 100%);
+  width:min(620px, 100%);
   background:#fff;
   border:1px solid var(--line);
   border-radius:22px;
@@ -726,7 +909,9 @@ button{
 @media (max-width: 980px){
   .masthead-grid,
   .news-hero,
-  .home-doors{
+  .home-doors,
+  .crossword-inputs,
+  .month-grid{
     grid-template-columns:1fr;
   }
 
@@ -767,31 +952,31 @@ button{
     padding:18px;
   }
 
-  .lead-title{
-    font-size:30px;
+  .lead-title{ font-size:30px; }
+  .story-title{ font-size:28px; }
+  .story-body{ font-size:18px; }
+
+  .ticker{ gap:0; }
+  .ticker-label{ display:none; }
+
+  .home-hero-title{ font-size:36px; }
+  .door-card h2{ font-size:24px; }
+
+  .coin{
+    width:140px;
+    height:140px;
   }
 
-  .story-title{
+  .coin-face{
     font-size:28px;
   }
 
-  .story-body{
-    font-size:18px;
-  }
-
-  .ticker{
-    gap:0;
-  }
-
-  .ticker-label{
-    display:none;
-  }
-
-  .home-hero-title{
-    font-size:36px;
-  }
-
-  .door-card h2{
-    font-size:24px;
+  .zodiac-sign-text,
+  .fatwa-card p,
+  .fatwa-card li,
+  .quiz-question label,
+  .quiz-result,
+  .crossword-result{
+    font-size:17px;
   }
 }
