@@ -34,9 +34,9 @@
             <div class="nav-wrap">
               <div class="nav-links">
                 <a class="nav-link" href="index.html">الرئيسية</a>
-                <a class="nav-link teaser-link" href="news.html">الأخبار</a>
-                <a class="nav-link teaser-link" href="columns.html">الأعمدة</a>
-                <a class="nav-link teaser-link" href="entertainment.html">المنوعات</a>
+                <a class="nav-link" href="news.html">الأخبار</a>
+                <a class="nav-link" href="columns.html">الأعمدة</a>
+                <a class="nav-link" href="entertainment.html">المنوعات</a>
                 <a class="nav-link" href="#" data-coming>التحقيقات</a>
                 <a class="nav-link primary" href="archive.html">الأرشيف</a>
               </div>
@@ -46,40 +46,91 @@
       </div>
     </header>
 
-    <main class="page-wrap">
+    <section class="ticker-wrap" aria-label="شريط الأرشيف">
       <div class="container">
-        <article class="page-card narrow-card">
-          <h1>الأرشيف</h1>
+        <div class="ticker">
+          <div class="ticker-label">الأرشيف</div>
+          <div class="ticker-viewport">
+            <div class="ticker-track">
+              <span>الأرشيف ليس مجرد حفظ لما نُشر، بل تهديد مبطن بإمكانية الرجوع إليه لاحقاً</span>
+              <span>•</span>
+              <span>بعض المواد هنا أُغلقت تحريرياً فقط، لا اجتماعياً</span>
+              <span>•</span>
+              <span>العدد المؤجل لا يعني النسيان، بل يعني أن الظروف لم تنضج بما يكفي بعد</span>
+              <span>•</span>
+              <span>هذا الباب وُجد لحماية الذاكرة من التلاعب، ولحماية الجريدة من عبارة: ما صار هيك</span>
+              <span>•</span>
+              <span>يرجى عدم اعتبار غياب بعض الأعداد دليلاً على براءة أحد</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="archive-list">
-            <article class="archive-item">
+    <main class="news-main">
+      <div class="container">
+        <section class="home-hero-card">
+          <div class="home-hero-kicker">قسم الأرشيف</div>
+          <h1 class="home-hero-title">ما صدر، وما ينتظر الظرف المناسب، وما لم يُغلق فعلياً</h1>
+          <p class="home-hero-text">
+            يحتفظ هذا الباب بالأعداد المنشورة، والمشاريع المؤجلة، والمواد التي قد تعود إلى السطح
+            فور توفر سبب عائلي كافٍ.
+          </p>
+        </section>
+
+        <section class="toc-card">
+          <div class="section-heading">
+            <h2>سجل الأعداد</h2>
+            <p>ليس ترتيباً زمنياً فقط، بل ترتيباً لمستويات الاستعداد النفسي للنشر.</p>
+          </div>
+
+          <div class="archive-list better-archive-list">
+            <article class="archive-item better-archive-item">
               <div class="archive-number">001</div>
-              <div>
+              <div class="archive-main">
                 <h3>العدد الأول</h3>
-                <p>قيد الإعداد</p>
+                <p>العدد التأسيسي الذي بدأ منه كل شيء، أو على الأقل بدأ منه التوثيق بصيغته الرسمية.</p>
               </div>
-              <div class="archive-status">قريباً</div>
+              <div class="archive-status published-status">مفتوح</div>
             </article>
 
-            <article class="archive-item">
+            <article class="archive-item better-archive-item">
               <div class="archive-number">002</div>
-              <div>
+              <div class="archive-main">
                 <h3>العدد الثاني</h3>
-                <p>مؤجل حتى إشعار عائلي آخر</p>
+                <p>قيد الانتظار إلى حين توافر مادة كافية، أو حدث لا يمكن تركه يمر دون عنوان مناسب.</p>
               </div>
-              <div class="archive-status">لاحقاً</div>
+              <div class="archive-status pending-status">قيد الترقب</div>
             </article>
 
-            <article class="archive-item">
+            <article class="archive-item better-archive-item">
               <div class="archive-number">003</div>
-              <div>
+              <div class="archive-main">
                 <h3>عدد خاص</h3>
-                <p>عند توفر الأسباب الكافية لفتحه</p>
+                <p>يُفتح عند الحاجة فقط، أي عندما يصبح السكوت غير مهني، أو غير كافٍ، أو غير ممتع.</p>
               </div>
-              <div class="archive-status">غير مستبعد</div>
+              <div class="archive-status sensitive-status">غير مستبعد</div>
             </article>
           </div>
-        </article>
+        </section>
+
+        <section class="home-note-card">
+          <div class="home-note-title">ملاحظة أرشيفية</div>
+          <p>
+            لا يعني عدم ظهور عدد جديد أن الحياة هدأت،
+            بل قد يعني فقط أن المادة ما تزال تتخمّر،
+            أو أن هيئة التحرير تفضّل منح الواقع فرصة أخيرة لتفسير نفسه قبل الطباعة.
+          </p>
+        </section>
+
+        <section class="home-note-card">
+          <div class="home-note-title">سياسة الحفظ</div>
+          <p>
+            تحتفظ الجريدة بحق إعادة فتح أي ملف سابق،
+            إذا ثبت أن أثره لم ينتهِ،
+            أو أن أحد أطرافه تصرّف لاحقاً بطريقة جعلت النص القديم يبدو تمهيداً لا أكثر.
+          </p>
+        </section>
       </div>
     </main>
 
@@ -89,12 +140,13 @@
           <div class="footer-top">
             <div class="footer-brand">
               <h3>قال قيل ال خليل</h3>
-              <p>أرشيف محفوظ لما صدر وما سيصدر وما كان يجب تجاوزه.</p>
+              <p>أرشيف محفوظ لما نُشر، ولما تأجل، ولما يرفض أن ينتهي بشكل محترم.</p>
             </div>
 
             <div class="footer-actions">
               <a class="footer-link" href="about.html">من نحن</a>
               <a class="footer-link" href="contact.html">تواصل معنا</a>
+              <a class="footer-link active" href="archive.html">الأرشيف</a>
             </div>
           </div>
 
