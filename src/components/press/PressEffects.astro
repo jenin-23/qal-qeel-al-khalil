@@ -7,7 +7,16 @@
  * ------------------------------------------------------------------ */
 ---
 <!-- motion starts from a hidden state only when this script can also end it -->
-<script is:inline>document.documentElement.classList.add('press-js');</script>
+<script is:inline>
+  document.documentElement.classList.add('press-js');
+  // arriving with a newspaper just taken from the library shelf
+  try {
+    if (sessionStorage.getItem('qqak:arrive') === 'library' && document.body.dataset.page !== 'library') {
+      document.documentElement.classList.add('arrive-from-library');
+      sessionStorage.removeItem('qqak:arrive');
+    }
+  } catch (e) {}
+</script>
 <svg class="press-defs" width="0" height="0" aria-hidden="true" focusable="false">
   <!-- slightly uneven ink edges, as if pressed from worn type -->
   <filter id="press-ink" x="-2%" y="-10%" width="104%" height="120%">

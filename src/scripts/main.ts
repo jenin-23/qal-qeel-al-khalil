@@ -14,11 +14,15 @@ import { initBirthday } from './birthday';
 import { initCoin } from './coin';
 import { initQuiz } from './quiz';
 import { initPopupAds } from './popup-ads';
+import { initLibrary } from './library';
+import { initNewsroom } from './newsroom';
 
 const issue = readJSON<IssueData>('issue-data');
 const entertainment = readJSON<EntertainmentData>('entertainment-data');
 
 initModals();
+initLibrary();
+initNewsroom();
 initTickers();
 initArticleToggles();
 

@@ -1,0 +1,125 @@
+---
+/* ------------------------------------------------------------------ *
+ * /issues/NNN/ while the issue is in editing: a proof lying on the
+ * editor's desk before it goes to print. Crop marks, column guides,
+ * empty frames, red proof marks, a pinned internal note.
+ *
+ * The emptiness is the design. Every word here is newsroom wording
+ * (src/universe/newsroom.ts) or the issue's own number and month.
+ * Real teasers / progress appear only once added to the issue.
+ * ------------------------------------------------------------------ */
+import type { Issue } from '../../lib/types';
+import Document from '../../layouts/Document.astro';
+import Masthead from '../shell/Masthead.astro';
+import Ticker from '../shell/Ticker.astro';
+import Footer from '../shell/Footer.astro';
+import Teaser from './Teaser.astro';
+import { newspaper } from '../../universe/newspaper';
+import { library } from '../../universe/library';
+import { newsroom } from '../../universe/newsroom';
+import { monthLabel } from '../../universe/calendar';
+import { issueUrl } from '../../lib/url';
+
+interface Props {
+  issue: Issue;
+}
+const { issue } = Astro.props;
+const { meta } = issue;
+const month = monthLabel(meta.month, meta.year);
+const teasers = issue.construction?.teasers ?? [];
+const progress = Object.entries(issue.construction?.progress ?? {}).filter(([, v]) => v);
+const ph = newsroom.placeholders;
+const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${newspaper.name}`;
+---
+<Document docTitle={docTitle} pageKey="newsroom" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number), Astro.site).href}>
+  <div class="site-shell is-proof">
+    <span class="crop-mark crop-mark--tr" aria-hidden="true"></span>
+    <span class="crop-mark crop-mark--tl" aria-hidden="true"></span>
+    <span class="crop-mark crop-mark--br" aria-hidden="true"></span>
+    <span class="crop-mark crop-mark--bl" aria-hidden="true"></span>
+    <span class="reg-mark reg-mark--top" aria-hidden="true"></span>
+    <span class="reg-mark reg-mark--side" aria-hidden="true"></span>
+
+    <p class="masthead-stamp">{newsroom.stamp}</p>
+    <Masthead issue={issue} pageKey="home" />
+    <Ticker ticker={{ label: newsroom.stamp, items: newsroom.status }} />
+
+    <main class="news-main proof-main">
+      <div class="container">
+        <section class="proof-front">
+          <span class="proof-kicker">{library.issueLabel} {meta.number} · {month}</span>
+          <h1 class="proof-headline">
+            <span class="proof-disputed">{ph.headlineDisputed}</span>
+          </h1>
+          <p class="proof-deck">{newsroom.lead}</p>
+        </section>
+
+        <div class="proof-grid">
+          <article class="proof-story proof-story--lead">
+            <button class="proof-frame" type="button" data-proof-frame>
+              <span class="proof-frame-label">{ph.imageSearch}</span>
+              <span class="proof-frame-stamp" aria-hidden="true">{newsroom.stamp}</span>
+            </button>
+            <div class="proof-type" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p class="proof-placeholder">{ph.awaiting}</p>
+          </article>
+
+          <article class="proof-story">
+            <div class="proof-type proof-type--short" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <p class="proof-redacted" tabindex="0">{ph.underReview}</p>
+            <div class="proof-type proof-type--ghost" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <p class="proof-placeholder proof-placeholder--boxed">{ph.noReply}</p>
+          </article>
+
+          <aside class="proof-board">
+            <span class="paperclip" aria-hidden="true"></span>
+            <ul class="proof-status">
+              {newsroom.status.map((line) => <li>{line}</li>)}
+            </ul>
+            {progress.length > 0 && (
+              <dl class="proof-progress">
+                {progress.map(([key, item]) => (
+                  <div>
+                    <dt>{newsroom.progressLabels[key as keyof typeof newsroom.progressLabels]}</dt>
+                    <dd>{item!.total !== undefined ? `${item!.done} / ${item!.total}` : item!.done}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            <div class="proof-reserved">
+              <span>{ph.reserved}</span>
+            </div>
+          </aside>
+        </div>
+
+        {teasers.length > 0 && (
+          <section class="proof-teasers">
+            {teasers.map((teaser, i) => <Teaser teaser={teaser} index={i} />)}
+          </section>
+        )}
+
+        <div class="proof-bottom">
+          <p class="proof-reject">{newsroom.notForPrint}</p>
+          <p class="proof-release">{newsroom.release}</p>
+        </div>
+
+        <button class="proof-note" type="button" aria-expanded="false" data-proof-note>
+          <span class="proof-note-pin" aria-hidden="true"></span>
+          <span class="proof-note-fold" aria-hidden="true">❖</span>
+          <span class="proof-note-body">
+            <span class="proof-note-text">{newsroom.internalNote}</span>
+            <span class="proof-note-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+          </span>
+        </button>
+      </div>
+    </main>
+
+    <Footer issue={issue} pageKey="newsroom" tagline={null} />
+  </div>
+</Document>

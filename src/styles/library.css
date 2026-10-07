@@ -1,0 +1,700 @@
+/* ==================================================================
+   مكتبة قال قيل: an archive room with one bookcase.
+   Newspapers stand face-out on wooden shelves under a warm lamp.
+   Planks repeat with the rows, so the shelf grows with every issue.
+   ================================================================== */
+body[data-page="library"]{
+  --wood-face:#8b6b4a;
+  --wood-front:#5d4430;
+  --wood-deep:#3d2c1f;
+  --wood-back:#251b13;
+  --row:410px;
+  --plank:30px;
+  min-height:100vh;
+  background-color:#211912;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% -6%, rgba(255, 210, 140, .2), transparent 72%),
+    radial-gradient(ellipse 120% 70% at 50% 120%, rgba(0, 0, 0, .5), transparent 62%),
+    var(--grain);
+}
+
+body[data-page="library"]::before,
+body[data-page="library"]::after{
+  content:none;
+}
+
+.library-room{
+  width:min(1180px, calc(100% - 40px));
+  margin:0 auto;
+  padding:42px 0 46px;
+}
+
+/* ---- the brass-less plaque: a printed card nailed to the case ----- */
+.library-plaque{
+  position:relative;
+  width:min(560px, 100%);
+  margin:0 auto 34px;
+  padding:24px 34px 18px;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-7px;
+  background-color:var(--paper-fresh);
+  background-image:var(--fibers), var(--grain);
+  box-shadow:0 20px 34px -18px rgba(0, 0, 0, .8);
+  text-align:center;
+  transform:rotate(-.4deg);
+}
+
+.library-plaque::before,
+.library-plaque::after{
+  content:"";
+  position:absolute;
+  top:11px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #a39375, #3b3125 70%);
+  box-shadow:0 1px 1px rgba(0, 0, 0, .4);
+}
+
+.library-plaque::before{ right:13px; }
+.library-plaque::after{ left:13px; }
+
+.library-brand{
+  margin:0;
+  font-family:var(--font-display);
+  font-size:19px;
+  color:var(--ink-faded);
+}
+
+.library-title{
+  margin:2px 0 6px;
+  padding-bottom:8px;
+  border-bottom:3px double var(--ink);
+  font-family:var(--font-display);
+  font-size:clamp(40px, 6vw, 64px);
+  line-height:1.15;
+  font-weight:700;
+  color:var(--ink);
+  filter:url(#press-ink);
+}
+
+.library-tagline{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin:0;
+  font-family:var(--font-display);
+  font-size:18px;
+  color:var(--ink-faded);
+}
+
+.library-tagline::before,
+.library-tagline::after{
+  content:"◆" / "";
+  font-size:8px;
+  color:var(--press-red);
+}
+
+/* ---- the bookcase -------------------------------------------------- */
+.bookcase{
+  padding:20px 22px 0;
+  border:14px solid var(--wood-deep);
+  background-color:var(--wood-back);
+  background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, .55), transparent 46px),
+    repeating-linear-gradient(90deg, rgba(255, 235, 200, .022) 0 1px, transparent 1px 7px, rgba(0, 0, 0, .06) 7px 9px, transparent 9px 17px),
+    var(--grain);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 230, 190, .06),
+    inset 0 0 70px rgba(0, 0, 0, .55),
+    0 34px 60px -30px rgba(0, 0, 0, .85);
+}
+
+.shelf{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+  grid-auto-rows:var(--row);
+  margin:0;
+  padding:0;
+  list-style:none;
+  /* one plank per row, however many issues there are */
+  background:
+    linear-gradient(to bottom,
+      transparent calc(var(--row) - var(--plank)),
+      var(--wood-face) calc(var(--row) - var(--plank)),
+      #a07e59 calc(var(--row) - var(--plank) + 2px),
+      var(--wood-face) calc(var(--row) - var(--plank) + 6px),
+      var(--wood-front) calc(var(--row) - var(--plank) + 6px),
+      var(--wood-deep) var(--row)) 0 0 / 100% var(--row) repeat-y,
+    linear-gradient(to bottom, rgba(0, 0, 0, .55), transparent 34px) 0 0 / 100% var(--row) repeat-y;
+}
+
+.shelf-slot{
+  --lean:-1.4deg;
+  position:relative;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:40px 12px calc(var(--plank) - 9px);
+}
+
+.shelf-slot:nth-child(3n + 2){ --lean:1deg; }
+.shelf-slot:nth-child(3n){ --lean:-.5deg; }
+
+/* front edge of the plank, drawn over the foot of each newspaper */
+.shelf-slot::after{
+  content:"";
+  position:absolute;
+  inset-inline:0;
+  bottom:0;
+  z-index:2;
+  height:calc(var(--plank) - 6px);
+  background:linear-gradient(to bottom, var(--wood-front), var(--wood-deep));
+  box-shadow:inset 0 1px 0 rgba(255, 220, 170, .12);
+  pointer-events:none;
+}
+
+/* ---- a newspaper standing on the shelf ------------------------------ */
+.shelf-paper{
+  position:relative;
+  z-index:1;
+  display:block;
+  width:min(204px, 86%);
+  aspect-ratio:204 / 276;
+  container-type:inline-size;
+  color:var(--ink);
+  transform:rotate(var(--lean));
+  transform-origin:50% 100%;
+  transition:transform .4s var(--ease-paper), filter .4s ease;
+  /* copies of the same issue stacked behind */
+  filter:drop-shadow(0 16px 14px rgba(0, 0, 0, .55));
+}
+
+.paper-front{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  padding:6cqw 6cqw 5cqw;
+  overflow:hidden;
+  background-color:var(--paper);
+  background-image:var(--specks), var(--fibers), var(--grain);
+  border:1px solid rgba(33, 29, 24, .3);
+  box-shadow:
+    -3px 3px 0 -1px var(--paper-deep),
+    -3px 3px 0 0 rgba(33, 29, 24, .28),
+    -6px 6px 0 -1px #ddd1b4,
+    -6px 6px 0 0 rgba(33, 29, 24, .24),
+    inset 0 0 26px rgba(150, 118, 62, .22);
+}
+
+.pf-rule{
+  flex:0 0 auto;
+  height:1.6cqw;
+  background:var(--ink);
+  box-shadow:0 2.4cqw 0 -1.6cqw var(--ink);
+  margin-bottom:2.6cqw;
+}
+
+.pf-name{
+  font-family:var(--font-display);
+  font-size:11cqw;
+  font-weight:700;
+  line-height:1.15;
+  text-align:center;
+  filter:url(#press-ink);
+}
+
+.pf-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:2cqw;
+  padding:.6cqw 0;
+  border-block:1px solid var(--ink);
+  font-family:var(--font-body);
+  font-size:4.6cqw;
+  line-height:1.6;
+  color:var(--ink-faded);
+}
+
+.pf-rule--double{
+  height:0;
+  margin:2cqw 0 3cqw;
+  background:none;
+  border-top:1.6cqw double var(--ink);
+  box-shadow:none;
+}
+
+.pf-story,
+.pf-proof{
+  position:relative;
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  min-height:0;
+}
+
+.pf-headline{
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  font-family:var(--font-display);
+  font-size:7.4cqw;
+  font-weight:700;
+  line-height:1.32;
+  text-align:center;
+}
+
+.pf-photo{
+  position:relative;
+  display:block;
+  flex:0 0 auto;
+  height:30cqw;
+  margin:3cqw 0;
+  border:1px solid var(--ink);
+  overflow:hidden;
+}
+
+.pf-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(.9) sepia(.2) contrast(1.2);
+}
+
+.pf-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:var(--halftone);
+  background-size:2px 2px;
+  mix-blend-mode:multiply;
+  opacity:.5;
+}
+
+/* columns of type too small to read: just the texture of print */
+.pf-columns{
+  display:grid;
+  flex:1;
+  grid-template-columns:repeat(3, 1fr);
+  gap:3cqw;
+  min-height:0;
+}
+
+.pf-columns > span{
+  background:repeating-linear-gradient(to bottom, rgba(33, 29, 24, .36) 0 1.2px, transparent 1.2px 4.6px);
+}
+
+.pf-columns > span + span{
+  border-inline-start:1px solid rgba(33, 29, 24, .18);
+  padding-inline-start:3cqw;
+  background-clip:content-box;
+}
+
+.pf-crease{
+  position:absolute;
+  inset-inline:0;
+  top:57%;
+  height:9cqw;
+  background:linear-gradient(to bottom, rgba(60, 44, 20, .14), rgba(255, 250, 235, .35) 40%, transparent);
+  pointer-events:none;
+}
+
+/* the archive label pinned to the plank */
+.shelf-label{
+  position:absolute;
+  bottom:4px;
+  left:50%;
+  z-index:3;
+  display:flex;
+  gap:8px;
+  padding:1px 10px 0;
+  border:1px solid rgba(33, 29, 24, .55);
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:0 1px 2px rgba(0, 0, 0, .5);
+  font-family:var(--font-body);
+  font-size:12px;
+  font-weight:600;
+  line-height:1.6;
+  white-space:nowrap;
+  color:var(--ink);
+  transform:translateX(-50%);
+}
+
+.shelf-label-date{
+  color:var(--ink-faded);
+  font-weight:500;
+}
+
+/* ---- taking it off the shelf --------------------------------------- */
+.shelf-paper:hover,
+.shelf-paper:focus-visible{
+  z-index:4;
+  transform:translateY(-16px) rotate(0deg) scale(1.03);
+  filter:drop-shadow(0 30px 22px rgba(0, 0, 0, .7));
+}
+
+.shelf-paper:focus-visible{
+  outline:2px solid var(--paper-fresh);
+  outline-offset:8px;
+}
+
+.shelf-paper:active{
+  transform:translateY(-10px) rotate(0deg) scale(.99);
+}
+
+.is-taken .shelf-paper{
+  z-index:10;
+  transform:translateY(-34px) scale(1.4) rotate(0deg);
+  filter:drop-shadow(0 40px 34px rgba(0, 0, 0, .75));
+  transition:transform .42s var(--ease-paper), filter .42s ease;
+}
+
+body.is-taking .shelf-slot:not(.is-taken),
+body.is-taking .library-plaque{
+  opacity:.45;
+  transition:opacity .35s ease;
+}
+
+/* ---- the unfinished December copy ----------------------------------- */
+.shelf-paper.is-editing .paper-front{
+  background-color:var(--paper-fresh);
+  box-shadow:inset 0 0 18px rgba(150, 118, 62, .14);
+}
+
+.loose-sheet{
+  position:absolute;
+  inset:0;
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  border:1px solid rgba(33, 29, 24, .28);
+}
+
+.loose-sheet--a{ transform:translate(9px, -7px) rotate(4.5deg); }
+.loose-sheet--b{ transform:translate(-8px, 5px) rotate(-3.5deg); background-color:#ece2c6; }
+
+/* a yellowed editor's slip pushed in behind, pencil lines only */
+.editor-slip{
+  position:absolute;
+  top:-7%;
+  inset-inline-start:12%;
+  display:grid;
+  align-content:start;
+  gap:6px;
+  width:34%;
+  height:30%;
+  padding:10px 9px;
+  background:#efe1b4;
+  border:1px solid rgba(33, 29, 24, .2);
+  transform:rotate(-8deg);
+}
+
+.editor-slip span{
+  height:1.5px;
+  background:rgba(70, 70, 70, .45);
+}
+
+.editor-slip span:nth-child(2){ width:70%; }
+.editor-slip span:nth-child(3){ width:85%; }
+
+.pf-bars{
+  display:grid;
+  gap:2.4cqw;
+  margin:1cqw 4cqw 0;
+}
+
+.pf-bars span{
+  height:4cqw;
+  background:rgba(33, 29, 24, .7);
+}
+
+.pf-bars span:nth-child(2){ width:72%; justify-self:center; }
+
+.pf-bars .is-struck{
+  position:relative;
+  width:84%;
+  justify-self:center;
+  background:rgba(33, 29, 24, .3);
+}
+
+.pf-bars .is-struck::after{
+  content:"";
+  position:absolute;
+  inset-inline:-4%;
+  top:50%;
+  height:2px;
+  background:var(--press-red);
+  transform:rotate(-4deg);
+}
+
+/* crossed-out picture box */
+.pf-frame{
+  flex:0 0 auto;
+  height:26cqw;
+  margin:4cqw 0;
+  border:1px dashed rgba(33, 29, 24, .6);
+  background:
+    linear-gradient(to top right, transparent calc(50% - .6px), rgba(33, 29, 24, .45) 50%, transparent calc(50% + .6px)),
+    linear-gradient(to top left, transparent calc(50% - .6px), rgba(33, 29, 24, .45) 50%, transparent calc(50% + .6px));
+}
+
+.pf-columns--partial > span:nth-child(2){
+  background-size:100% 46%;
+  background-repeat:no-repeat;
+}
+
+.pf-columns--partial > span:nth-child(3){
+  background:none;
+  border:1px dashed rgba(70, 120, 170, .5);
+}
+
+/* red proof marks */
+.proof-circle{
+  position:absolute;
+  top:-1cqw;
+  inset-inline:1cqw;
+  height:17cqw;
+  border:1.5px solid var(--press-red);
+  border-radius:50%;
+  transform:rotate(-3deg);
+  opacity:.85;
+}
+
+.proof-caret{
+  position:absolute;
+  top:40%;
+  inset-inline-end:2cqw;
+  font-family:var(--font-display);
+  font-size:10cqw;
+  color:var(--press-red);
+  transform:rotate(8deg);
+}
+
+.paperclip{
+  position:absolute;
+  top:-12px;
+  inset-inline-end:16%;
+  z-index:3;
+  width:14px;
+  height:42px;
+  border:2px solid #8f8a80;
+  border-radius:8px;
+  transform:rotate(9deg);
+}
+
+.paperclip::after{
+  content:"";
+  position:absolute;
+  inset:5px 2px 9px;
+  border:2px solid #8f8a80;
+  border-bottom:0;
+  border-radius:6px 6px 0 0;
+}
+
+.paper-stamp{
+  position:absolute;
+  bottom:22%;
+  left:9%;
+  z-index:3;
+  padding:2px 9px 0;
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:2px;
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:15px;
+  line-height:1.5;
+  transform:rotate(-11deg);
+  filter:url(#press-stamp);
+}
+
+/* ---- atmosphere: unlabelled bundles of old paper -------------------- */
+.shelf-slot--decor{
+  gap:14px;
+}
+
+.paper-bundle{
+  position:relative;
+  display:grid;
+  width:76%;
+  transform:rotate(-1deg);
+}
+
+.paper-bundle > span:not(.twine){
+  height:11px;
+  margin-top:-2px;
+  border:1px solid rgba(0, 0, 0, .35);
+  background-color:var(--paper-deep);
+  background-image:var(--grain);
+  box-shadow:0 1px 0 rgba(0, 0, 0, .25);
+}
+
+.paper-bundle > span:nth-child(2n){ transform:translateX(5px); background-color:#ddd1b2; }
+.paper-bundle > span:nth-child(3n){ transform:translateX(-4px); }
+
+.twine{
+  position:absolute;
+  top:-2px;
+  bottom:0;
+  left:38%;
+  width:3px;
+  background:#9c8257;
+  box-shadow:0 0 0 1px rgba(0, 0, 0, .15);
+}
+
+.paper-bundle--low{
+  width:58%;
+}
+
+.paper-spines{
+  display:flex;
+  align-items:flex-end;
+  gap:1px;
+  height:60%;
+}
+
+.paper-spines span{
+  width:11px;
+  height:100%;
+  border:1px solid rgba(0, 0, 0, .35);
+  background:linear-gradient(to left, var(--paper-deep), #cfc3a3);
+}
+
+.paper-spines span:nth-child(2n){ height:93%; }
+.paper-spines span:nth-child(3n){ height:97%; background:linear-gradient(to left, #e3d8bc, #c6b996); }
+
+.paper-spines span:last-child{
+  transform:rotate(-9deg);
+  transform-origin:100% 100%;
+  margin-inline-end:18px;
+}
+
+.bookend{
+  width:24px;
+  height:46%;
+  background:linear-gradient(to left, var(--wood-face), var(--wood-front));
+  box-shadow:0 8px 10px -6px rgba(0, 0, 0, .6);
+}
+
+/* ---- under the bookcase ------------------------------------------- */
+.library-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:22px;
+  color:rgba(232, 223, 200, .7);
+  font-size:var(--t-small);
+}
+
+.library-foot .footer-link{
+  color:var(--paper-deep);
+  text-decoration-color:rgba(232, 223, 200, .45);
+}
+
+.library-foot .footer-link:hover{
+  color:var(--paper-fresh);
+  text-decoration-color:currentColor;
+}
+
+/* ---- smaller screens: a closer, narrower case ---------------------- */
+@media (max-width: 760px){
+  body[data-page="library"]{
+    --row:340px;
+    --plank:26px;
+  }
+
+  .library-room{
+    width:calc(100% - 24px);
+    padding-top:22px;
+  }
+
+  .library-plaque{
+    padding:20px 18px 14px;
+    margin-bottom:22px;
+  }
+
+  .bookcase{
+    padding:14px 10px 0;
+    border-width:10px;
+  }
+
+  .shelf{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+
+  .shelf-slot{
+    padding-inline:8px;
+  }
+
+  .shelf-label{
+    font-size:11px;
+    padding-inline:7px;
+  }
+}
+
+@media (max-width: 380px){
+  .shelf-label-date{
+    display:none;
+  }
+}
+
+/* ---- the storage shelf beneath: bundles of old paper --------------- */
+.shelf--storage{
+  --storage-row:190px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-around;
+  gap:20px;
+  height:var(--storage-row);
+  padding:0 24px calc(var(--plank) - 4px);
+  grid-auto-rows:auto;
+  background:
+    linear-gradient(to bottom,
+      transparent calc(var(--storage-row) - var(--plank)),
+      var(--wood-face) calc(var(--storage-row) - var(--plank)),
+      #a07e59 calc(var(--storage-row) - var(--plank) + 2px),
+      var(--wood-face) calc(var(--storage-row) - var(--plank) + 6px),
+      var(--wood-front) calc(var(--storage-row) - var(--plank) + 6px),
+      var(--wood-deep) var(--storage-row)),
+    linear-gradient(to bottom, rgba(0, 0, 0, .55), transparent 34px);
+}
+
+.storage-group{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  gap:3px;
+  width:min(240px, 30%);
+}
+
+.storage-group .paper-bundle{
+  width:100%;
+}
+
+.storage-group .paper-bundle--low{
+  width:78%;
+}
+
+.paper-spines--low{
+  height:120px;
+}
+
+@media (max-width: 760px){
+  .shelf--storage{
+    --storage-row:150px;
+    gap:10px;
+    padding-inline:8px;
+  }
+
+  .paper-spines--low{
+    height:90px;
+  }
+}

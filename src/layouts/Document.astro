@@ -1,0 +1,40 @@
+---
+/* ------------------------------------------------------------------ *
+ * The HTML document every page shares: head, fonts, paper effects and
+ * the browser scripts. The library, each issue and the newsroom proof
+ * all render inside it, so they are the same paper in the same world.
+ * ------------------------------------------------------------------ */
+import '../styles/index.css';
+import PressEffects from '../components/press/PressEffects.astro';
+
+interface Props {
+  docTitle: string;
+  /** body[data-page]: drives page-specific composition */
+  pageKey: string;
+  issueNumber?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+const { docTitle, pageKey, issueNumber, canonical, noindex = false } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{docTitle}</title>
+  {canonical && <link rel="canonical" href={canonical} />}
+  {noindex && <meta name="robots" content="noindex" />}
+  <slot name="head" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cairo:wght@500;700&family=Lalezar&display=swap" />
+</head>
+<body data-page={pageKey} data-issue={issueNumber}>
+  <PressEffects />
+  <slot />
+  <script>
+    import '../scripts/main';
+  </script>
+</body>
+</html>

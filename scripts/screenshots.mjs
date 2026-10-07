@@ -25,7 +25,8 @@ const CURRENT = path.join(ROOT, 'tests/output/screenshots');
 const BASE = '/qal-qeel-al-khalil';
 
 const PAGES = [
-  { name: 'root', path: '/' },
+  { name: 'library', path: '/' },
+  { name: 'issue-002-proof', path: '/issues/002/' },
   { name: 'home', path: '/issues/001/' },
   { name: 'news', path: '/issues/001/news.html' },
   { name: 'columns', path: '/issues/001/columns.html' },

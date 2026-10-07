@@ -1,8 +1,11 @@
 ---
 import type { Issue } from '../../lib/types';
 import { newspaper } from '../../universe/newspaper';
-import { issueUrl, archiveUrl } from '../../lib/url';
-import { hasPage } from '../../lib/issues';
+import { library } from '../../universe/library';
+import { newsroom } from '../../universe/newsroom';
+import { monthLabel } from '../../universe/calendar';
+import { issueUrl, archiveUrl, libraryUrl } from '../../lib/url';
+import { hasPage, isEditing } from '../../lib/issues';
 
 interface Props {
   issue: Issue;
@@ -11,24 +14,33 @@ interface Props {
 const { issue, pageKey } = Astro.props;
 const { meta } = issue;
 const n = meta.number;
+const editing = isEditing(issue);
 
 // Nav is truthful per issue: real link when this issue has the page,
 // "coming soon" when the universe marks it so, otherwise omitted.
+// An issue still in editing has no sections yet: only its proof + archive.
 const items = newspaper.nav.flatMap((item) => {
   if (item.key === 'archive') return [{ ...item, href: archiveUrl(), coming: false }];
   if (item.key === 'home' || hasPage(issue, item.key)) return [{ ...item, href: issueUrl(n, item.key), coming: false }];
-  if (item.comingSoon) return [{ ...item, href: '#', coming: true }];
+  if (item.comingSoon && !editing) return [{ ...item, href: '#', coming: true }];
   return [];
 });
+
+// An issue in editing has no release date yet: the planned month instead.
+const dateLine = meta.releaseDateLabel ?? monthLabel(meta.month, meta.year);
+const thirdLine = editing ? newsroom.stamp : meta.priceLine;
 ---
 <header class="topbar">
   <div class="container">
+    <!-- the way back to the shelf, printed like an archive reference -->
+    <a class="library-ref" href={libraryUrl()} data-to-library>{library.name}</a>
+
     <div class="masthead">
       <div class="masthead-grid">
         <div class="meta-box">
           <span class="meta-label">{newspaper.masthead.issueNumberLabel}</span>
           <strong>{n}</strong>
-          <span>{meta.city}</span>
+          {meta.city && <span>{meta.city}</span>}
         </div>
 
         <div class="brand-box">
@@ -38,8 +50,8 @@ const items = newspaper.nav.flatMap((item) => {
 
         <div class="meta-box meta-left">
           <span class="meta-label">{newspaper.masthead.releaseDateLabel}</span>
-          <strong>{meta.releaseDateLabel}</strong>
-          <span>{meta.priceLine}</span>
+          <strong>{dateLine}</strong>
+          {thirdLine && <span>{thirdLine}</span>}
         </div>
       </div>
 

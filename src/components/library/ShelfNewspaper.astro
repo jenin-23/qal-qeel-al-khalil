@@ -1,0 +1,95 @@
+---
+/* ------------------------------------------------------------------ *
+ * One issue standing on the library shelf, face out.
+ * A readable issue shows its real front page in miniature (name, date,
+ * its own front headline and photograph). An issue still in editing is
+ * an unassembled proof: loose sheets, empty frames, red marks, a clip.
+ * Everything is drawn from the issue's data; nothing is invented.
+ * ------------------------------------------------------------------ */
+import { Image } from 'astro:assets';
+import type { ArticleImage, Issue } from '../../lib/types';
+import { isEditing } from '../../lib/issues';
+import { issueUrl } from '../../lib/url';
+import { newspaper } from '../../universe/newspaper';
+import { library } from '../../universe/library';
+import { newsroom } from '../../universe/newsroom';
+import { monthLabel } from '../../universe/calendar';
+
+interface Props {
+  issue: Issue;
+  index: number;
+}
+const { issue, index } = Astro.props;
+const { meta } = issue;
+const editing = isEditing(issue);
+const dateLine = meta.releaseDateLabel ?? monthLabel(meta.month, meta.year);
+
+// the issue's own front-page headline (home leader), as printed
+const hero = issue.pages.home?.blocks.find((b) => b.type === 'hero');
+const headline = hero && 'title' in hero ? hero.title.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+// and its first real photograph
+const photo = issue.articles.map((a) => a.image).find((img): img is ArticleImage => !!img && 'src' in img);
+
+const label = [`${library.issueLabel} ${meta.number}`, dateLine, editing ? newsroom.stamp : '']
+  .filter(Boolean)
+  .join(' · ');
+---
+<li class="shelf-slot" style={`--i:${index}`}>
+  <a
+    class:list={['shelf-paper', { 'is-editing': editing }]}
+    href={issueUrl(meta.number)}
+    data-take
+    data-status={meta.status}
+    aria-label={label}
+  >
+    {editing && (
+      <span class="paper-loose" aria-hidden="true">
+        <span class="loose-sheet loose-sheet--a"></span>
+        <span class="loose-sheet loose-sheet--b"></span>
+        <span class="editor-slip"><span></span><span></span><span></span></span>
+      </span>
+    )}
+
+    <span class="paper-front" aria-hidden="true">
+      <span class="pf-rule"></span>
+      <span class="pf-name">{newspaper.name}</span>
+      <span class="pf-meta">
+        <span>{library.issueLabel} {meta.number}</span>
+        <span>{dateLine}</span>
+      </span>
+      <span class="pf-rule pf-rule--double"></span>
+
+      {editing ? (
+        <span class="pf-proof">
+          <span class="pf-bars"><span></span><span></span><span class="is-struck"></span></span>
+          <span class="pf-frame"></span>
+          <span class="pf-columns pf-columns--partial"><span></span><span></span><span></span></span>
+          <span class="proof-circle"></span>
+          <span class="proof-caret">‸</span>
+        </span>
+      ) : (
+        <span class="pf-story">
+          {headline && <span class="pf-headline">{headline}</span>}
+          {photo && (
+            <span class="pf-photo">
+              <Image src={photo.src} alt="" widths={[240, 400]} sizes="200px" loading="eager" />
+            </span>
+          )}
+          <span class="pf-columns"><span></span><span></span><span></span></span>
+        </span>
+      )}
+      <span class="pf-crease"></span>
+    </span>
+
+    {editing && (
+      <span class="paper-extras" aria-hidden="true">
+        <span class="paperclip"></span>
+        <span class="paper-stamp">{newsroom.stamp}</span>
+      </span>
+    )}
+  </a>
+  <span class="shelf-label" aria-hidden="true">
+    <span>{library.issueLabel} {meta.number}</span>
+    <span class="shelf-label-date">{dateLine}</span>
+  </span>
+</li>

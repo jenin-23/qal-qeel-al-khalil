@@ -23,6 +23,19 @@
     transition:opacity .5s ease, transform 1.1s var(--ease-paper);
   }
 
+  /* arriving from the library: the copy just taken from the shelf opens */
+  .press-js.arrive-from-library .site-shell{
+    opacity:0;
+    transform:translateY(52px) scale(.88) rotate(-1.6deg);
+    transform-origin:50% 0;
+  }
+
+  .press-js.arrive-from-library.press-settled .site-shell{
+    opacity:1;
+    transform:none;
+    transition:opacity .35s ease, transform .95s var(--ease-paper);
+  }
+
   /* rules draw themselves into place */
   .press-js .section-heading h2::after{
     transform:scaleX(0);

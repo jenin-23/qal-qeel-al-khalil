@@ -38,8 +38,8 @@ const links = newspaper.footerLinks.flatMap((link) => {
       </div>
 
       <div class="footer-bottom">
-        <span>{issue.meta.copyright}</span>
-        <span>{issue.meta.city}</span>
+        <span>{issue.meta.copyright ?? `© ${issue.meta.year} ${newspaper.name}`}</span>
+        {issue.meta.city && <span>{issue.meta.city}</span>}
       </div>
     </div>
   </div>

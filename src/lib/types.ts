@@ -9,7 +9,13 @@ import type { ImageMetadata } from 'astro';
 /** Page keys an issue may publish. New sections only need a new key + blocks. */
 export type PageKey = 'home' | 'news' | 'columns' | 'entertainment' | 'about' | 'contact' | (string & {});
 
-export type IssueStatus = 'published' | 'draft';
+/**
+ * draft     internal only: built by `npm run dev`, invisible publicly
+ * editing   on the library shelf; opens the newsroom proof (/issues/NNN/)
+ * published on the shelf; the full newspaper
+ * archived  on the shelf and in the archive; the full newspaper, forever
+ */
+export type IssueStatus = 'draft' | 'editing' | 'published' | 'archived';
 
 export interface IssueMeta {
   /** Zero-padded issue number, also the URL segment: /issues/001/ */
@@ -275,4 +281,52 @@ export interface Issue {
   ads: IssueAds;
   birthday?: BirthdayDef;
   entertainment?: EntertainmentDef;
+  /** While status is 'editing': what the newsroom proof may show. */
+  construction?: ConstructionDef;
+}
+
+/* ---- an issue in the newsroom (status: 'editing') ----------------- */
+
+/**
+ * Real production progress. Nothing is shown until a value is provided;
+ * never fill these in with guesses.
+ */
+export interface ProgressItem {
+  done: number;
+  total?: number;
+}
+
+export interface IssueProgress {
+  articles?: ProgressItem;
+  images?: ProgressItem;
+  ads?: ProgressItem;
+  sections?: ProgressItem;
+}
+
+/**
+ * Things the editors may choose to leak from an unfinished issue.
+ * Each type is rendered by components/newsroom/Teaser.astro.
+ * Only add a teaser when the material actually exists.
+ */
+export type Teaser =
+  /** a real headline whose article stays hidden */
+  | { type: 'headline'; headline: string; section?: string }
+  /** a headline shown mostly blacked out; only `visible` words show */
+  | { type: 'redacted-headline'; visible: string[]; hiddenWords: number }
+  /** a real image, shown cropped and/or blurred */
+  | { type: 'image'; image: ImageMetadata; alt: string; crop?: string; blur?: boolean }
+  /** one quote without its context */
+  | { type: 'quote'; quote: string }
+  /** names of sections planned for the issue */
+  | { type: 'sections'; names: string[] }
+  /** a finished advertisement from the issue */
+  | { type: 'ad'; ad: SidebarAd }
+  /** a short cryptic classified line */
+  | { type: 'classified'; text: string }
+  /** a small fragment of a future article */
+  | { type: 'snippet'; text: string };
+
+export interface ConstructionDef {
+  progress?: IssueProgress;
+  teasers?: Teaser[];
 }

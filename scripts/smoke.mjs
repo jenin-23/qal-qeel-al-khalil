@@ -45,7 +45,9 @@ page.on('response', (r) => {
   if (['stylesheet', 'script', 'image', 'font'].includes(t) && r.status() >= 400) broken.push(`${r.status()} ${r.url()}`);
 });
 page.on('requestfailed', (r) => {
-  if (!r.url().startsWith('data:')) broken.push(`failed ${r.url()}`);
+  // cancelled by navigating away (e.g. taking a paper off the shelf) is not broken
+  if (r.url().startsWith('data:') || /ERR_ABORTED|NS_BINDING_ABORTED|cancelled/i.test(r.failure()?.errorText ?? '')) return;
+  broken.push(`failed ${r.url()} (${r.failure()?.errorText})`);
 });
 
 // --- entertainment: gate, validation, April greeting, memory
@@ -115,16 +117,53 @@ for (const legacy of ['news.html#tat3eem-story', 'news.html#eslam-story', 'enter
   check(true, `legacy /${legacy} → /issues/001/${legacy}`);
 }
 
-// --- every page: loads, has the shell, no script errors
-const PAGES = ['/', '/issues/001/', '/issues/001/news.html', '/issues/001/columns.html', '/issues/001/entertainment.html', '/issues/001/about.html', '/issues/001/contact.html', '/archive.html'];
-for (const p of PAGES) {
+// --- every newspaper page: loads, has the shell, no script errors
+const ISSUE_PAGES = ['/issues/001/', '/issues/001/news.html', '/issues/001/columns.html', '/issues/001/entertainment.html', '/issues/001/about.html', '/issues/001/contact.html', '/archive.html'];
+const PAGES = ['/', ...ISSUE_PAGES, '/issues/002/'];
+for (const p of ISSUE_PAGES) {
   const before = errors.length;
   const res = await page.goto(url(p));
-  const shell = await page.evaluate(() => ['.masthead', '.site-nav', '.ticker', '.site-footer', '#copyToast'].every((s) => document.querySelector(s)));
-  check(res.ok() && shell && errors.length === before, `${p} loads with masthead, nav, ticker, footer, toast`);
+  const shell = await page.evaluate(() => ['.masthead', '.site-nav', '.ticker', '.site-footer', '#copyToast', '.library-ref'].every((s) => document.querySelector(s)));
+  check(res.ok() && shell && errors.length === before, `${p} loads with masthead, nav, ticker, footer, toast, library reference`);
 }
-check((await page.goto(url('/'), { waitUntil: 'load' }), (await page.locator('.meta-box strong').first().textContent()) === '001'), '/ shows the latest published issue (001)');
-check((await page.goto(url('/issues/002/'))).status() === 404, 'draft issue 002 is not published');
+
+// --- the library (/)
+await page.goto(url('/'));
+const lib = await page.evaluate(() => ({
+  page: document.body.dataset.page,
+  issueData: !!document.getElementById('issue-data'),
+  papers: [...document.querySelectorAll('a[data-take]')].map((a) => ({ href: a.getAttribute('href'), status: a.dataset.status })),
+}));
+check(lib.page === 'library' && !lib.issueData, '/ opens the library (مكتبة قال قيل), not Issue 001');
+check(lib.papers.every((p) => p.status !== 'draft'), 'no draft issue stands on the shelf');
+check(lib.papers.some((p) => p.href.endsWith('/issues/001/') && ['published', 'archived'].includes(p.status)), 'Issue 001 is on the shelf as a finished newspaper');
+check(lib.papers.some((p) => p.href.endsWith('/issues/002/') && p.status === 'editing'), 'Issue 002 is on the shelf as an unfinished copy (editing)');
+check(lib.papers.length === 2, `exactly the public issues are shelved (${lib.papers.length})`);
+
+await page.locator('a[data-take][href$="/issues/001/"]').click();
+await page.waitForURL(/issues\/001\/$/);
+check(await page.evaluate(() => document.documentElement.classList.contains('arrive-from-library')), 'taking 001 off the shelf opens /issues/001/ (as an opened copy)');
+await page.locator('.library-ref').click();
+await page.waitForURL(/qal-qeel-al-khalil\/$/);
+check(true, 'the masthead reference leads back to the library');
+await page.locator('a[data-take][href$="/issues/002/"]').click();
+await page.waitForURL(/issues\/002\/$/);
+check((await page.evaluate(() => document.body.dataset.page)) === 'newsroom', 'Issue 002 opens its newsroom proof');
+
+// --- the newsroom proof (Issue 002, editing)
+const proof = await page.evaluate(() => ({
+  nav: [...document.querySelectorAll('.nav-link')].map((a) => a.textContent.trim()),
+  articles: document.querySelectorAll('.story-card').length,
+}));
+check(proof.articles === 0 && !proof.nav.includes('الأخبار') && !proof.nav.includes('المنوعات'), 'the proof exposes no news/columns/entertainment sections');
+check((await page.goto(url('/issues/002/news.html'))).status() === 404, '/issues/002/news.html does not exist');
+await page.goto(url('/issues/002/'));
+await page.locator('[data-proof-frame]').click();
+check(await page.locator('[data-proof-frame]').evaluate((b) => b.classList.contains('is-stamped')), 'empty photo frame takes a stamp when pressed');
+await page.locator('[data-proof-note]').focus();
+await page.keyboard.press('Enter');
+check((await page.locator('[data-proof-note]').getAttribute('aria-expanded')) === 'true', 'internal note unfolds (keyboard)');
+check((await page.locator('.proof-note-text').textContent()) === 'ملاحظة داخلية — ليس للنشر', '…and says nothing useful');
 
 // --- archive: the folded copy opens its edition
 await page.goto(url('/archive.html'));
@@ -133,14 +172,26 @@ await page.waitForURL(/issues\/001\/$/);
 check(true, 'archive card for 001 opens /issues/001/');
 
 // --- keyboard: focus is visible, dialogs trap and return focus
+const focused = () =>
+  page.evaluate(() => {
+    const el = document.activeElement;
+    const cs = getComputedStyle(el);
+    return { cls: el.className, href: el.getAttribute('href'), ring: cs.outlineStyle !== 'none' || cs.boxShadow !== 'none' };
+  });
+await page.goto(url('/'));
+await page.keyboard.press('Tab');
+const shelfFocus = await focused();
+check(shelfFocus.cls.includes('shelf-paper') && shelfFocus.ring, 'library: Tab reaches the first newspaper with a visible focus ring');
+await page.keyboard.press('Enter');
+await page.waitForURL(/issues\/001\/$/);
+check(true, 'library: Enter takes the newspaper and opens it');
+
 await page.goto(url('/issues/001/news.html'));
 await page.keyboard.press('Tab');
-const firstFocus = await page.evaluate(() => {
-  const el = document.activeElement;
-  const cs = getComputedStyle(el);
-  return { cls: el.className, ring: cs.outlineStyle !== 'none' || cs.boxShadow !== 'none' };
-});
-check(firstFocus.cls.includes('nav-link') && firstFocus.ring, 'first Tab lands on the section bar with a visible focus ring');
+const refFocus = await focused();
+await page.keyboard.press('Tab');
+const navFocus = await focused();
+check(refFocus.cls.includes('library-ref') && refFocus.ring && navFocus.cls.includes('nav-link') && navFocus.ring, 'issue: Tab order is library reference, then section bar, with focus rings');
 const coming = page.locator('[data-coming]');
 await coming.focus();
 await page.keyboard.press('Enter');
@@ -170,7 +221,22 @@ const motion = await rp.evaluate(() => ({
   img: getComputedStyle(document.querySelector('.story-img')).opacity,
 }));
 check(motion.shell === '1' && motion.ticker === 'none' && motion.img === '1', 'prefers-reduced-motion: page static and fully visible');
+await rp.goto(url('/'));
+await rp.locator('a[data-take][href$="/issues/001/"]').click();
+await rp.waitForURL(/issues\/001\/$/);
+check(await rp.evaluate(() => getComputedStyle(document.querySelector('.site-shell')).opacity === '1'), 'prefers-reduced-motion: library opens the issue at once, no take/arrival motion');
 await reduced.close();
+
+// --- library + proof at tablet width
+const tablet = await browser.newContext({ viewport: { width: 820, height: 1180 } });
+const tp = await tablet.newPage();
+for (const p of ['/', '/issues/002/', '/issues/001/news.html']) {
+  await tp.goto(url(p));
+  await tp.waitForTimeout(400);
+  const overflow = await tp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check(overflow <= 0, `${p} at 820px: no horizontal overflow`);
+}
+await tablet.close();
 
 // --- mobile: no sideways scrolling on any page
 const mobile = await browser.newContext({ viewport: { width: 360, height: 780 } });

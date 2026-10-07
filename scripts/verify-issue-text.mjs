@@ -39,8 +39,12 @@ const PAGE_MAP = {
 };
 
 // While 001 is the newest published issue, "/" is its front page too.
-const ROOT_IS_001 = true;
+// "/" is now the library (مكتبة قال قيل), not an issue page.
+const ROOT_IS_001 = false;
 if (ROOT_IS_001) PAGE_MAP['index.html'].push('index.html');
+
+// the masthead's archive reference back to the library, on every issue page
+const LIBRARY_REF = 'مكتبة قال قيل';
 
 const SHELL_ADDITIONS = {
   toast: ['تم نسخ المقال. استخدمه بحذر.'],
@@ -50,18 +54,21 @@ const SHELL_ADDITIONS = {
 
 /** Text that may appear in the new build but not in the original, per page. */
 const ALLOWED_ADDITIONS = {
-  'about.html': { reason: 'shared toast now on every page', text: [...SHELL_ADDITIONS.toast] },
+  'index.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
+  'news.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
+  'columns.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
+  'about.html': { reason: 'shared toast; library reference', text: [...SHELL_ADDITIONS.toast, LIBRARY_REF] },
   'archive.html': {
     reason: 'shared toast; archive card shows the issue date + "enter issue" button',
-    text: [...SHELL_ADDITIONS.toast, '١-٤-٢٠٢٦', 'ادخل العدد'],
+    text: [...SHELL_ADDITIONS.toast, '١-٤-٢٠٢٦', 'ادخل العدد', LIBRARY_REF],
   },
   'contact.html': {
     reason: 'shared coming-soon modal + toast were missing on Contact',
-    text: [...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast],
+    text: [...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, LIBRARY_REF],
   },
   'entertainment.html': {
     reason: 'footer, coming-soon modal, toast were missing; approved «تغيير تاريخ الميلاد»; gate close button (shown only when changing)',
-    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×'],
+    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×', LIBRARY_REF],
   },
 };
 

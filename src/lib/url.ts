@@ -11,3 +11,5 @@ export function issueUrl(number: string, page = 'home', hash?: string): string {
 }
 
 export const archiveUrl = () => url('archive.html');
+/** The library (مكتبة قال قيل): the site's front door. */
+export const libraryUrl = () => url('');

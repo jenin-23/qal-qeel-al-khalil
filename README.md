@@ -28,13 +28,39 @@ npm run preview    # serve dist/ locally
 | `tests/fixtures/issue-001-original/` | Frozen copy of the original Issue 001 site, the reference for `verify:001`. |
 | `tests/visual-baseline/` | Screenshots of every page (desktop / tablet / mobile). |
 
-URLs: `/` is always the newest **published** issue; `/issues/001/…` is Issue 001
-forever; `/archive.html` lists every issue. Old links such as
-`/news.html#eslam-story` redirect to `/issues/001/news.html#eslam-story`.
+URLs:
 
+| URL | What |
+|---|---|
+|  | **مكتبة قال قيل**: the library. Every public issue stands on the shelf as a newspaper. |
+|  | The structured, chronological archive. |
+|  | Issue 001, permanently. |
+|  | While 002 is in editing: the newsroom proof (unfinished on purpose). |
+
+Old links such as  redirect to .
+
+## Issue statuses
+
+| status | Library shelf |  |
+|---|---|---|
+|  | not shown (only ) | dev preview only |
+|  | an unfinished copy (loose sheets, proof marks, «قيد التحرير») | the newsroom proof |
+|  | a finished newspaper | the full issue |
+|  | a finished newspaper | the full issue, forever |
+
+Issue 001 is ; Issue 002 is .
+
+### While an issue is in editing
+
+The proof at  uses newsroom wording only ()
+and invents nothing. To leak real material gradually, add it to the issue's
+ (see ):
+
+- : , ,  (cropped/blurred), ,
+  , , , - : real counts only, e.g. 
 ## Starting a new issue
 
-1. `src/issues/002/index.ts` already exists as a draft (`status: 'draft'`).
+1. `src/issues/002/index.ts` exists in `editing` (it shows as the newsroom proof).
    Use `src/issues/001/` as the model: split it into `issue.ts`, `pages.ts`,
    `articles.ts` + `articles/<id>.html`, `ads.ts`, `birthday.ts`,
    `entertainment.ts`.
@@ -42,7 +68,8 @@ forever; `/archive.html` lists every issue. Old links such as
    issue's files. Every image needs Arabic `alt` text (the build fails otherwise).
 3. Preview with `npm run dev` at `/issues/002/`.
 4. Publish: set `status: 'published'` and add `meta.archive` (its archive card).
-   `/` then shows Issue 002; Issue 001 stays at `/issues/001/`.
+   The unfinished copy on the shelf becomes a finished newspaper; Issue 001
+   stays at `/issues/001/` (optionally mark it `archived`).
 
 The build validates each issue: 12 horoscope predictions, exactly three
 reactions per article, known article ids, alt text, popup timing ranges.

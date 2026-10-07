@@ -1,0 +1,52 @@
+---
+/* ------------------------------------------------------------------ *
+ * One leaked piece of an issue in editing. Renders only what the
+ * editors put in construction.teasers; supplies no words of its own.
+ * ------------------------------------------------------------------ */
+import { Image } from 'astro:assets';
+import type { Teaser } from '../../lib/types';
+import SidebarAd from '../ads/SidebarAd.astro';
+
+interface Props {
+  teaser: Teaser;
+  index: number;
+}
+const { teaser, index } = Astro.props;
+---
+{teaser.type === 'headline' && (
+  <article class="teaser teaser--headline">
+    {teaser.section && <span class="teaser-section">{teaser.section}</span>}
+    <h3>{teaser.headline}</h3>
+    <span class="teaser-hidden-body" aria-hidden="true"><span></span><span></span><span></span></span>
+  </article>
+)}
+{teaser.type === 'redacted-headline' && (
+  <article class="teaser teaser--redacted">
+    <h3>
+      {teaser.visible.map((word) => <span>{word} </span>)}
+      {Array.from({ length: teaser.hiddenWords }).map(() => <span class="redaction" aria-hidden="true">████</span>)}
+    </h3>
+  </article>
+)}
+{teaser.type === 'image' && (
+  <figure class:list={['teaser', 'teaser--image', { 'is-blurred': teaser.blur }]}>
+    <Image src={teaser.image} alt={teaser.alt} widths={[400, 800]} sizes="(max-width: 760px) 100vw, 600px" style={teaser.crop ? `object-position:${teaser.crop}` : undefined} />
+  </figure>
+)}
+{teaser.type === 'quote' && (
+  <blockquote class="teaser teaser--quote">{teaser.quote}</blockquote>
+)}
+{teaser.type === 'sections' && (
+  <ul class="teaser teaser--sections">
+    {teaser.names.map((name) => <li>{name}</li>)}
+  </ul>
+)}
+{teaser.type === 'ad' && (
+  <div class="teaser teaser--ad"><SidebarAd ad={teaser.ad} index={index} /></div>
+)}
+{teaser.type === 'classified' && (
+  <p class="teaser teaser--classified">{teaser.text}</p>
+)}
+{teaser.type === 'snippet' && (
+  <p class="teaser teaser--snippet">{teaser.text}</p>
+)}

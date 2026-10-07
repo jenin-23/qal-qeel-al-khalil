@@ -5,12 +5,11 @@
  * Published issues come from the registry; upcoming placeholders from
  * src/universe/archive.ts until an issue with that number is published.
  * ------------------------------------------------------------------ */
-import '../styles/index.css';
 import IssueLayout from '../layouts/IssueLayout.astro';
 import Hero from '../components/blocks/Hero.astro';
 import Note from '../components/blocks/Note.astro';
 import IssueCard from '../components/archive/IssueCard.astro';
-import { issues, latestIssue } from '../lib/issues';
+import { readableIssues, shelfIssues, isEditing, latestIssue } from '../lib/issues';
 import { issueUrl, archiveUrl } from '../lib/url';
 import { archivePage, upcoming } from '../universe/archive';
 import type { ArchiveCard } from '../lib/types';
@@ -18,7 +17,7 @@ import type { ArchiveCard } from '../lib/types';
 const shell = latestIssue();
 
 type Entry = { number: string; card: ArchiveCard; href?: string; dateLabel?: string };
-const listed: Entry[] = issues
+const listed: Entry[] = readableIssues
   .filter((i) => i.meta.archive)
   .map((i) => ({
     number: i.meta.number,
@@ -29,7 +28,13 @@ const listed: Entry[] = issues
 const numbers = new Set(listed.map((e) => e.number));
 const entries: Entry[] = [
   ...listed,
-  ...upcoming.filter((u) => !numbers.has(u.number)).map((u) => ({ number: u.number, card: u })),
+  // announced issues; one already in the newsroom links to its proof
+  ...upcoming
+    .filter((u) => !numbers.has(u.number))
+    .map((u) => {
+      const inEditing = shelfIssues.find((i) => i.meta.number === u.number && isEditing(i));
+      return { number: u.number, card: u, href: inEditing ? issueUrl(u.number) : undefined };
+    }),
 ].sort((a, b) => a.number.localeCompare(b.number));
 ---
 <IssueLayout

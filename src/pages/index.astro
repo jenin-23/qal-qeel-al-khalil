@@ -1,6 +1,65 @@
 ---
-/* "/" is always the newest published issue's front page. */
-import IssuePage from '../components/IssuePage.astro';
-import { latestIssue } from '../lib/issues';
+/* ------------------------------------------------------------------ *
+ * مكتبة قال قيل: the front door. Every public issue stands on the
+ * shelf (editing, published, archived; never drafts), oldest first,
+ * straight from the registry. The rest of the shelf holds unlabelled
+ * bundles of old paper: atmosphere, never pretend issues.
+ * ------------------------------------------------------------------ */
+import Document from '../layouts/Document.astro';
+import ShelfNewspaper from '../components/library/ShelfNewspaper.astro';
+import { shelfIssues } from '../lib/issues';
+import { archiveUrl } from '../lib/url';
+import { newspaper } from '../universe/newspaper';
+import { library } from '../universe/library';
+
+const year = shelfIssues.at(-1)?.meta.year ?? new Date().getFullYear();
 ---
-<IssuePage issue={latestIssue()} pageKey="home" />
+<Document docTitle={`${library.name} | ${newspaper.name}`} pageKey="library" canonical={new URL(import.meta.env.BASE_URL, Astro.site).href}>
+  <div class="library-room">
+    <header class="library-plaque">
+      <p class="library-brand">{newspaper.name}</p>
+      <h1 class="library-title">{library.name}</h1>
+      <p class="library-tagline">{newspaper.tagline}</p>
+    </header>
+
+    <section class="bookcase" aria-labelledby="library-shelf-title">
+      <h2 id="library-shelf-title" class="sr-only">{library.name}</h2>
+      <ol class="shelf" data-count={shelfIssues.length}>
+        {shelfIssues.map((issue, i) => <ShelfNewspaper issue={issue} index={i} />)}
+
+        <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
+          <span class="paper-bundle">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span class="twine"></span>
+          </span>
+        </li>
+        <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
+          <span class="paper-spines">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </span>
+          <span class="bookend"></span>
+        </li>
+      </ol>
+
+      <!-- the storage shelf: old bundles, never issues -->
+      <div class="shelf shelf--storage" aria-hidden="true">
+        <span class="storage-group">
+          <span class="paper-bundle paper-bundle--low"><span></span><span></span><span></span><span class="twine"></span></span>
+          <span class="paper-bundle"><span></span><span></span><span></span><span></span><span class="twine"></span></span>
+        </span>
+        <span class="storage-group">
+          <span class="paper-spines paper-spines--low"><span></span><span></span><span></span><span></span><span></span></span>
+        </span>
+        <span class="storage-group">
+          <span class="paper-bundle"><span></span><span></span><span></span><span></span><span></span><span></span><span class="twine"></span></span>
+          <span class="paper-bundle paper-bundle--low"><span></span><span></span><span class="twine"></span></span>
+        </span>
+      </div>
+    </section>
+
+    <footer class="library-foot">
+      <a class="footer-link" href={archiveUrl()}>{library.archiveLabel}</a>
+      <span>© {year} {newspaper.name}</span>
+    </footer>
+  </div>
+</Document>

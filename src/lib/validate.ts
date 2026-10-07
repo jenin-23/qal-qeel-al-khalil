@@ -55,7 +55,16 @@ export function validateIssue(issue: Issue): void {
     if (r && (r[0] > r[1] || r[0] < 0)) fail(`ads.popup.${key} must be [min, max] seconds`);
   }
 
-  if (issue.meta.status === 'published') {
+  if (issue.meta.status === 'editing' && Object.keys(issue.pages).length) {
+    fail('an issue in editing has no reader pages yet; publish it to open its sections');
+  }
+  if (issue.meta.status === 'editing') {
+    for (const [key, item] of Object.entries(issue.construction?.progress ?? {})) {
+      if (item && (item.done < 0 || (item.total !== undefined && item.done > item.total))) fail(`progress.${key} is not a real count`);
+    }
+  }
+
+  if (issue.meta.status === 'published' || issue.meta.status === 'archived') {
     if (!issue.pages.home) fail('a published issue needs a home page');
     if (!issue.meta.archive) fail('a published issue needs meta.archive for the archive card');
     if (!issue.meta.releaseDateLabel) fail('a published issue needs meta.releaseDateLabel');

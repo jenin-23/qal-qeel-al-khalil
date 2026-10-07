@@ -1,11 +1,14 @@
 ---
+/* /issues/NNN/: the front page of a readable issue, or the newsroom
+   proof of an issue that is still in editing. */
 import type { GetStaticPaths } from 'astro';
 import IssuePage from '../../../components/IssuePage.astro';
-import { issues, getIssue } from '../../../lib/issues';
+import NewsroomProof from '../../../components/newsroom/NewsroomProof.astro';
+import { issues, getIssue, isEditing } from '../../../lib/issues';
 
 export const getStaticPaths = (() =>
-  issues.filter((i) => i.pages.home).map((i) => ({ params: { issue: i.meta.number } }))) satisfies GetStaticPaths;
+  issues.filter((i) => i.pages.home || i.meta.status === 'editing').map((i) => ({ params: { issue: i.meta.number } }))) satisfies GetStaticPaths;
 
 const issue = getIssue(Astro.params.issue!);
 ---
-<IssuePage issue={issue} pageKey="home" />
+{isEditing(issue) ? <NewsroomProof issue={issue} /> : <IssuePage issue={issue} pageKey="home" />}
