@@ -35,6 +35,7 @@ const PAGES = [
   { name: 'about', path: '/about.html' },
   { name: 'contact', path: '/contact.html' },
   { name: 'archive', path: '/archive.html' },
+  { name: 'broadcast', path: '/broadcast.html' },
 ];
 const WIDTHS = [
   { label: 'desktop', width: 1440, height: 900 },

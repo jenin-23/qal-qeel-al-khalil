@@ -47,7 +47,9 @@ export const newspaper = {
     { key: 'about', label: 'من نحن' },
     { key: 'contact', label: 'تواصل معنا' },
     { key: 'archive', label: 'الأرشيف' },
-  ] as { key: PageKey | 'archive'; label: string }[],
+    // credits for the radio programme, as its licences require
+    { key: 'broadcast', label: 'بيانات البث' },
+  ] as { key: PageKey | 'archive' | 'broadcast'; label: string }[],
   archive: {
     enterIssueLabel: 'ادخل العدد',
   },

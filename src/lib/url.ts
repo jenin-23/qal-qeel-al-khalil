@@ -18,6 +18,9 @@ export const libraryUrl = () => url('');
 export const aboutUrl = () => url('about.html');
 export const contactUrl = () => url('contact.html');
 
-export function paperUrl(key: 'library' | 'archive' | 'about' | 'contact'): string {
-  return { library: libraryUrl, archive: archiveUrl, about: aboutUrl, contact: contactUrl }[key]();
+/** بيانات البث: credits for 107.5 FM's programme */
+export const broadcastUrl = () => url('broadcast.html');
+
+export function paperUrl(key: 'library' | 'archive' | 'about' | 'contact' | 'broadcast'): string {
+  return { library: libraryUrl, archive: archiveUrl, about: aboutUrl, contact: contactUrl, broadcast: broadcastUrl }[key]();
 }

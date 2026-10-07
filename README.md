@@ -124,7 +124,16 @@ shelf, and at the desk side of every newspaper page (folded to an edge until
 opened). It never plays on its own; a fresh visit is always silent.
 
 - Settings: `src/config/radio.ts` (frequency, default volume, wording).
-- Programme: none yet (`tracks: []`), so switching on reads «لا توجد إشارة».
-- To add audio you have the rights to publish: put the MP3 in `public/audio/`,
-  add `{ src: 'audio/<file>.mp3' }` to `tracks`, run `npm test`, deploy.
-  Several tracks play as one station on a clock, never as a playlist.
+- Programme: 7 Creative Commons (CC BY-SA) oud and qanun recordings in
+  `public/audio/radio/` (about 18 minutes, 24.6 MB). They are played as one
+  station on a clock, never as a playlist: position = now mod programme length,
+  so every page and visitor hears the same moment. Nothing is downloaded until
+  the radio is switched on. A file that fails reads «لا توجد إشارة» and the
+  station moves on to the next item.
+- Licences: `docs/RADIO_MUSIC_LICENSES.md` records the provenance of every file.
+  The required attributions are shown on `/broadcast.html` («بيانات البث»,
+  linked from every footer), not on the radio.
+- To change the programme: use only audio whose licence clearly allows public
+  self-hosting. Add the file to `public/audio/radio/`, add an entry with `duration`
+  and `credit` to `tracks`, and record it in the licences doc. Then run
+  `npm test` and deploy.

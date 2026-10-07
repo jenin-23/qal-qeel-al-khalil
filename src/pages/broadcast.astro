@@ -1,0 +1,38 @@
+---
+/* ------------------------------------------------------------------ *
+ * بيانات البث: the public credits for 107.5 FM's programme, as the
+ * Creative Commons licences require (title, creator, source, licence).
+ * A quiet newspaper-level page, linked from every colophon; the radio
+ * itself carries no legal text. Full provenance:
+ * docs/RADIO_MUSIC_LICENSES.md
+ * ------------------------------------------------------------------ */
+import PaperLayout from '../layouts/PaperLayout.astro';
+import { radio } from '../config/radio';
+import { broadcastUrl } from '../lib/url';
+import { newspaper } from '../universe/newspaper';
+
+const label = newspaper.footerLinks.find((l) => l.key === 'broadcast')!.label;
+// grouped by creator, so it reads as credits rather than a running order
+const credits = radio.tracks
+  .map((t) => t.credit)
+  .filter((c): c is NonNullable<typeof c> => !!c)
+  .sort((a, b) => a.creator.localeCompare(b.creator) || a.title.localeCompare(b.title));
+---
+<PaperLayout pageKey="broadcast" docTitle={`${label} | ${newspaper.name}`} canonical={new URL(broadcastUrl(), Astro.site).href}>
+  <section class="home-hero-card broadcast-head">
+    <h1 class="home-hero-title">{label}</h1>
+    <p class="home-hero-text broadcast-freq">{radio.label}</p>
+  </section>
+
+  {credits.length > 0 && (
+    <ul class="broadcast-credits" dir="ltr">
+      {credits.map((c) => (
+        <li>
+          <span class="broadcast-title">“{c.title}”</span> by <span class="broadcast-creator">{c.creator}</span>
+          {' · '}<a href={c.sourceUrl} rel="noopener">{c.source}</a>
+          {' · '}<a href={c.licenseUrl} rel="license noopener">{c.license}</a>
+        </li>
+      ))}
+    </ul>
+  )}
+</PaperLayout>

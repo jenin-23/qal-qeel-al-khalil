@@ -13,7 +13,7 @@ interface Props {
 }
 const { issue, pageKey, tagline } = Astro.props;
 
-const links = newspaper.footerLinks.map((link) => ({ ...link, href: paperUrl(link.key as 'about' | 'contact' | 'archive') }));
+const links = newspaper.footerLinks.map((link) => ({ ...link, href: paperUrl(link.key as 'about' | 'contact' | 'archive' | 'broadcast') }));
 const year = issue?.meta.year ?? new Date().getFullYear();
 const copyright = issue?.meta.copyright ?? `© ${year} ${newspaper.name}`;
 const city = issue ? issue.meta.city : newspaper.city;

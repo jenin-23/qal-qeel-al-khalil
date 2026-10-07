@@ -92,69 +92,121 @@ export function initRadio(): void {
 
   function applyVolume(): void {
     const v = volume / 100;
-    if (masterGain && ctx) masterGain.gain.setTargetAtTime(v * v, ctx.currentTime, 0.05); // perceptual curve
-    else audio!.volume = v * v;
+    const level = v * v; // perceptual curve
+    if (masterGain && ctx) masterGain.gain.setTargetAtTime(level, ctx.currentTime, 0.05);
+    else audio!.volume = level * reception();
+    root!.dataset.volume = level.toFixed(3);
   }
 
   const onStation = () => Math.abs(freq - cfg.frequency) <= cfg.capture;
 
+  /** 1 = clear on 107.5 … 0 = nothing: the programme fades as the needle leaves */
+  function reception(): number {
+    const away = Math.abs(freq - cfg.frequency);
+    return clamp(1 - Math.max(0, away - 0.1) / 0.6, 0, 1);
+  }
+
   function applyReception(): void {
     const tuned = onStation();
+    const clear = reception();
     // on 107.5 with nothing to receive: «لا توجد إشارة»;
     // while the needle wanders, the dial shows where it is
     signal!.hidden = !(state === 'nosignal' && tuned);
     readout!.hidden = !signal!.hidden;
     root!.classList.toggle('is-detuned', !tuned && state !== 'off');
+    root!.dataset.reception = clear.toFixed(2);
     const t = ctx?.currentTime ?? 0;
-    stationGain?.gain.setTargetAtTime(tuned ? 1 : 0, t, 0.08);
-    noiseGain?.gain.setTargetAtTime(!tuned && state !== 'off' && state !== 'standby' ? 0.035 : 0, t, 0.08);
-    if (!stationGain) audio!.muted = !tuned;
+    stationGain?.gain.setTargetAtTime(clear, t, 0.08);
+    const hiss = state !== 'off' && state !== 'standby' ? (1 - clear) * 0.035 : 0;
+    noiseGain?.gain.setTargetAtTime(hiss, t, 0.08);
+    if (!stationGain) {
+      const v = volume / 100;
+      audio!.volume = v * v * clear;
+    }
   }
 
-  /* ---- the station clock: where the programme is "now" */
+  /* ---- the station clock: where the programme is "now" ----------------
+     Deterministic: position = (now in seconds) mod (programme length),
+     so every page, every visitor and every return agrees on what 107.5
+     is broadcasting. The programme exists whether or not anyone listens. */
+  const failed = new Set<number>(); // items that would not load this visit
+
   function schedulePosition(): { index: number; offset: number } | null {
     const tracks = cfg.tracks;
     if (!tracks.length) return null;
     const durations = tracks.map((t, i) => t.duration ?? (i === 0 && audio!.duration > 0 ? audio!.duration : null));
     if (durations.some((d) => !d)) return { index: 0, offset: tracks.length === 1 ? NaN : 0 };
-    const total = (durations as number[]).reduce((a, b) => a + b, 0);
-    let t = (Date.now() / 1000) % total;
-    for (let i = 0; i < durations.length; i++) {
-      if (t < durations[i]!) return { index: i, offset: t };
-      t -= durations[i]!;
-    }
-    return { index: 0, offset: 0 };
+    return stationPosition(durations as number[], Date.now());
   }
 
-  let trackIndex = 0;
-  function loadAndPlay(): Promise<void> {
-    const pos = schedulePosition();
+  let trackIndex = -1;
+  let switching = false;
+
+  /** tune the receiver to whatever the programme is playing right now */
+  function joinProgramme(): Promise<void> {
+    let pos = schedulePosition();
     if (!pos) return Promise.reject(new Error('no programme'));
-    trackIndex = pos.index;
+    // a broken item is skipped: the station carries on with the next one
+    for (let n = 0; n < cfg.tracks.length && failed.has(pos.index); n++) {
+      pos = { index: (pos.index + 1) % cfg.tracks.length, offset: 0 };
+    }
+    if (failed.has(pos.index)) return Promise.reject(new Error('no signal'));
+    const target = pos;
+    trackIndex = target.index;
     const src = cfg.tracks[trackIndex].src;
     if (!audio!.src.endsWith(src)) {
       audio!.src = src;
       audio!.preload = 'auto';
     }
-    // join the programme "now" once the file's length is known
     const seek = () => {
-      const p = schedulePosition();
       const d = audio!.duration;
-      if (p && d > 0) audio!.currentTime = Number.isNaN(p.offset) ? (Date.now() / 1000) % d : Math.min(p.offset, d - 1);
+      if (!(d > 0)) return;
+      const p = schedulePosition();
+      const offset = Number.isNaN(target.offset) ? (Date.now() / 1000) % d : p && p.index === trackIndex ? p.offset : target.offset;
+      audio!.currentTime = Math.min(Math.max(0, offset), Math.max(0, d - 0.5));
     };
     if (audio!.readyState >= 1) seek();
     else audio!.addEventListener('loadedmetadata', seek, { once: true });
     return audio!.play();
   }
 
-  audio.addEventListener('ended', () => {
-    if (state !== 'playing') return;
-    trackIndex = (trackIndex + 1) % cfg.tracks.length;
-    audio.src = cfg.tracks[trackIndex].src;
-    audio.play().catch(() => setState('standby'));
+  /* the next item is fetched shortly before it airs, not before */
+  const preloader = new Audio();
+  preloader.preload = 'none';
+  let preloadedFor = -1;
+  audio.addEventListener('timeupdate', () => {
+    if (state !== 'playing' || cfg.tracks.length < 2 || !(audio.duration > 0)) return;
+    if (audio.duration - audio.currentTime > 25) return;
+    const next = (trackIndex + 1) % cfg.tracks.length;
+    if (preloadedFor === next || failed.has(next)) return;
+    preloadedFor = next;
+    preloader.preload = 'auto';
+    preloader.src = cfg.tracks[next].src;
+    preloader.load();
   });
+
+  // an item ends: the station moves on to what the clock says is next
+  audio.addEventListener('ended', () => {
+    if (state !== 'playing' || switching) return;
+    switching = true;
+    joinProgramme()
+      .catch(() => (state === 'playing' ? setState('standby') : undefined))
+      .finally(() => (switching = false));
+  });
+
+  // a file that will not load is a reception problem, never a crash
   audio.addEventListener('error', () => {
-    if (state === 'playing' || state === 'tuning-in') setState('nosignal');
+    if (state === 'off' || state === 'standby' || !audio.getAttribute('src')) return;
+    if (trackIndex >= 0) failed.add(trackIndex);
+    setState('nosignal');
+    if (failed.size >= cfg.tracks.length) return; // nothing left to receive
+    window.setTimeout(() => {
+      if (state !== 'nosignal') return;
+      setState('tuning-in');
+      joinProgramme()
+        .then(() => setState('playing'))
+        .catch(() => setState('nosignal'));
+    }, 1500);
   });
 
   /* ---- states */
@@ -175,9 +227,12 @@ export function initRadio(): void {
     renderTuning();
     if (!cfg.tracks.length) return setState('nosignal');
     setState('tuning-in');
-    loadAndPlay()
+    joinProgramme()
       .then(() => setState('playing'))
-      .catch((err: unknown) => setState(err instanceof DOMException && err.name === 'NotAllowedError' ? 'standby' : 'nosignal'));
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'NotAllowedError') setState('standby');
+        else if (state === 'tuning-in') setState('nosignal');
+      });
   }
 
   function switchOff(): void {
@@ -332,7 +387,7 @@ export function initRadio(): void {
       applyVolume();
       setState('tuning-in');
       const c = audioCtx();
-      Promise.all([c ? c.resume() : Promise.resolve(), loadAndPlay()])
+      Promise.all([c ? c.resume() : Promise.resolve(), joinProgramme()])
         .then(() => (c && c.state !== 'running' ? Promise.reject(new DOMException('', 'NotAllowedError')) : undefined))
         .then(() => setState('playing'))
         .catch(() => {
@@ -351,4 +406,19 @@ export function initRadio(): void {
 
 function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
+}
+
+/**
+ * The station clock. Given the programme's durations (seconds) and a
+ * moment in time, where is 107.5? Pure and deterministic: the same moment
+ * always gives the same item and offset, for everyone, on every page.
+ */
+export function stationPosition(durations: number[], nowMs: number): { index: number; offset: number } {
+  const total = durations.reduce((a, b) => a + b, 0);
+  let t = ((nowMs / 1000) % total + total) % total;
+  for (let i = 0; i < durations.length; i++) {
+    if (t < durations[i]) return { index: i, offset: t };
+    t -= durations[i];
+  }
+  return { index: 0, offset: 0 };
 }

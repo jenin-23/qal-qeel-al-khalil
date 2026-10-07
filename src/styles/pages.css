@@ -799,3 +799,51 @@ body[data-page="archive"] .toc-card .section-heading{
   appearance:none;
   margin:0;
 }
+
+/* ==================================================================
+   بيانات البث: radio credits, set like a small print colophon
+   ================================================================== */
+.broadcast-head{
+  padding-bottom:18px;
+}
+
+.broadcast-freq{
+  direction:ltr;
+  font-family:var(--font-ui);
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.04em;
+}
+
+.broadcast-credits{
+  max-width:46em;
+  margin:0 auto 10px;
+  padding:0;
+  list-style:none;
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.9;
+  color:var(--ink-body);
+  text-align:left;
+}
+
+.broadcast-credits li{
+  padding:7px 0;
+  border-bottom:1px dotted var(--rule);
+}
+
+.broadcast-title{
+  font-weight:700;
+  color:var(--ink);
+}
+
+.broadcast-credits a{
+  color:var(--ink-faded);
+  text-decoration:underline;
+  text-decoration-color:var(--rule);
+  text-underline-offset:4px;
+}
+
+.broadcast-credits a:hover{
+  color:var(--press-red);
+}

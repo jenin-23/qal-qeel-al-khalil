@@ -12,9 +12,9 @@ import Toast from '../components/shell/Toast.astro';
 import { paperUi } from '../universe/ui';
 
 interface Props {
-  pageKey: 'about' | 'contact' | 'archive';
+  pageKey: 'about' | 'contact' | 'archive' | 'broadcast';
   docTitle: string;
-  ticker: TickerDef;
+  ticker?: TickerDef;
   footerTagline?: string | null;
   canonical?: string;
 }
@@ -30,7 +30,7 @@ const clientData = {
 <Document docTitle={docTitle} pageKey={pageKey} canonical={canonical}>
   <div class="site-shell">
     <PaperMasthead pageKey={pageKey} />
-    <Ticker ticker={ticker} />
+    {ticker && <Ticker ticker={ticker} />}
 
     <main class="news-main">
       <div class="container">

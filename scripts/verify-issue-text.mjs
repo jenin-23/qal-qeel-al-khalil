@@ -55,6 +55,8 @@ const CONTENT_REGIONS = ['.ticker-wrap', 'main', '.footer-brand p'];
 const LIBRARY_REF = 'مكتبة قال قيل';
 // …and, on completed issues, the reference to the printed edition
 const PRINT_REF = 'نسخة للطباعة';
+// the footer's link to the radio's broadcast credits (licence attributions)
+const BROADCAST_REF = 'بيانات البث';
 
 const SHELL_ADDITIONS = {
   toast: ['تم نسخ المقال. استخدمه بحذر.'],
@@ -64,9 +66,9 @@ const SHELL_ADDITIONS = {
 
 /** Text that may appear in the new build but not in the original, per page. */
 const ALLOWED_ADDITIONS = {
-  'index.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
-  'news.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
-  'columns.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
+  'index.html': { reason: 'library + print-edition references above the masthead; broadcast-credits footer link', text: [LIBRARY_REF, PRINT_REF, BROADCAST_REF] },
+  'news.html': { reason: 'library + print-edition references above the masthead; broadcast-credits footer link', text: [LIBRARY_REF, PRINT_REF, BROADCAST_REF] },
+  'columns.html': { reason: 'library + print-edition references above the masthead; broadcast-credits footer link', text: [LIBRARY_REF, PRINT_REF, BROADCAST_REF] },
   'about.html': { reason: 'shared toast; library reference', text: [...SHELL_ADDITIONS.toast, LIBRARY_REF] },
   'archive.html': {
     reason: 'archive cards: the issue date and the "enter issue" button',
@@ -77,8 +79,8 @@ const ALLOWED_ADDITIONS = {
     text: [...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, LIBRARY_REF],
   },
   'entertainment.html': {
-    reason: 'footer, coming-soon modal, toast were missing; approved «تغيير تاريخ الميلاد»; gate close button (shown only when changing)',
-    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×', LIBRARY_REF, PRINT_REF],
+    reason: 'footer, coming-soon modal, toast were missing; approved «تغيير تاريخ الميلاد»; gate close button (shown only when changing); broadcast-credits footer link',
+    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×', LIBRARY_REF, PRINT_REF, BROADCAST_REF],
   },
 };
 

@@ -83,6 +83,7 @@ let index = 0;
 
     <footer class="library-foot">
       <span>© {latestYear} {newspaper.name}</span>
+      <a class="footer-link" href={paperUrl('broadcast')}>{newspaper.footerLinks.find((l) => l.key === 'broadcast')!.label}</a>
       <span>{newspaper.city}</span>
     </footer>
   </div>
