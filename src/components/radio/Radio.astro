@@ -1,0 +1,122 @@
+---
+/* ------------------------------------------------------------------ *
+ * The radio: a small tabletop receiver kept beside the newspaper.
+ * One implementation, one instance per page:
+ *   desk  → on issue / newspaper pages: a radio edge at the desk side,
+ *           opening into the full set (fixed, never over the reading
+ *           column unless the reader opens it)
+ *   shelf → in the library: standing on the storage shelf
+ * Behaviour: src/scripts/radio.ts · settings: src/config/radio.ts
+ * ------------------------------------------------------------------ */
+import { radio } from '../../config/radio';
+
+interface Props {
+  variant?: 'desk' | 'shelf';
+}
+const { variant = 'desk' } = Astro.props;
+const { band } = radio;
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pos = (mhz: number) => ((mhz - band.min) / (band.max - band.min)) * 100;
+const config = {
+  frequency: radio.frequency,
+  label: radio.label,
+  min: band.min,
+  max: band.max,
+  capture: radio.capture,
+  returnAfterMs: radio.returnAfterMs,
+  defaultVolume: radio.defaultVolume,
+  resumeWindowMs: radio.resumeWindowMs,
+  noSignal: radio.text.noSignal,
+  tracks: radio.tracks.map((t) => ({ src: `${BASE}/${t.src.replace(/^\//, '')}`, duration: t.duration ?? null })),
+};
+// minor ticks every MHz, numbered marks from the config
+const ticks = Array.from({ length: band.max - band.min + 1 }, (_, i) => band.min + i);
+---
+{radio.enabled && (
+  <div class={`radio radio--${variant}`} data-radio data-variant={variant} data-state="off" style={`--needle-k:${pos(radio.frequency) / 100}`}>
+    {variant === 'desk' && (
+      <button class="radio-tab" type="button" aria-expanded="false" aria-controls="radio-set" data-radio-toggle>
+        <span class="radio-tab-grille" aria-hidden="true"></span>
+        <span class="radio-tab-lamp" aria-hidden="true"></span>
+        <span class="sr-only">{radio.a11y.radio}</span>
+      </button>
+    )}
+
+    <section class="radio-set" id="radio-set" role="group" aria-label={radio.a11y.radio}>
+      {variant === 'desk' && (
+        <button class="radio-close" type="button" aria-label={radio.a11y.close} aria-controls="radio-set" data-radio-toggle>×</button>
+      )}
+
+      <div class="radio-case">
+        <span class="radio-screw radio-screw--a" aria-hidden="true"></span>
+        <span class="radio-screw radio-screw--b" aria-hidden="true"></span>
+
+        <div class="radio-grille" aria-hidden="true"></div>
+
+        <div class="radio-face">
+          <!-- the dial window: printed scale, needle, and what the receiver hears -->
+          <div class="radio-window">
+            <div class="radio-scale" aria-hidden="true">
+              {ticks.map((t) => <span class="radio-tick" style={`--x:${pos(t)}%`}></span>)}
+              {band.marks.map((m) => (
+                <span class:list={['radio-mark', { 'is-station': m === radio.frequency }]} style={`--x:${pos(m)}%`}>{m}</span>
+              ))}
+            </div>
+            <span class="radio-needle" aria-hidden="true"></span>
+            <span class="radio-static" aria-hidden="true"></span>
+            <p class="radio-readout">
+              <span class="radio-freq" data-radio-readout>{radio.label}</span>
+              <span class="radio-signal" role="status" data-radio-signal hidden>{radio.text.noSignal}</span>
+            </p>
+          </div>
+
+          <div class="radio-controls">
+            <div class="radio-power">
+              <span class="radio-lamp" aria-hidden="true"></span>
+              <button class="radio-switch" type="button" aria-pressed="false" aria-label={radio.text.on} data-radio-power>
+                <span class="radio-switch-lever" aria-hidden="true"></span>
+              </button>
+              <span class="radio-engraving" aria-hidden="true">
+                <span>{radio.text.on}</span><span>{radio.text.off}</span>
+              </span>
+            </div>
+
+            <div class="radio-knob-wrap">
+              <div
+                class="radio-knob"
+                role="slider"
+                tabindex="0"
+                aria-label={radio.text.volume}
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={radio.defaultVolume}
+                aria-valuetext={`${radio.defaultVolume}٪`}
+                data-radio-volume
+              ><span class="radio-knob-mark" aria-hidden="true"></span></div>
+              <span class="radio-engraving" aria-hidden="true">{radio.text.volume}</span>
+            </div>
+
+            <div class="radio-knob-wrap">
+              <div
+                class="radio-knob radio-knob--tune"
+                role="slider"
+                tabindex="0"
+                aria-label={radio.a11y.tuning}
+                aria-valuemin={band.min}
+                aria-valuemax={band.max}
+                aria-valuenow={radio.frequency}
+                aria-valuetext={radio.label}
+                data-radio-tune
+              ><span class="radio-knob-mark" aria-hidden="true"></span></div>
+              <span class="radio-engraving radio-engraving--blank" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- no native controls: the radio is the control. preload none: nothing loads until switched on -->
+    <audio preload="none" data-radio-audio></audio>
+    <script type="application/json" data-radio-config set:html={JSON.stringify(config)} />
+  </div>
+)}

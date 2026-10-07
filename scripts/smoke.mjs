@@ -320,6 +320,112 @@ await np.waitForURL(/issues\/001\/$/);
 check(njs.page === 'library' && njs.papers === 2, 'without JavaScript: the library renders and a newspaper opens as a plain link');
 await nojs.close();
 
+// --- 107.5 FM: the radio (no programme configured: tracks: [])
+{
+  const rctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const rp = await rctx.newPage();
+  const rerrors = [];
+  const media = [];
+  rp.on('pageerror', (e) => rerrors.push(e.message));
+  rp.on('request', (r) => (r.resourceType() === 'media' || /\.(mp3|ogg|wav|m4a|aac)(\?|$)/i.test(r.url())) && media.push(r.url()));
+
+  await rp.goto(url('/issues/001/news.html'), { waitUntil: 'networkidle' });
+  const r0 = await rp.evaluate(() => {
+    const radio = document.querySelectorAll('[data-radio]');
+    const a = document.querySelector('[data-radio-audio]');
+    return { count: radio.length, state: radio[0]?.dataset.state, label: document.querySelector('.radio-freq')?.textContent, paused: a?.paused, src: a?.getAttribute('src'), controls: a?.hasAttribute('controls') };
+  });
+  check(r0.count === 1 && r0.label === '107.5 FM' && r0.state === 'off', 'radio: one set per page, 107.5 FM, starts OFF');
+  check(r0.paused && !r0.src && !r0.controls && media.length === 0, 'radio: nothing autoplays, nothing loads, no native player controls');
+
+  // closed, it sits in the desk margin, clear of the newspaper sheet
+  const tab = await rp.locator('.radio-tab').boundingBox();
+  const sheet = await rp.locator('.site-shell').boundingBox();
+  check(!!tab && tab.x + tab.width <= sheet.x, 'radio: closed, it stays in the desk margin (never over the paper)');
+
+  await rp.locator('.radio-tab').click();
+  check((await rp.locator('.radio-tab').getAttribute('aria-expanded')) === 'true' || (await rp.locator('.radio-set').isVisible()), 'radio: the set comes out');
+  await rp.locator('[data-radio-power]').click();
+  const r1 = await rp.evaluate(() => ({
+    state: document.querySelector('[data-radio]').dataset.state,
+    pressed: document.querySelector('[data-radio-power]').getAttribute('aria-pressed'),
+    signal: document.querySelector('[data-radio-signal]').hidden ? null : document.querySelector('[data-radio-signal]').textContent,
+    src: document.querySelector('[data-radio-audio]').getAttribute('src'),
+  }));
+  check(r1.state === 'nosignal' && r1.pressed === 'true' && r1.signal === 'لا توجد إشارة' && !r1.src, 'radio: switched on with no programme → «لا توجد إشارة», lamp on, no audio source');
+
+  // volume: a keyboard slider, remembered
+  const vol = rp.locator('[data-radio-volume]');
+  const v0 = Number(await vol.getAttribute('aria-valuenow'));
+  await vol.focus();
+  await rp.keyboard.press('ArrowUp');
+  await rp.keyboard.press('ArrowUp');
+  const v1 = Number(await vol.getAttribute('aria-valuenow'));
+  check(v0 >= 40 && v0 <= 60 && v1 === Math.min(100, v0 + 10) && (await vol.getAttribute('role')) === 'slider', `radio: volume knob is a keyboard slider (default ${v0}, now ${v1})`);
+  check((await rp.evaluate(() => localStorage.getItem('qqak:radio-volume'))) === String(v1), 'radio: volume remembered locally');
+
+  // tuning away finds nothing and drifts home to 107.5
+  const tune = rp.locator('[data-radio-tune]');
+  await tune.focus();
+  for (let i = 0; i < 3; i++) await rp.keyboard.press('PageDown');
+  const away = await rp.evaluate(() => ({
+    text: document.querySelector('[data-radio-tune]').getAttribute('aria-valuetext'),
+    readout: document.querySelector('.radio-freq').textContent,
+    detuned: document.querySelector('[data-radio]').classList.contains('is-detuned'),
+    state: document.querySelector('[data-radio]').dataset.state,
+  }));
+  check(away.text === '104.5 FM' && away.readout === '104.5 FM' && away.detuned && away.state !== 'playing', 'radio: tuning is a keyboard slider; away from 107.5 the dial shows 104.5 FM and receives nothing');
+  await rp.keyboard.press('Home');
+  check((await tune.getAttribute('aria-valuetext')) === '88.0 FM' && (await rp.evaluate(() => document.querySelector('[data-radio]').dataset.state)) !== 'playing', 'radio: the whole band holds no other station');
+  await rp.waitForTimeout(4500);
+  check((await tune.getAttribute('aria-valuetext')) === '107.5 FM', 'radio: left alone, the needle drifts back to 107.5');
+
+  await rp.locator('[data-radio-power]').click();
+  check((await rp.evaluate(() => document.querySelector('[data-radio]').dataset.state)) === 'off' && (await rp.locator('[data-radio-power]').getAttribute('aria-pressed')) === 'false', 'radio: switching off works');
+  await rp.keyboard.press('Escape');
+  check(!(await rp.locator('.radio-set').isVisible()), 'radio: Escape folds it back to its edge');
+
+  // print edition carries no radio; the library has its own on the shelf
+  await rp.goto(url('/issues/001/print.html'));
+  check((await rp.locator('[data-radio]').count()) === 0, 'radio: not part of the printed edition');
+  await rp.goto(url('/'));
+  check((await rp.locator('[data-radio][data-variant="shelf"]').count()) === 1 && (await rp.locator('[data-radio]').count()) === 1, 'radio: in the library it stands on the shelf (one instance)');
+
+  // a "returning" visitor with an old on-state from a past session stays silent
+  await rp.evaluate(() => sessionStorage.setItem('qqak:radio', JSON.stringify({ on: true, ts: Date.now() - 24 * 3600e3 })));
+  await rp.goto(url('/issues/002/'));
+  check((await rp.evaluate(() => document.querySelector('[data-radio]').dataset.state)) === 'off', 'radio: an old "on" never resumes (fresh visits begin silent)');
+  check(rerrors.length === 0 && media.length === 0, `radio: no script errors, no audio requested anywhere${rerrors.length ? ': ' + rerrors.join(' | ') : ''}`);
+  await rctx.close();
+
+  // phones: a small edge tab; the panel opens and closes; nothing overflows
+  const mctx = await browser.newContext({ viewport: { width: 360, height: 780 }, hasTouch: true, isMobile: true });
+  const mpage = await mctx.newPage();
+  await mpage.goto(url('/issues/001/news.html'));
+  const mtab = await mpage.locator('.radio-tab').boundingBox();
+  check(!!mtab && mtab.x <= 0.5 && mtab.width <= 40 && mtab.height >= 44, `radio (phone): only a ${Math.round(mtab?.width ?? 0)}×${Math.round(mtab?.height ?? 0)} edge at the screen side`);
+  await mpage.locator('.radio-tab').tap();
+  const panel = await mpage.locator('.radio-set').boundingBox();
+  const overflow = await mpage.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check(!!panel && panel.x >= 0 && panel.x + panel.width <= 360 && overflow <= 0, 'radio (phone): the panel opens within the screen, no sideways scroll');
+  await mpage.locator('.radio-close').tap();
+  check(!(await mpage.locator('.radio-set').isVisible()) && (await mpage.locator('.radio-tab').isVisible()), 'radio (phone): closes back to its edge');
+  await mctx.close();
+
+  // reduced motion: the needle jumps, nothing sweeps or slides
+  const rmctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const rmp = await rmctx.newPage();
+  await rmp.goto(url('/issues/001/news.html'));
+  await rmp.locator('.radio-tab').click();
+  const motion = await rmp.evaluate(() => ({
+    needle: getComputedStyle(document.querySelector('.radio-needle')).transitionDuration,
+    knob: getComputedStyle(document.querySelector('.radio-knob')).transitionDuration,
+    set: getComputedStyle(document.querySelector('.radio-set')).animationName,
+  }));
+  check(motion.needle === '0s' && motion.knob === '0s' && motion.set === 'none', 'radio: reduced motion → no sweeping, rotating or sliding');
+  await rmctx.close();
+}
+
 // --- keyboard: focus is visible, dialogs trap and return focus
 const focused = () =>
   page.evaluate(() => {

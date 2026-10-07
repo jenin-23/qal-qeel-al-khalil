@@ -6,6 +6,7 @@
  * ------------------------------------------------------------------ */
 import '../styles/index.css';
 import PressEffects from '../components/press/PressEffects.astro';
+import Radio from '../components/radio/Radio.astro';
 
 interface Props {
   docTitle: string;
@@ -18,8 +19,10 @@ interface Props {
   eggs?: string[];
   /** extra Google Fonts families, merged into the one font request */
   extraFonts?: string[];
+  /** the one radio on this page: at the desk side, or none (the library places its own) */
+  radio?: 'desk' | 'none';
 }
-const { docTitle, pageKey, issueNumber, canonical, noindex = false, eggs, extraFonts = [] } = Astro.props;
+const { docTitle, pageKey, issueNumber, canonical, noindex = false, eggs, extraFonts = [], radio = 'desk' } = Astro.props;
 // one render-blocking font stylesheet only: a second one disables cross-page View Transitions
 const FAMILIES = ['Amiri:ital,wght@0,400;0,700;1,400', 'Noto+Naskh+Arabic:wght@400;500;600;700', 'Cairo:wght@500;700', 'Lalezar', ...extraFonts];
 const fontHref = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => 'family=' + f).join('&')}&display=swap`;
@@ -40,6 +43,7 @@ const fontHref = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => 'famil
 <body data-page={pageKey} data-issue={issueNumber} data-eggs={eggs?.join(' ')}>
   <PressEffects />
   <slot />
+  {radio === 'desk' && <Radio variant="desk" />}
   <script>
     import '../scripts/main';
   </script>

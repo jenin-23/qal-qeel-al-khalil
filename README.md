@@ -116,3 +116,15 @@ variable `DEPLOY_ENABLED=true`).
 An issue opens only when its newspaper is taken from the shelf or its URL
 is opened directly. `verify:001` fails the build if the root ever stops
 being the library.
+
+## 107.5 FM (the radio)
+
+One small receiver lives in the world of the paper: on the library's storage
+shelf, and at the desk side of every newspaper page (folded to an edge until
+opened). It never plays on its own; a fresh visit is always silent.
+
+- Settings: `src/config/radio.ts` (frequency, default volume, wording).
+- Programme: none yet (`tracks: []`), so switching on reads «لا توجد إشارة».
+- To add audio you have the rights to publish: put the MP3 in `public/audio/`,
+  add `{ src: 'audio/<file>.mp3' }` to `tracks`, run `npm test`, deploy.
+  Several tracks play as one station on a clock, never as a playlist.

@@ -33,7 +33,7 @@ const fatwaDesk = ent?.fatwa ? institution(ent.fatwa.desk) : undefined;
 const fatwaAuthor = ent?.fatwa && fatwaDesk ? person(ent.fatwa.author ?? fatwaDesk.resident ?? '') : undefined;
 const docTitle = home?.docTitle ?? newspaper.name;
 ---
-<Document docTitle={docTitle} pageKey="print" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number, 'print'), Astro.site).href}>
+<Document docTitle={docTitle} pageKey="print" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number, 'print'), Astro.site).href} radio="none">
   <div class="site-shell print-edition" style={appearanceVars(meta.appearance)}>
     <div class="print-controls">
       <a class="library-ref" href={libraryUrl()} data-to-library>{library.name}</a>

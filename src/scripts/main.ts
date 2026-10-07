@@ -18,6 +18,7 @@ import { initLibrary, initIssueSide } from './library';
 import { initEggs } from './eggs';
 import { initPencil } from './pencil';
 import { initPrint } from './print';
+import { initRadio } from './radio';
 import { initNewsroom } from './newsroom';
 
 const issue = readJSON<IssueData>('issue-data');
@@ -30,6 +31,7 @@ initNewsroom();
 initPencil();
 initPrint();
 initEggs();
+initRadio();
 initTickers();
 initArticleToggles();
 

@@ -99,7 +99,9 @@ function textSegments(html, scoped = false) {
   const root = parse(html, { comment: false, blockTextElements: { script: false, style: false, noscript: false } });
   // the original entertainment.html never closes .site-shell; browsers cope, the parser loses <body>
   const body = root.querySelector('body') ?? root.querySelector('html') ?? root;
-  body.querySelectorAll('head, template, [data-ticker-clone]').forEach((el) => el.remove());
+  // Not newspaper text: the ticker's duplicate copy, inert templates, and the
+  // 107.5 FM radio (an object on the desk, tested by its own browser checks).
+  body.querySelectorAll('head, template, [data-ticker-clone], [data-radio]').forEach((el) => el.remove());
   const out = [];
   const walk = (node) => {
     for (const child of node.childNodes) {

@@ -11,6 +11,7 @@
 import Document from '../layouts/Document.astro';
 import ShelfNewspaper from '../components/library/ShelfNewspaper.astro';
 import ArchiveDrawer from '../components/library/ArchiveDrawer.astro';
+import Radio from '../components/radio/Radio.astro';
 import { shelfIssues } from '../lib/issues';
 import { paperUrl } from '../lib/url';
 import { newspaper } from '../universe/newspaper';
@@ -22,7 +23,7 @@ const shelves = years.map((year) => ({ year, issues: shelfIssues.filter((i) => i
 const latestYear = years.at(-1) ?? new Date().getFullYear();
 let index = 0;
 ---
-<Document docTitle={`${library.name} | ${newspaper.name}`} pageKey="library" canonical={new URL(import.meta.env.BASE_URL, Astro.site).href}>
+<Document docTitle={`${library.name} | ${newspaper.name}`} pageKey="library" canonical={new URL(import.meta.env.BASE_URL, Astro.site).href} radio="none">
   <div class="library-room">
     <header class="library-plaque">
       <p class="library-brand">{newspaper.name}</p>
@@ -75,10 +76,8 @@ let index = 0;
           <span class="paper-bundle"><span></span><span></span><span></span><span></span><span class="twine"></span></span>
         </span>
         <ArchiveDrawer />
-        <span class="storage-group" aria-hidden="true">
-          <span class="paper-bundle"><span></span><span></span><span></span><span></span><span></span><span></span><span class="twine"></span></span>
-          <span class="paper-bundle paper-bundle--low"><span></span><span></span><span class="twine"></span></span>
-        </span>
+        <!-- …and, noticed second, the radio -->
+        <Radio variant="shelf" />
       </div>
     </div>
 
