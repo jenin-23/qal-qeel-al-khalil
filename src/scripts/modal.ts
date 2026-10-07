@@ -63,8 +63,11 @@ function wire(dialog: HTMLDialogElement): void {
       return;
     }
     syncScrollLock();
+    // Browsers return focus to the opener themselves; only step in when
+    // focus was lost (never pull it back from where the reader moved it).
     const opener = openers.get(dialog);
-    if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
+    const lost = !document.activeElement || document.activeElement === document.body;
+    if (lost && opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
     dialog.dispatchEvent(new CustomEvent('dialog:closed'));
   });
 }
