@@ -1,0 +1,648 @@
+/* ==================================================================
+   Front page composition, index box, articles, photographs,
+   and the physical controls printed on the page.
+   ================================================================== */
+.news-main{
+  padding:26px 0 34px;
+}
+
+/* section headings: title + a rule that draws itself */
+.section-heading h2{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  margin:0;
+  font-family:var(--font-display);
+  font-size:30px;
+  line-height:1.3;
+  color:var(--ink);
+}
+
+.section-heading h2::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--ink);
+  transform-origin:right;
+}
+
+.section-heading p{
+  margin:2px 0 12px;
+  font-size:var(--t-meta);
+  color:var(--ink-faded);
+}
+
+/* ---- front: lead story + "also in this issue" --------------------- */
+.news-hero{
+  display:grid;
+  grid-template-columns:minmax(0, 1.7fr) minmax(0, 1fr);
+  margin-bottom:24px;
+  padding-bottom:22px;
+  border-bottom:4px double var(--ink);
+}
+
+.lead-story{
+  padding-inline-end:var(--col-gap);
+  border-inline-end:1px solid var(--rule);
+}
+
+.lead-kicker{
+  display:inline-block;
+  padding:2px 12px 1px;
+  background:var(--press-red);
+  color:var(--paper-fresh);
+  font-family:var(--font-poster);
+  font-size:16px;
+  line-height:1.6;
+}
+
+.lead-title{
+  margin:12px 0 14px;
+  font-family:var(--font-display);
+  font-size:var(--t-h1);
+  line-height:1.14;
+  font-weight:700;
+  color:var(--ink);
+  text-wrap:balance;
+}
+
+.lead-title a{
+  background:linear-gradient(var(--press-red), var(--press-red)) right bottom / 0 2px no-repeat;
+  transition:background-size .35s var(--ease-paper);
+}
+
+.lead-title a:hover{
+  background-size:100% 2px;
+}
+
+.lead-subtitle{
+  margin:0;
+  padding-top:12px;
+  border-top:1px solid var(--rule);
+  font-family:var(--font-display);
+  font-size:var(--t-deck);
+  line-height:1.75;
+  color:var(--ink-faded);
+}
+
+.headline-stack{
+  display:grid;
+  align-content:start;
+  padding-inline-start:var(--col-gap);
+}
+
+.headline-chip{
+  display:block;
+  padding:14px 0;
+  border-bottom:1px solid var(--rule);
+}
+
+.headline-chip:first-child{
+  padding-top:2px;
+}
+
+.headline-chip:last-child{
+  border-bottom:0;
+}
+
+.chip-label{
+  display:block;
+  margin-bottom:4px;
+  font-size:var(--t-small);
+  font-weight:700;
+  color:var(--press-red);
+}
+
+.chip-label::before{
+  content:"◆" / "";
+  margin-inline-end:6px;
+  font-size:9px;
+  vertical-align:2px;
+}
+
+.chip-title{
+  display:block;
+  font-family:var(--font-display);
+  font-size:23px;
+  line-height:1.45;
+  font-weight:700;
+  color:var(--ink);
+  transition:color .2s ease;
+}
+
+.headline-chip:hover .chip-title{
+  color:var(--press-red);
+}
+
+/* ---- index box ("فهرس الأخبار"): a boxed notice ------------------ */
+.toc-card{
+  margin-bottom:30px;
+  padding:18px 24px 14px;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-6px;
+  background-color:rgba(244, 237, 218, .55);
+}
+
+.toc-links{
+  counter-reset:toc;
+}
+
+.toc-links a{
+  counter-increment:toc;
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px dotted var(--rule);
+  font-family:var(--font-display);
+  font-size:21px;
+  line-height:1.5;
+  transition:color .2s ease, padding .25s var(--ease-paper);
+}
+
+.toc-links a:last-child{
+  border-bottom:0;
+}
+
+.toc-links a::before{
+  content:counter(toc, arabic-indic) ".";
+  flex:0 0 auto;
+  min-width:1.4em;
+  font-family:var(--font-display);
+  font-weight:700;
+  color:var(--press-red);
+}
+
+.toc-links a:hover{
+  color:var(--press-red);
+  padding-inline-start:6px;
+}
+
+/* ---- page layout: articles + advertisement column ----------------- */
+.news-page-layout{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 290px;
+  align-items:start;
+}
+
+.news-articles-column{
+  min-width:0;
+  padding-inline-end:var(--col-gap);
+  border-inline-end:1px solid var(--rule);
+}
+
+.left-ads-sidebar{
+  order:2; /* ads on the outer (left) column; stories lead from the right */
+  padding-inline-start:24px;
+}
+
+/* ---- the article ---------------------------------------------------- */
+.story-card{
+  display:flex;
+  flex-direction:column;
+  padding-bottom:30px;
+  margin-bottom:30px;
+  border-bottom:4px double var(--ink);
+}
+
+.story-card:last-child{
+  margin-bottom:0;
+  border-bottom:0;
+}
+
+/* headline above the photograph, as in print */
+.story-content{
+  display:contents;
+}
+
+.story-meta{
+  order:0;
+  margin-bottom:4px;
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--ink-faded);
+}
+
+.story-meta::before{
+  content:"◆" / "";
+  margin-inline-end:7px;
+  font-size:9px;
+  color:var(--press-red);
+  vertical-align:2px;
+}
+
+.story-title{
+  order:1;
+  margin:0 0 16px;
+  font-family:var(--font-display);
+  font-size:var(--t-h2);
+  line-height:1.2;
+  font-weight:700;
+  color:var(--ink);
+  text-wrap:balance;
+}
+
+/* ---- photographs, printed ------------------------------------------ */
+.story-image{
+  order:2;
+  position:relative;
+  margin:0 0 18px;
+  padding:5px;
+  border:1px solid var(--ink);
+  background:var(--paper-fresh);
+}
+
+.story-img{
+  display:block;
+  width:100%;
+  height:clamp(230px, 30vw, 380px);
+  object-fit:cover;
+  /* newsprint reproduction: muted, warm, slightly crushed contrast */
+  filter:grayscale(.82) sepia(.22) contrast(1.16) brightness(.95);
+  transition:filter .8s var(--ease-paper);
+}
+
+.story-img.top{ object-position:center top; }
+.story-img.center{ object-position:center center; }
+.story-img.left{ object-position:left center; }
+.story-img.right{ object-position:right center; }
+
+/* halftone screen + paper grain over the print */
+.story-image:not(.image-placeholder)::after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  background-image:var(--halftone), var(--grain);
+  background-size:3px 3px, 260px 260px;
+  mix-blend-mode:multiply;
+  opacity:.38;
+  pointer-events:none;
+  transition:opacity .8s var(--ease-paper);
+}
+
+.story-image:hover .story-img{
+  filter:grayscale(.3) sepia(.12) contrast(1.06) brightness(.98);
+}
+
+.story-image:hover::after{
+  opacity:.16;
+}
+
+.story-caption{
+  margin-top:6px;
+  padding-top:5px;
+  border-top:1px solid var(--rule);
+  font-size:var(--t-small);
+  line-height:1.6;
+  color:var(--ink-faded);
+}
+
+.story-image.is-cartoon .story-img{
+  object-fit:contain;
+  filter:grayscale(.4) contrast(1.05);
+}
+
+/* photo not yet supplied: an empty, hatched printer's frame */
+.image-placeholder{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:clamp(200px, 24vw, 300px);
+  background-color:var(--paper-deep);
+  background-image:repeating-linear-gradient(45deg, rgba(33, 29, 24, .07) 0 1px, transparent 1px 8px);
+  background-clip:content-box;
+}
+
+.image-placeholder-label{
+  padding:4px 16px 2px;
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:2px;
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:20px;
+  transform:rotate(-4deg);
+  filter:url(#press-stamp);
+}
+
+/* ---- body copy ------------------------------------------------------ */
+.story-body{
+  order:3;
+  position:relative;
+  font-size:var(--t-body);
+  line-height:1.95;
+  color:var(--ink-body);
+  overflow:hidden;
+  transition:max-height .7s var(--ease-paper);
+}
+
+.story-body.is-collapsed{
+  max-height:440px;
+  /* the text fades into the paper itself, not into a painted colour */
+  mask-image:linear-gradient(to bottom, #000 62%, transparent 100%);
+}
+
+.story-body:not(.is-collapsed){
+  max-height:6000px;
+}
+
+/* lede: the opening paragraph, set larger with a spot-red marker
+   (Arabic letters join, so a Latin-style drop cap would break the word) */
+.story-body > p:first-child{
+  font-size:21px;
+  font-weight:600;
+  line-height:1.85;
+  color:var(--ink);
+}
+
+.story-body > p:first-child::before{
+  content:"◆" / "";
+  margin-inline-end:8px;
+  font-size:11px;
+  color:var(--press-red);
+  vertical-align:3px;
+}
+
+.story-body p{
+  margin:0 0 14px;
+}
+
+.story-body h3{
+  margin:18px 0 8px;
+  padding-top:8px;
+  border-top:1px solid var(--ink);
+  font-family:var(--font-display);
+  font-size:24px;
+  line-height:1.35;
+  color:var(--ink);
+  break-after:avoid;
+}
+
+.story-body ul,
+.story-body ol{
+  margin:0 0 16px;
+  padding-inline-start:22px;
+}
+
+.story-body ul{
+  list-style:none;
+  padding-inline-start:4px;
+}
+
+.story-body ul li{
+  position:relative;
+  padding-inline-start:20px;
+}
+
+.story-body ul li::before{
+  content:"◆" / "";
+  position:absolute;
+  inset-inline-start:0;
+  top:.2em;
+  font-size:9px;
+  color:var(--press-red);
+}
+
+.story-body ol{
+  list-style:arabic-indic;
+}
+
+.story-body li{
+  margin-bottom:6px;
+  break-inside:avoid;
+}
+
+/* pull quote between rules */
+.story-body blockquote{
+  margin:14px 0 18px;
+  padding:10px 6px;
+  border-top:2px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  font-family:var(--font-display);
+  font-size:24px;
+  line-height:1.6;
+  font-weight:700;
+  color:var(--ink);
+  text-align:center;
+  break-inside:avoid;
+}
+
+/* newspaper columns once the measure allows comfortable Arabic lines */
+@media (min-width: 1180px){
+  .story-body{
+    column-count:2;
+    column-gap:34px;
+    column-rule:1px solid var(--rule-soft);
+  }
+
+  .story-body > p:first-child{
+    column-span:all;
+    margin-bottom:16px;
+  }
+}
+
+/* article unfolding: a soft fold-shadow travels down the revealed paper */
+.story-body.is-unfolding{
+  animation:paperUnfold .7s var(--ease-paper);
+  transform-origin:top center;
+}
+
+.story-body.is-unfolding::before{
+  content:"";
+  position:absolute;
+  inset-inline:0;
+  top:0;
+  height:180px;
+  background:linear-gradient(to bottom, rgba(60, 44, 20, .12), transparent);
+  animation:foldShadow .9s var(--ease-paper) forwards;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* ---- controls printed on the page ---------------------------------- */
+.story-actions{
+  order:4;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:14px 22px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid var(--rule);
+}
+
+/* "تابع رغم وضوح الأمور": a rectangular rubber stamp */
+.story-toggle-btn{
+  position:relative;
+  padding:6px 18px 3px;
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:2px;
+  border-radius:2px;
+  background:transparent;
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:18px;
+  line-height:1.5;
+  transform:rotate(-1.5deg);
+  filter:url(#press-stamp);
+  transition:transform .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.story-toggle-btn:hover{
+  color:var(--red-deep);
+  border-color:var(--red-deep);
+  outline-color:var(--red-deep);
+  transform:rotate(-2.5deg);
+}
+
+/* pressed down onto the paper */
+.story-toggle-btn:active{
+  transform:rotate(-2.5deg) translateY(1px) scale(.96);
+}
+
+.story-toggle-btn .less-text{
+  display:none;
+}
+
+.story-toggle-btn.is-open{
+  color:var(--ink);
+  border-color:var(--ink);
+  outline-color:var(--ink);
+  transform:rotate(1deg);
+}
+
+.story-toggle-btn.is-open .more-text{
+  display:none;
+}
+
+.story-toggle-btn.is-open .less-text{
+  display:inline;
+}
+
+/* secondary actions: editorial references */
+.copy-btn,
+.footer-link{
+  position:relative;
+  padding:2px 0;
+  border:0;
+  background:none;
+  font-family:var(--font-body);
+  font-size:var(--t-meta);
+  font-weight:600;
+  color:var(--ink);
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-decoration-color:var(--rule);
+  text-underline-offset:7px;
+  transition:color .2s ease, text-decoration-color .2s ease;
+}
+
+.copy-btn::before{
+  content:"※" / "";
+  margin-inline-end:6px;
+  color:var(--press-red);
+  text-decoration:none;
+  display:inline-block;
+}
+
+.copy-btn:hover,
+.footer-link:hover,
+.footer-link.active{
+  color:var(--press-red);
+  text-decoration-color:currentColor;
+}
+
+/* copied: the reference is stamped */
+.copy-btn.copied{
+  padding:3px 12px 1px;
+  border:2px solid var(--press-red);
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:17px;
+  font-weight:400;
+  text-decoration:none;
+  transform:rotate(-3deg);
+  filter:url(#press-stamp);
+  animation:stampDown .38s var(--ease-stamp);
+}
+
+.copy-btn.copied::before{
+  content:none;
+}
+
+/* ---- "شعورك تجاه المقال؟": a printed questionnaire ---------------- */
+.article-reactions{
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  width:100%;
+  padding-top:12px;
+  border-top:1px dashed var(--rule);
+}
+
+.reaction-label{
+  font-family:var(--font-display);
+  font-size:19px;
+  font-weight:700;
+  color:var(--ink);
+}
+
+.reaction-options{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px 20px;
+}
+
+.reaction-btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:4px 2px;
+  border:0;
+  background:none;
+  font-family:var(--font-body);
+  font-size:16px;
+  color:var(--ink-faded);
+  transition:color .2s ease;
+}
+
+/* the printed tick-box */
+.reaction-btn::before{
+  content:"";
+  flex:0 0 auto;
+  width:13px;
+  height:13px;
+  border:1.5px solid currentColor;
+  transition:background-color .2s ease;
+}
+
+.reaction-btn:hover{
+  color:var(--ink);
+}
+
+.reaction-btn.is-selected{
+  color:var(--ink);
+}
+
+.reaction-btn.is-selected::before{
+  border-color:var(--press-red);
+  background:var(--press-red);
+  box-shadow:inset 0 0 0 2px var(--paper);
+}
+
+/* …and the editor's red stamp around the choice */
+.reaction-btn.is-selected::after{
+  content:"";
+  position:absolute;
+  inset:-3px -9px -2px;
+  border:2px solid var(--press-red);
+  border-radius:3px;
+  transform:rotate(-2.5deg);
+  filter:url(#press-stamp);
+  animation:stampDown .36s var(--ease-stamp);
+  pointer-events:none;
+}

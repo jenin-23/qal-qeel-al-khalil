@@ -4,7 +4,6 @@
  * archive) renders inside it, so shared parts can no longer drift:
  * masthead, nav, ticker, footer, toast, coming-soon modal, popup ads.
  * ------------------------------------------------------------------ */
-import '../styles/index.css';
 import type { Issue, TickerDef } from '../lib/types';
 import { editionOf } from '../lib/issues';
 import { popupDefaults } from '../universe/defaults';
@@ -16,6 +15,7 @@ import Toast from '../components/shell/Toast.astro';
 import IssueSwitcher from '../components/shell/IssueSwitcher.astro';
 import PopupAdHost from '../components/ads/PopupAdHost.astro';
 import { newspaper } from '../universe/newspaper';
+import PressEffects from '../components/press/PressEffects.astro';
 
 interface Props {
   issue: Issue;
@@ -25,9 +25,12 @@ interface Props {
   ticker: TickerDef;
   footerTagline?: string | null;
   canonical?: string;
+  /** Visual theme. "press" = the redesign prototype (not yet approved). */
+  theme?: 'classic' | 'press';
+  noindex?: boolean;
 }
 
-const { issue, pageKey, docTitle, ticker, footerTagline, canonical } = Astro.props;
+const { issue, pageKey, docTitle, ticker, footerTagline, canonical, theme = 'classic', noindex = false } = Astro.props;
 const edition = editionOf(issue);
 const popup = issue.ads.popup;
 
@@ -51,13 +54,19 @@ const clientData = {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{docTitle}</title>
   {canonical && <link rel="canonical" href={canonical} />}
+  {noindex && <meta name="robots" content="noindex" />}
   {edition.previous && <link rel="prev" href={edition.previous.url} />}
   {edition.next && <link rel="next" href={edition.next.url} />}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" />
+  {theme === 'press' ? (
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cairo:wght@500;700&family=Lalezar&display=swap" />
+  ) : (
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" />
+  )}
 </head>
-<body data-page={pageKey} data-issue={issue.meta.number}>
+<body data-page={pageKey} data-issue={issue.meta.number} data-theme={theme}>
+  {theme === 'press' && <PressEffects />}
   <div class="site-shell">
     <Masthead issue={issue} pageKey={pageKey} />
     {newspaper.features.issueSwitcher && <IssueSwitcher edition={edition} />}

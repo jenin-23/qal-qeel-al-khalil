@@ -153,7 +153,12 @@ export interface Article {
 
 /* ---- ads --------------------------------------------------------- */
 
+/** Classified-ad compositions (press theme). Defaults rotate by position. */
+export type AdLayout = 'notice' | 'banner' | 'checklist' | 'reverse' | 'coupon';
+
 export interface SidebarAd {
+  /** Optional print composition; omitted → chosen by position. */
+  layout?: AdLayout;
   brand: string;
   html: string;
   cta: string;

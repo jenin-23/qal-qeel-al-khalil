@@ -1,0 +1,159 @@
+/* ==================================================================
+   Things laid on top of the newspaper: notices (dialogs), loose
+   flyers (popup ads) and the editorial office's stamp slip (toast).
+   ================================================================== */
+dialog.modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  max-width:none;
+  max-height:none;
+  margin:0;
+  padding:18px;
+  border:0;
+  background:rgba(33, 29, 24, .4);
+  color:inherit;
+  overflow:auto;
+}
+
+dialog.modal[open]{
+  display:flex;
+}
+
+dialog.modal::backdrop{
+  background:transparent;
+}
+
+/* an official notice, laid over the page */
+.modal-card{
+  position:relative;
+  width:min(560px, 100%);
+  padding:38px 34px 30px;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-8px;
+  background-color:var(--paper-fresh);
+  background-image:var(--fibers), var(--grain);
+  box-shadow:var(--lift-shadow);
+  text-align:center;
+  transform:rotate(-.6deg);
+}
+
+dialog.modal[open] .modal-card{
+  animation:noticeDrop .5s var(--ease-paper);
+}
+
+.modal-card h2{
+  margin:0 0 6px;
+  font-family:var(--font-display);
+  font-size:34px;
+  line-height:1.25;
+  color:var(--ink);
+}
+
+.modal-card h2::after{
+  content:"❖" / "";
+  display:block;
+  margin-top:6px;
+  font-size:14px;
+  color:var(--press-red);
+}
+
+.modal-card p{
+  margin:0;
+  font-size:17px;
+  line-height:1.9;
+  color:var(--ink-faded);
+}
+
+.modal-close{
+  position:absolute;
+  top:14px;
+  inset-inline-start:14px;
+  width:32px;
+  height:32px;
+  border:1px solid var(--ink);
+  background:var(--paper-fresh);
+  font-family:var(--font-display);
+  font-size:20px;
+  line-height:1;
+  color:var(--ink);
+  transition:color .2s ease, transform .15s ease;
+}
+
+.modal-close:hover{
+  color:var(--press-red);
+  transform:rotate(-4deg);
+}
+
+/* ---- a loose flyer dropped on the newspaper ------------------------ */
+.popup-ad-card{
+  width:min(480px, 100%);
+  padding:12px 12px 10px;
+  outline:none;
+  border:1px solid rgba(33, 29, 24, .35);
+  background:var(--paper-fresh);
+  transform:rotate(-2.4deg);
+}
+
+dialog.modal[open] .popup-ad-card{
+  animation:flyerDrop .65s var(--ease-paper);
+}
+
+.popup-ad-card .modal-close{
+  top:-14px;
+  inset-inline-start:-14px;
+  border-radius:50%;
+  box-shadow:0 3px 8px -3px rgba(0, 0, 0, .4);
+}
+
+.popup-ad-slot img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:min(62vh, 640px);
+  object-fit:contain;
+}
+
+.popup-ad-card .story-actions{
+  justify-content:center;
+  margin-top:10px;
+  padding-top:10px;
+}
+
+/* ---- the stamp slip (toast) ---------------------------------------- */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  z-index:1100;
+  padding:8px 20px 6px;
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:3px;
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:0 12px 26px -12px rgba(33, 29, 24, .55);
+  color:var(--press-red);
+  font-family:var(--font-display);
+  font-size:19px;
+  font-weight:700;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) rotate(-2.5deg) scale(1.2);
+  transition:opacity .2s ease, transform .3s var(--ease-stamp);
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) rotate(-2.5deg) scale(1);
+}
+
+.toast.stamping{
+  animation:slipStamp .42s var(--ease-stamp);
+}

@@ -1,0 +1,125 @@
+/* ==================================================================
+   Motion: physical, small, paper-and-press. Only applied once the
+   press script is running (html.press-js), and never under
+   prefers-reduced-motion.
+   ================================================================== */
+@media (prefers-reduced-motion: no-preference){
+  /* the sheet settles onto the desk */
+  .press-js .site-shell{
+    opacity:0;
+    transform:translateY(14px) rotate(-.45deg);
+  }
+
+  .press-js.press-settled .site-shell{
+    opacity:1;
+    transform:none;
+    transition:opacity .5s ease, transform 1.1s var(--ease-paper);
+  }
+
+  /* rules draw themselves into place */
+  .press-js .section-heading h2::after{
+    transform:scaleX(0);
+    transition:transform .9s var(--ease-paper) .15s;
+  }
+
+  .press-js .in-view .section-heading h2::after,
+  .press-js .section-heading.in-view h2::after{
+    transform:scaleX(1);
+  }
+
+  .press-js .news-hero{
+    border-bottom-color:transparent;
+    transition:border-color .6s ease .3s;
+  }
+
+  .press-js .news-hero.in-view{
+    border-bottom-color:var(--ink);
+  }
+
+  /* photographs are placed onto the page, then develop */
+  .press-js .story-image:not(.image-placeholder) .story-img{
+    opacity:0;
+    transform:translateY(8px) rotate(-.5deg);
+    filter:grayscale(1) sepia(.3) contrast(.9) brightness(1.3);
+  }
+
+  .press-js .story-image.in-view .story-img{
+    opacity:1;
+    transform:none;
+    filter:grayscale(.82) sepia(.22) contrast(1.16) brightness(.95);
+    transition:opacity .6s ease, transform .9s var(--ease-paper), filter 1.6s ease .2s;
+  }
+
+  .press-js .story-image.in-view:hover .story-img{
+    filter:grayscale(.3) sepia(.12) contrast(1.06) brightness(.98);
+    transition:filter .8s var(--ease-paper);
+  }
+
+  /* placeholder stamp lands when its frame scrolls in */
+  .press-js .image-placeholder.in-view .image-placeholder-label{
+    animation:stampDown .45s var(--ease-stamp) .2s both;
+  }
+}
+
+/* ---- keyframes ------------------------------------------------------ */
+@keyframes stampDown{
+  0%{ opacity:0; transform:rotate(-7deg) scale(1.45); }
+  60%{ opacity:1; transform:rotate(-2deg) scale(.95); }
+  100%{ opacity:1; }
+}
+
+@keyframes slipStamp{
+  0%{ transform:translateX(-50%) rotate(-6deg) scale(1.3); opacity:0; }
+  55%{ transform:translateX(-50%) rotate(-2deg) scale(.96); opacity:1; }
+  100%{ transform:translateX(-50%) rotate(-2.5deg) scale(1); }
+}
+
+@keyframes noticeDrop{
+  0%{ opacity:0; transform:translateY(-22px) rotate(-3.5deg); }
+  70%{ opacity:1; transform:translateY(2px) rotate(-.3deg); }
+  100%{ transform:rotate(-.6deg); }
+}
+
+@keyframes flyerDrop{
+  0%{ opacity:0; transform:translate(36px, -60px) rotate(-11deg) scale(1.04); }
+  65%{ opacity:1; transform:translate(-2px, 3px) rotate(-1.4deg) scale(1); }
+  100%{ transform:rotate(-2.4deg); }
+}
+
+@keyframes paperUnfold{
+  0%{ transform:perspective(1200px) rotateX(-7deg); }
+  100%{ transform:none; }
+}
+
+@keyframes foldShadow{
+  0%{ transform:translateY(0); opacity:1; }
+  100%{ transform:translateY(420px); opacity:0; }
+}
+
+/* ---- reduced motion: everything still works, nothing moves --------- */
+@media (prefers-reduced-motion: reduce){
+  html{
+    scroll-behavior:auto;
+  }
+
+  *,
+  *::before,
+  *::after{
+    animation:none !important;
+    transition:none !important;
+  }
+
+  .ticker-group[data-ticker-clone]{
+    display:none;
+  }
+
+  .ticker-group::after{
+    content:none;
+  }
+
+  .ticker-viewport{
+    overflow-x:auto;
+    scrollbar-width:none;
+    mask-image:none;
+  }
+}

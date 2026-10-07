@@ -17,7 +17,7 @@ const inlineAfter = (id: string) => issue.ads.inline.filter((ad) => ad.page === 
 {block.sidebar ? (
   <section class="news-page-layout single-left-sidebar">
     <aside class="news-sidebar left-ads-sidebar">
-      {sidebarAds.map((ad) => <SidebarAd ad={ad} />)}
+      {sidebarAds.map((ad, i) => <SidebarAd ad={ad} index={i} />)}
     </aside>
 
     <div class="news-articles-column">

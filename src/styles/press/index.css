@@ -1,0 +1,9 @@
+/* Press theme entry (prototype). Standalone: does not load the classic CSS. */
+@import "./tokens.css";
+@import "./paper.css";
+@import "./shell.css";
+@import "./content.css";
+@import "./ads.css";
+@import "./overlays.css";
+@import "./motion.css";
+@import "./responsive.css";

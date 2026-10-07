@@ -1,0 +1,126 @@
+/* ==================================================================
+   The sheet: a physical newspaper page lying on a darker desk, with
+   two older sheets underneath. Everything else is printed on it.
+   ================================================================== */
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  position:relative;
+  margin:0;
+  min-height:100vh;
+  direction:rtl;
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:var(--t-body);
+  background-color:var(--desk);
+  background-image:var(--grain), var(--blotches);
+  overflow-x:hidden;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+  color:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.press-defs{
+  position:absolute;
+  width:0;
+  height:0;
+  overflow:hidden;
+}
+
+/* the sheet */
+.site-shell{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  width:min(var(--sheet-max), calc(100% - 64px));
+  min-height:calc(100vh - 72px);
+  margin:36px auto 56px;
+  background-color:var(--paper);
+  background-image:var(--specks), var(--fibers), var(--grain), var(--blotches);
+  background-size:780px 1100px, 600px 600px, 260px 260px, 900px 900px;
+  box-shadow:
+    var(--sheet-shadow),
+    inset 0 0 0 1px rgba(110, 88, 52, .14),
+    inset 0 0 110px rgba(150, 118, 62, .2);
+}
+
+/* each section of the paper sits on a slightly different spot of the stock */
+body[data-page="home"] .site-shell{ background-position:0 0, 120px 40px, 0 0, -200px -90px; }
+body[data-page="news"] .site-shell{ background-position:310px 160px, -80px 210px, 40px 90px, 260px -340px; }
+body[data-page="columns"] .site-shell{ background-position:-140px 400px, 260px -60px, 90px 10px, -420px 120px; }
+
+/* older sheets underneath (desktop only) */
+body::before,
+body::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:44px;
+  bottom:62px;
+  left:50%;
+  width:min(var(--sheet-max), calc(100% - 64px));
+  background-color:var(--paper-deep);
+  background-image:var(--grain), var(--blotches);
+  box-shadow:var(--sheet-shadow);
+  pointer-events:none;
+}
+
+body::before{
+  transform:translateX(-50%) translate(7px, 5px) rotate(-.55deg);
+}
+
+body::after{
+  transform:translateX(-50%) translate(-9px, 11px) rotate(.4deg);
+  filter:brightness(.97);
+}
+
+.container{
+  width:100%;
+  padding-inline:var(--gutter);
+}
+
+/* ornament helper for decorative separators */
+.press-ornament{
+  color:var(--press-red);
+  font-size:.7em;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:3px;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border:0;
+}

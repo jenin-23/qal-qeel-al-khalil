@@ -1,12 +1,15 @@
 ---
-import type { SidebarAd } from '../../lib/types';
+import type { AdLayout, SidebarAd } from '../../lib/types';
 
 interface Props {
   ad: SidebarAd;
+  index?: number;
 }
-const { ad } = Astro.props;
+const LAYOUTS: AdLayout[] = ['notice', 'banner', 'checklist', 'reverse', 'coupon'];
+const { ad, index = 0 } = Astro.props;
+const layout = ad.layout ?? LAYOUTS[index % LAYOUTS.length];
 ---
-<div class="ad-flyer">
+<div class="ad-flyer" data-ad-layout={layout}>
   <div class="ad-brand">{ad.brand}</div>
   <div class="ad-body" set:html={ad.html} />
   <div class="ad-cta">{ad.cta}</div>
