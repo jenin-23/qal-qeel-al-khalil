@@ -1,0 +1,161 @@
+---
+/* ------------------------------------------------------------------ *
+ * نسخة للطباعة: the whole issue as one printed edition.
+ * Every section in order, articles fully set, interactive pieces
+ * re-set for paper (all twelve horoscope predictions, the quiz as a
+ * printed questionnaire; the coin stays on screen). Existing content
+ * only; nothing is added or reworded.
+ * ------------------------------------------------------------------ */
+import type { Issue, PageKey } from '../../lib/types';
+import Document from '../../layouts/Document.astro';
+import ArticleFigure from '../article/ArticleFigure.astro';
+import SidebarAd from '../ads/SidebarAd.astro';
+import Hero from '../blocks/Hero.astro';
+import Note from '../blocks/Note.astro';
+import { newspaper } from '../../universe/newspaper';
+import { library } from '../../universe/library';
+import { institution, person } from '../../universe/institutions';
+import { libraryUrl, issueUrl } from '../../lib/url';
+import { appearanceVars } from '../../lib/appearance';
+import { ZODIAC_SIGNS } from '../../lib/types';
+
+interface Props {
+  issue: Issue;
+}
+const { issue } = Astro.props;
+const { meta } = issue;
+const sectionLabel = (key: PageKey) => newspaper.nav.find((n) => n.key === key)?.label ?? key;
+const home = issue.pages.home;
+const sections = (['news', 'columns'] as PageKey[]).filter((k) => issue.pages[k]);
+const articlesOf = (key: PageKey) => issue.articles.filter((a) => a.page === key);
+const ent = issue.entertainment;
+const fatwaDesk = ent?.fatwa ? institution(ent.fatwa.desk) : undefined;
+const fatwaAuthor = ent?.fatwa && fatwaDesk ? person(ent.fatwa.author ?? fatwaDesk.resident ?? '') : undefined;
+const docTitle = home?.docTitle ?? newspaper.name;
+---
+<Document docTitle={docTitle} pageKey="print" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number, 'print'), Astro.site).href}>
+  <div class="site-shell print-edition" style={appearanceVars(meta.appearance)}>
+    <div class="print-controls">
+      <a class="library-ref" href={libraryUrl()} data-to-library>{library.name}</a>
+      <button class="print-mark" type="button" data-print-now>{library.printEdition}</button>
+    </div>
+
+    <header class="topbar">
+      <div class="container">
+        <div class="masthead">
+          <div class="masthead-grid">
+            <div class="meta-box">
+              <span class="meta-label">{newspaper.masthead.issueNumberLabel}</span>
+              <strong>{meta.number}</strong>
+              {meta.city && <span>{meta.city}</span>}
+            </div>
+            <div class="brand-box">
+              <div class="brand">{newspaper.name}</div>
+              <p class="tagline">{newspaper.tagline}</p>
+            </div>
+            <div class="meta-box meta-left">
+              <span class="meta-label">{newspaper.masthead.releaseDateLabel}</span>
+              <strong>{meta.releaseDateLabel}</strong>
+              {meta.priceLine && <span>{meta.priceLine}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="news-main">
+      <div class="container">
+        {home && (
+          <section class="print-section print-section--front">
+            {home.blocks.map((b) => (b.type === 'hero' ? <Hero block={b} /> : b.type === 'note' ? <Note block={b} /> : null))}
+          </section>
+        )}
+
+        {sections.map((key) => (
+          <section class="print-section">
+            <h2 class="print-section-label">{sectionLabel(key)}</h2>
+            {articlesOf(key).map((article) => (
+              <article class="story-card print-article" id={article.id}>
+                <div class="story-content">
+                  <div class="story-meta">{article.meta}</div>
+                  <h3 class="story-title">{article.title}</h3>
+                  <ArticleFigure image={article.image} />
+                  <div class="story-body" set:html={article.body} />
+                </div>
+              </article>
+            ))}
+            {(issue.ads.sidebar[key]?.length ?? 0) > 0 && (
+              <aside class="print-classifieds">
+                {issue.ads.sidebar[key]!.map((ad, i) => <SidebarAd ad={ad} index={i} />)}
+              </aside>
+            )}
+          </section>
+        ))}
+
+        {ent && (
+          <section class="print-section">
+            <h2 class="print-section-label">{sectionLabel('entertainment')}</h2>
+
+            {ent.fatwa && fatwaDesk && (
+              <article class="story-card ent-fatwa-big print-article">
+                <div class="story-content">
+                  <div class="section-heading">
+                    <h3>{fatwaDesk.title}</h3>
+                    {fatwaAuthor && <p>{fatwaAuthor.name}</p>}
+                  </div>
+                  <div class="fatwa-card">
+                    <h4>{ent.fatwa.question}</h4>
+                    <Fragment set:html={ent.fatwa.html} />
+                  </div>
+                </div>
+              </article>
+            )}
+
+            {ent.horoscope && (
+              <article class="print-horoscope">
+                <div class="section-heading">
+                  <h3>{ent.horoscope.heading}</h3>
+                  <p>{ent.horoscope.sub}</p>
+                </div>
+                <dl>
+                  {ZODIAC_SIGNS.map((sign) => (
+                    <div>
+                      <dt>{sign}</dt>
+                      <dd>{ent.horoscope!.predictions[sign]}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            )}
+
+            {ent.quiz && (
+              <article class="print-quiz">
+                <div class="section-heading">
+                  <h3>{ent.quiz.heading}</h3>
+                  <p>{ent.quiz.sub}</p>
+                </div>
+                {ent.quiz.questions.map((q) => (
+                  <div class="print-quiz-question">
+                    <h4>{q.title}</h4>
+                    <ul>{q.options.map((o) => <li>{o.label}</li>)}</ul>
+                  </div>
+                ))}
+              </article>
+            )}
+          </section>
+        )}
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-card">
+          <div class="footer-bottom">
+            <span>{meta.copyright}</span>
+            {meta.city && <span>{meta.city}</span>}
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</Document>

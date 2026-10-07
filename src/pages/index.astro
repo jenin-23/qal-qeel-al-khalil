@@ -1,18 +1,26 @@
 ---
 /* ------------------------------------------------------------------ *
- * مكتبة قال قيل: the front door. Every public issue stands on the
- * shelf (editing, published, archived; never drafts), oldest first,
- * straight from the registry. The rest of the shelf holds unlabelled
- * bundles of old paper: atmosphere, never pretend issues.
+ * مكتبة قال قيل: the front door, and nothing but the front door.
+ * No issue ever opens from here by itself: a reader takes one.
+ *
+ * Every public issue stands on the shelf (editing, published,
+ * archived; never drafts), one shelf per year, oldest first, straight
+ * from the registry. Unlabelled bundles of old paper are atmosphere,
+ * never pretend issues. The editors' drawer waits on the storage shelf.
  * ------------------------------------------------------------------ */
 import Document from '../layouts/Document.astro';
 import ShelfNewspaper from '../components/library/ShelfNewspaper.astro';
+import ArchiveDrawer from '../components/library/ArchiveDrawer.astro';
 import { shelfIssues } from '../lib/issues';
 import { paperUrl } from '../lib/url';
 import { newspaper } from '../universe/newspaper';
 import { library } from '../universe/library';
 
-const year = shelfIssues.at(-1)?.meta.year ?? new Date().getFullYear();
+// one shelf per year
+const years = [...new Set(shelfIssues.map((i) => i.meta.year))].sort((a, b) => a - b);
+const shelves = years.map((year) => ({ year, issues: shelfIssues.filter((i) => i.meta.year === year) }));
+const latestYear = years.at(-1) ?? new Date().getFullYear();
+let index = 0;
 ---
 <Document docTitle={`${library.name} | ${newspaper.name}`} pageKey="library" canonical={new URL(import.meta.env.BASE_URL, Astro.site).href}>
   <div class="library-room">
@@ -33,43 +41,49 @@ const year = shelfIssues.at(-1)?.meta.year ?? new Date().getFullYear();
       ))}
     </nav>
 
-    <section class="bookcase" aria-labelledby="library-shelf-title">
-      <h2 id="library-shelf-title" class="sr-only">{library.name}</h2>
-      <ol class="shelf" data-count={shelfIssues.length}>
-        {shelfIssues.map((issue, i) => <ShelfNewspaper issue={issue} index={i} />)}
+    <div class="bookcase">
+      {shelves.map((shelf, s) => (
+        <section class="shelf-year" aria-labelledby={`shelf-${shelf.year}`}>
+          <h2 class="shelf-year-label" id={`shelf-${shelf.year}`}>{shelf.year}</h2>
+          <ol class="shelf">
+            {shelf.issues.map((issue) => <ShelfNewspaper issue={issue} index={index++} />)}
 
-        <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
-          <span class="paper-bundle">
-            <span></span><span></span><span></span><span></span><span></span>
-            <span class="twine"></span>
-          </span>
-        </li>
-        <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
-          <span class="paper-spines">
-            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-          </span>
-          <span class="bookend"></span>
-        </li>
-      </ol>
+            {s === shelves.length - 1 && (
+              <Fragment>
+                <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
+                  <span class="paper-bundle">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span class="twine"></span>
+                  </span>
+                </li>
+                <li class="shelf-slot shelf-slot--decor" aria-hidden="true">
+                  <span class="paper-spines">
+                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                  </span>
+                  <span class="bookend"></span>
+                </li>
+              </Fragment>
+            )}
+          </ol>
+        </section>
+      ))}
 
-      <!-- the storage shelf: old bundles, never issues -->
-      <div class="shelf shelf--storage" aria-hidden="true">
-        <span class="storage-group">
+      <!-- the storage shelf: old bundles, and the editors' drawer -->
+      <div class="shelf shelf--storage">
+        <span class="storage-group" aria-hidden="true">
           <span class="paper-bundle paper-bundle--low"><span></span><span></span><span></span><span class="twine"></span></span>
           <span class="paper-bundle"><span></span><span></span><span></span><span></span><span class="twine"></span></span>
         </span>
-        <span class="storage-group">
-          <span class="paper-spines paper-spines--low"><span></span><span></span><span></span><span></span><span></span></span>
-        </span>
-        <span class="storage-group">
+        <ArchiveDrawer />
+        <span class="storage-group" aria-hidden="true">
           <span class="paper-bundle"><span></span><span></span><span></span><span></span><span></span><span></span><span class="twine"></span></span>
           <span class="paper-bundle paper-bundle--low"><span></span><span></span><span class="twine"></span></span>
         </span>
       </div>
-    </section>
+    </div>
 
     <footer class="library-foot">
-      <span>© {year} {newspaper.name}</span>
+      <span>© {latestYear} {newspaper.name}</span>
       <span>{newspaper.city}</span>
     </footer>
   </div>

@@ -28,7 +28,9 @@ const url = (p) => `${ORIGIN}${BASE}${p}`;
 console.log(`testing ${ORIGIN}${BASE}/`);
 
 let failed = 0;
+let lastCheck = '';
 const check = (cond, msg) => {
+  lastCheck = msg;
   console.log(`${cond ? '✓' : '✗'} ${msg}`);
   if (!cond) failed++;
 };
@@ -37,7 +39,11 @@ const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
 const page = await ctx.newPage();
 const errors = [];
-page.on('pageerror', (e) => errors.push(e.message));
+// Chromium reports a skipped optional cross-page View Transition (e.g. a page that was
+// backgrounded earlier in this long session) as a page error; navigation is unaffected.
+// Only that exact browser message is tolerated; any other error fails the run.
+const BENIGN = /^Transition was aborted because of invalid state. ViewTransition opt-in disabled$/;
+page.on('pageerror', (e) => { if (BENIGN.test(e.message)) return; errors.push(`${e.message} @ ${page.url()}`); console.log('PAGEERROR after:', lastCheck); });
 // every asset (fonts, images, scripts, styles) must load
 const broken = [];
 page.on('response', (r) => {
@@ -94,9 +100,14 @@ check(await page.locator('#comingModal').evaluate((d) => d.open), 'Issue 001: ا
 check((await page.locator('#comingText').textContent()) === 'يزم محنا حكينا قادم، مش حتلاقي اشي.', 'coming-soon shows the original text');
 await page.keyboard.press('Escape');
 await page.goto(url('/contact.html'));
+await page.fill('#contact-field-1', 'قارئ');
 await page.fill('#contact-field-3', 'test');
-await page.click('.contact-form button');
-check((await page.locator('#copyToast').textContent()) === 'تم استلام الرسالة نظرياً. شكراً على الثقة.', 'Contact: form toast now appears');
+const [contactTab] = await Promise.all([page.context().waitForEvent('page'), page.click('.contact-form button')]);
+const contactUrl = new URL(contactTab.url().startsWith('https://wa.me') ? contactTab.url() : await contactTab.evaluate(() => location.href));
+await contactTab.close();
+check((await page.locator('#copyToast').textContent()) === 'تم استلام الرسالة نظرياً. شكراً على الثقة.', 'Contact: the original acknowledgement still appears');
+check(page.url().endsWith('/contact.html') && (await page.context().pages()).length === 1, 'Contact: exactly one new tab, the page stays');
+check(/(wa\.me\/962791432787|phone=962791432787)/.test(contactUrl.href), `Contact: «إرسال» opens WhatsApp to 962791432787 (${contactUrl.host})`);
 
 // --- news: toggle, reactions
 await page.goto(url('/issues/001/news.html'));
@@ -191,10 +202,11 @@ await fp.waitForTimeout(FRESH_WAIT);
 check((await fp.evaluate(() => document.body.dataset.page)) === 'library' && navigations.length === navCount + 1, 'returning visitor (storage set, history) stays in the library');
 await fresh.close();
 
+await page.bringToFront(); // an earlier test opened (and closed) a WhatsApp tab
 await page.locator('a[data-take][href$="/issues/001/"]').click();
 await page.waitForURL(/issues\/001\/$/);
-check(await page.evaluate(() => document.documentElement.classList.contains('arrive-from-library')), 'taking 001 off the shelf opens /issues/001/ (as an opened copy)');
-await page.locator('.library-ref').click();
+check(await page.evaluate(() => { const h = document.documentElement.classList; return h.contains('arrive-from-library') || h.contains('vt-active'); }), 'taking 001 off the shelf opens /issues/001/ as the opened copy (View Transition or fallback)');
+await page.locator('[data-to-library]').click();
 await page.waitForURL(/qal-qeel-al-khalil\/$/);
 check(true, 'the masthead reference leads back to the library');
 await page.locator('a[data-take][href$="/issues/002/"]').click();
@@ -220,6 +232,10 @@ check((await page.locator('.proof-note-text').textContent()) === 'ملاحظة �
 const SUBMIT_MESSAGE = 'مرحباً هيئة تحرير قال قيل، لدي مادة أود إرسالها للعدد 002:';
 const cta = page.locator('a[data-submit-whatsapp]');
 check((await cta.count()) === 1 && (await cta.textContent()).trim() === 'أرسل إلى هيئة التحرير', 'Issue 002 has one submission notice with «أرسل إلى هيئة التحرير»');
+check(!(await cta.isVisible()), 'the submission waits inside the closed envelope');
+await page.locator('[data-open-envelope]').click();
+check(await page.locator('#submission-envelope').evaluate((d) => d.open), 'the editors notice opens the envelope «إلى هيئة التحرير»');
+check(await cta.isVisible(), 'the opened letter shows «أرسل إلى هيئة التحرير»');
 const href = await cta.getAttribute('href');
 const wa = new URL(href);
 check(wa.origin === 'https://wa.me' && wa.pathname === '/962791432787', `WhatsApp click-to-chat targets 962791432787 (${wa.origin}${wa.pathname})`);
@@ -236,6 +252,60 @@ await page.goto(url('/archive.html'));
 await page.locator('.archive-item').first().click({ position: { x: 40, y: 40 } });
 await page.waitForURL(/issues\/001\/$/);
 check(true, 'archive card for 001 opens /issues/001/');
+
+// --- the red pencil (Issue 002): reveals the editing process only
+await page.goto(url('/issues/002/'));
+const pencil = page.locator('[data-pencil]');
+check((await page.locator('.pencil-note').evaluateAll((els) => els.filter((e) => getComputedStyle(e).display !== 'none').length)) === 0, 'pencil marks hidden until the pencil is taken up');
+await pencil.focus();
+await page.keyboard.press('Enter');
+const marks = await page.locator('.pencil-note').evaluateAll((els) => els.filter((e) => getComputedStyle(e).display !== 'none').map((e) => e.textContent.trim()));
+const APPROVED_MARKS = ['راجع', '؟', 'مصدر؟', 'ننتظر الصورة', 'تأكيد', 'هل يُنشر؟', '↓ هنا', 'قيد المراجعة'];
+check((await pencil.getAttribute('aria-pressed')) === 'true' && marks.length >= 5 && marks.every((m) => APPROVED_MARKS.includes(m)), `قلم هيئة التحرير works from the keyboard; ${marks.length} approved marks appear`);
+await page.keyboard.press('Enter');
+check((await pencil.getAttribute('aria-pressed')) === 'false', 'putting the pencil down hides the marks again');
+check((await page.locator('.proof-teasers, .incoming-slip, .proof-production').count()) === 0, 'no teasers, incoming slips or production lines are shown (none configured)');
+
+// --- محفوظات هيئة التحرير: the library drawer
+await page.goto(url('/'));
+await page.locator('[data-drawer-open]').click();
+check(await page.locator('#archiveDrawer').evaluate((d) => d.open), 'the editors drawer opens');
+const tabs = await page.locator('[data-folder-tab]').allTextContents();
+check(tabs.join('|') === 'ملفات مغلقة|مواد لم تُنشر|تصحيحات|محفوظات|من الأرشيف', 'drawer folders as approved (photo archive hidden while empty)');
+await page.locator('[data-folder-tab]').first().focus();
+await page.keyboard.press('ArrowLeft');
+check((await page.locator('[data-folder-tab]').nth(1).getAttribute('aria-selected')) === 'true', 'folders are keyboard tabs (arrow keys)');
+check((await page.locator('.drawer-folder:not([hidden]) .drawer-empty').textContent()) === '[بانتظار المادة]', 'empty folders say so; nothing invented');
+await page.keyboard.press('Escape');
+check(!(await page.locator('#archiveDrawer').evaluate((d) => d.open)), 'Escape closes the drawer');
+
+// --- the masthead Easter egg: five presses, a deadpan notice
+for (let i = 0; i < 5; i++) await page.locator('.library-title').click();
+await page.waitForTimeout(200);
+check((await page.locator('.egg-notice').textContent()) === 'لوحظ اهتمام غير اعتيادي بالجريدة.تم تسجيل الملاحظة.', 'masthead ×5: «لوحظ اهتمام غير اعتيادي بالجريدة.» then it goes away');
+
+// --- the printed edition
+const printRes = await page.goto(url('/issues/001/print.html'));
+const printed = await page.evaluate(() => ({
+  articles: document.querySelectorAll('.print-article').length,
+  signs: document.querySelectorAll('.print-horoscope dt').length,
+  collapsed: document.querySelectorAll('.is-collapsed').length,
+}));
+check(printRes.ok() && printed.articles >= 7 && printed.signs === 12 && printed.collapsed === 0, `print edition: ${printed.articles} articles in full, 12 horoscopes, nothing collapsed`);
+await page.emulateMedia({ media: 'print' });
+const printHidden = await page.evaluate(() => ['.print-controls', '.masthead-refs'].every((s) => !document.querySelector(s) || getComputedStyle(document.querySelector(s)).display === 'none'));
+check(printHidden, 'on paper: controls and references are not printed');
+await page.emulateMedia({ media: 'screen' });
+
+// --- the library without JavaScript: still a library, papers still open
+const nojs = await browser.newContext({ javaScriptEnabled: false });
+const np = await nojs.newPage();
+await np.goto(url('/'));
+const njs = await np.evaluate(() => ({ page: document.body.dataset.page, papers: document.querySelectorAll('a[data-take]').length }));
+await np.locator('a[data-take]').first().click();
+await np.waitForURL(/issues\/001\/$/);
+check(njs.page === 'library' && njs.papers === 2, 'without JavaScript: the library renders and a newspaper opens as a plain link');
+await nojs.close();
 
 // --- keyboard: focus is visible, dialogs trap and return focus
 const focused = () =>
@@ -262,8 +332,10 @@ await page.goto(url('/issues/001/news.html'));
 await page.keyboard.press('Tab');
 const refFocus = await focused();
 await page.keyboard.press('Tab');
+const printFocus = await focused();
+await page.keyboard.press('Tab');
 const navFocus = await focused();
-check(refFocus.cls.includes('library-ref') && refFocus.ring && navFocus.cls.includes('nav-link') && navFocus.ring, 'issue: Tab order is library reference, then section bar, with focus rings');
+check(refFocus.cls.includes('library-ref') && refFocus.ring && printFocus.cls.includes('print-ref') && navFocus.cls.includes('nav-link') && navFocus.ring, 'issue: Tab order is library reference, print edition, then section bar, with focus rings');
 const coming = page.locator('[data-coming]');
 await coming.focus();
 await page.keyboard.press('Enter');
@@ -320,6 +392,7 @@ for (const p of PAGES) {
   check(overflow <= 0, `${p} at 360px: no horizontal overflow`);
 }
 await mp.goto(url('/issues/002/'));
+await mp.locator('#submission-envelope summary').click();
 const ctaBox = await mp.locator('a[data-submit-whatsapp]').boundingBox();
 check(!!ctaBox && ctaBox.x >= 0 && ctaBox.x + ctaBox.width <= 360 && ctaBox.width > 120, 'mobile: «أرسل إلى هيئة التحرير» fully on screen and tappable');
 await mp.goto(url('/'));

@@ -53,6 +53,8 @@ const CONTENT_REGIONS = ['.ticker-wrap', 'main', '.footer-brand p'];
 
 // the masthead's archive reference back to the library, on every issue page
 const LIBRARY_REF = 'مكتبة قال قيل';
+// …and, on completed issues, the reference to the printed edition
+const PRINT_REF = 'نسخة للطباعة';
 
 const SHELL_ADDITIONS = {
   toast: ['تم نسخ المقال. استخدمه بحذر.'],
@@ -62,9 +64,9 @@ const SHELL_ADDITIONS = {
 
 /** Text that may appear in the new build but not in the original, per page. */
 const ALLOWED_ADDITIONS = {
-  'index.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
-  'news.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
-  'columns.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
+  'index.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
+  'news.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
+  'columns.html': { reason: 'library + print-edition references above the masthead', text: [LIBRARY_REF, PRINT_REF] },
   'about.html': { reason: 'shared toast; library reference', text: [...SHELL_ADDITIONS.toast, LIBRARY_REF] },
   'archive.html': {
     reason: 'archive cards: the issue date and the "enter issue" button',
@@ -76,7 +78,7 @@ const ALLOWED_ADDITIONS = {
   },
   'entertainment.html': {
     reason: 'footer, coming-soon modal, toast were missing; approved «تغيير تاريخ الميلاد»; gate close button (shown only when changing)',
-    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×', LIBRARY_REF],
+    text: [...SHELL_ADDITIONS.footer, ...SHELL_ADDITIONS.coming, ...SHELL_ADDITIONS.toast, 'تغيير تاريخ الميلاد', '×', LIBRARY_REF, PRINT_REF],
   },
 };
 

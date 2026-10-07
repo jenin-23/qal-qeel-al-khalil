@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------ *
  * Newsroom proof: small things to discover, none of which reveals
- * anything (there is nothing to reveal yet).
+ * anything that the issue's data does not explicitly provide.
  * ------------------------------------------------------------------ */
 export function initNewsroom(): void {
   // an empty photo frame takes an editorial stamp when pressed
@@ -17,5 +17,22 @@ export function initNewsroom(): void {
     note.addEventListener('click', () => {
       note.setAttribute('aria-expanded', String(note.getAttribute('aria-expanded') !== 'true'));
     });
+  });
+
+  // the notice's reference opens the envelope (without JS: it scrolls to it)
+  document.querySelectorAll<HTMLAnchorElement>('[data-open-envelope]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const envelope = document.getElementById('submission-envelope') as HTMLDetailsElement | null;
+      if (!envelope) return;
+      e.preventDefault();
+      envelope.open = true;
+      envelope.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      envelope.querySelector('summary')?.focus({ preventScroll: true });
+    });
+  });
+
+  // redactions with an explicit reveal/response from the data
+  document.querySelectorAll<HTMLButtonElement>('[data-redaction]').forEach((r) => {
+    r.addEventListener('click', () => r.setAttribute('aria-expanded', String(r.getAttribute('aria-expanded') !== 'true')));
   });
 }

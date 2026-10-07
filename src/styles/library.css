@@ -179,15 +179,20 @@ body[data-page="library"]::after{
   flex-direction:column;
   padding:6cqw 6cqw 5cqw;
   overflow:hidden;
-  background-color:var(--paper);
+  /* older issues: yellower stock (meta.appearance.paperAge) */
+  background-color:color-mix(in srgb, var(--paper-fresh), #cdb98d calc(var(--paper-age, .3) * 70%));
   background-image:var(--specks), var(--fibers), var(--grain);
   border:1px solid rgba(33, 29, 24, .3);
-  box-shadow:
-    -3px 3px 0 -1px var(--paper-deep),
-    -3px 3px 0 0 rgba(33, 29, 24, .28),
-    -6px 6px 0 -1px #ddd1b4,
-    -6px 6px 0 0 rgba(33, 29, 24, .24),
-    inset 0 0 26px rgba(150, 118, 62, .22);
+  box-shadow:inset 0 0 26px rgba(150, 118, 62, calc(.12 + var(--paper-age, .3) * .25));
+  transition:transform .4s var(--ease-paper);
+}
+
+/* the copies stacked beneath: count and offsets from meta.appearance.sheets */
+.paper-stack{
+  position:absolute;
+  inset:0;
+  box-shadow:var(--stack);
+  transition:transform .4s var(--ease-paper);
 }
 
 .pf-rule{
@@ -301,6 +306,7 @@ body[data-page="library"]::after{
   top:57%;
   height:9cqw;
   background:linear-gradient(to bottom, rgba(60, 44, 20, .14), rgba(255, 250, 235, .35) 40%, transparent);
+  opacity:var(--crease, .5);
   pointer-events:none;
 }
 

@@ -32,8 +32,11 @@ const thirdLine = editing ? newsroom.stamp : meta.priceLine;
 ---
 <header class="topbar">
   <div class="container">
-    <!-- the way back to the shelf, printed like an archive reference -->
-    <a class="library-ref" href={libraryUrl()} data-to-library>{library.name}</a>
+    <!-- archive references: the way back to the shelf, and the printed edition -->
+    <div class="masthead-refs">
+      <a class="library-ref" href={libraryUrl()} data-to-library>{library.name}</a>
+      {!editing && <a class="library-ref print-ref" href={issueUrl(n, 'print')}>{library.printEdition}</a>}
+    </div>
 
     <div class="masthead">
       <div class="masthead-grid">

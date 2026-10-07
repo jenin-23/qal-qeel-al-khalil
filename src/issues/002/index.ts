@@ -29,10 +29,15 @@ const issue: Issue = {
     status: 'editing',
     year: 2026,
     month: 12,
+    // a fresh proof: loose sheets, no fold yet, the red plate not quite aligned
+    appearance: { paperAge: 0.08, printOpacity: 0.82, inkSpread: 0.3, registrationOffset: 1, creaseLevel: 0, sheets: 2, loose: true },
   },
   construction: {
-    // progress: {},  ← only real numbers, once there are some
+    // progress: {},    ← only real numbers, once there are some
+    // production: [],  ← e.g. { category: 'images', label: 'الصور', state: 'received', stateLabel: 'قيد الاستلام' }
+    // incoming: [],    ← real arrivals: { id, receivedAt, state: 'reviewing' }
     teasers: [],
+    pencil: true,
     // «أرسل إلى هيئة التحرير»: readers send material for this issue
     submissions: {
       whatsapp: '962791432787',

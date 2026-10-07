@@ -280,7 +280,6 @@
 .proof-board{
   position:relative;
   margin:6px 0 0 4px;
-  margin-inline-start:var(--col-gap);
   padding:28px 18px 18px;
   background-color:#efe3bd;
   background-image:var(--grain);
@@ -614,9 +613,13 @@
     border-inline-end:0;
   }
 
-  .proof-board{
+  .proof-desk{
     grid-column:1 / -1;
-    margin:26px 0 0;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:26px;
+    margin-top:26px;
+    padding-inline-start:0;
   }
 }
 
@@ -655,114 +658,3 @@
   }
 }
 
-/* ---- «تنويه من هيئة التحرير»: the submissions notice -----------------
-   An editors' notice taped into the proof, among the empty spaces. */
-.submit-notice{
-  position:relative;
-  margin:2px 0 22px;
-  padding:22px 20px 18px;
-  border:2px solid var(--ink);
-  outline:1px solid var(--ink);
-  outline-offset:-7px;
-  background-color:var(--paper);
-  background-image:var(--fibers), var(--grain);
-  box-shadow:0 14px 24px -16px rgba(40, 29, 12, .6);
-  text-align:center;
-  transform:rotate(-.8deg);
-}
-
-.submit-notice-tape{
-  position:absolute;
-  top:-11px;
-  width:64px;
-  height:22px;
-  background:rgba(236, 226, 196, .78);
-  border:1px solid rgba(33, 29, 24, .12);
-  box-shadow:0 1px 2px rgba(0, 0, 0, .12);
-}
-
-.submit-notice-tape--a{ right:18px; transform:rotate(5deg); }
-.submit-notice-tape--b{ left:18px; transform:rotate(-6deg); }
-
-.submit-notice-label{
-  display:inline-block;
-  margin:0 0 10px;
-  padding:1px 12px 0;
-  background:var(--press-red);
-  color:var(--paper-fresh);
-  font-family:var(--font-poster);
-  font-size:16px;
-  line-height:1.6;
-}
-
-.submit-notice-vacancy{
-  margin:0 0 12px;
-  padding-bottom:10px;
-  border-bottom:1px dashed var(--rule);
-  font-size:15px;
-  line-height:1.8;
-  color:var(--ink-faded);
-}
-
-.submit-notice-heading{
-  margin:0 0 6px;
-  font-family:var(--font-display);
-  font-size:30px;
-  line-height:1.3;
-  color:var(--ink);
-}
-
-.submit-notice-text{
-  margin:0 0 16px;
-  font-size:16px;
-  line-height:1.85;
-  color:var(--ink-body);
-}
-
-/* the action: a rubber stamp, not a floating chat bubble */
-.submit-notice-button{
-  display:inline-block;
-  padding:8px 22px 5px;
-  border:2.5px solid var(--press-red);
-  outline:1px solid var(--press-red);
-  outline-offset:3px;
-  color:var(--press-red);
-  font-family:var(--font-poster);
-  font-size:21px;
-  line-height:1.5;
-  transform:rotate(-2deg);
-  filter:url(#press-stamp);
-  transition:transform .16s ease, color .16s ease, background-color .2s ease;
-}
-
-.submit-notice-button:hover{
-  color:var(--red-deep);
-  background-color:rgba(122, 33, 27, .06);
-  transform:rotate(-3.2deg);
-}
-
-.submit-notice-button:active{
-  transform:rotate(-3.2deg) translateY(1px) scale(.96);
-}
-
-.submit-notice-button:focus-visible{
-  outline-color:var(--ink);
-  box-shadow:0 0 0 5px var(--paper), 0 0 0 7px var(--ink);
-}
-
-.submit-notice-channel{
-  margin:12px 0 0;
-  font-size:var(--t-small);
-  font-weight:600;
-  color:var(--ink-faded);
-}
-
-@media (max-width: 760px){
-  .submit-notice{
-    transform:none;
-  }
-
-  .submit-notice-heading{
-    font-size:26px;
-  }
-}

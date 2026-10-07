@@ -17,6 +17,7 @@ import Toast from '../components/shell/Toast.astro';
 import IssueSwitcher from '../components/shell/IssueSwitcher.astro';
 import PopupAdHost from '../components/ads/PopupAdHost.astro';
 import { newspaper } from '../universe/newspaper';
+import { appearanceVars } from '../lib/appearance';
 
 interface Props {
   issue: Issue;
@@ -46,13 +47,13 @@ const clientData = {
   },
 };
 ---
-<Document docTitle={docTitle} pageKey={pageKey} issueNumber={issue.meta.number} canonical={canonical} noindex={noindex}>
+<Document docTitle={docTitle} pageKey={pageKey} issueNumber={issue.meta.number} canonical={canonical} noindex={noindex} eggs={issue.eggs}>
   <Fragment slot="head">
     {edition.previous && <link rel="prev" href={edition.previous.url} />}
     {edition.next && <link rel="next" href={edition.next.url} />}
   </Fragment>
 
-  <div class="site-shell">
+  <div class="site-shell" style={appearanceVars(issue.meta.appearance)}>
     <Masthead issue={issue} pageKey={pageKey} />
     {newspaper.features.issueSwitcher && <IssueSwitcher edition={edition} />}
     <Ticker ticker={ticker} />

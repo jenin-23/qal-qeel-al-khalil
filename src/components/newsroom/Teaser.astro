@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import type { Teaser } from '../../lib/types';
 import SidebarAd from '../ads/SidebarAd.astro';
+import Redaction from './Redaction.astro';
 
 interface Props {
   teaser: Teaser;
@@ -24,7 +25,7 @@ const { teaser, index } = Astro.props;
   <article class="teaser teaser--redacted">
     <h3>
       {teaser.visible.map((word) => <span>{word} </span>)}
-      {Array.from({ length: teaser.hiddenWords }).map(() => <span class="redaction" aria-hidden="true">████</span>)}
+      {Array.from({ length: teaser.hiddenWords }).map(() => <Redaction def={{ mode: 'permanent', length: 5 }} />)}
     </h3>
   </article>
 )}
@@ -49,4 +50,7 @@ const { teaser, index } = Astro.props;
 )}
 {teaser.type === 'snippet' && (
   <p class="teaser teaser--snippet">{teaser.text}</p>
+)}
+{teaser.type === 'production-note' && (
+  <p class="teaser teaser--note">{teaser.text}</p>
 )}

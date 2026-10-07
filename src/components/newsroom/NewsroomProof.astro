@@ -1,12 +1,15 @@
 ---
 /* ------------------------------------------------------------------ *
  * /issues/NNN/ while the issue is in editing: a proof lying on the
- * editor's desk before it goes to print. Crop marks, column guides,
- * empty frames, red proof marks, a pinned internal note.
+ * editor's desk before it goes to print. An authoritative masthead over
+ * a page still in production: crop marks, column guides, empty frames,
+ * red proof marks, a pinned internal note, the editor's red pencil, and
+ * an envelope for readers' material.
  *
  * The emptiness is the design. Every word here is newsroom wording
  * (src/universe/newsroom.ts) or the issue's own number and month.
- * Real teasers / progress appear only once added to the issue.
+ * Production lines, incoming slips and teasers appear only once real
+ * data is added to the issue's `construction`.
  * ------------------------------------------------------------------ */
 import type { Issue } from '../../lib/types';
 import Document from '../../layouts/Document.astro';
@@ -19,24 +22,30 @@ import { library } from '../../universe/library';
 import { newsroom } from '../../universe/newsroom';
 import { monthLabel } from '../../universe/calendar';
 import { issueUrl } from '../../lib/url';
+import { appearanceVars } from '../../lib/appearance';
 
 interface Props {
   issue: Issue;
 }
 const { issue } = Astro.props;
 const { meta } = issue;
+const c = issue.construction ?? {};
 const month = monthLabel(meta.month, meta.year);
-const teasers = issue.construction?.teasers ?? [];
-const progress = Object.entries(issue.construction?.progress ?? {}).filter(([, v]) => v);
+const teasers = c.teasers ?? [];
+const production = c.production ?? [];
+const incoming = c.incoming ?? [];
+const progress = Object.entries(c.progress ?? {}).filter(([, v]) => v);
 const ph = newsroom.placeholders;
 const sn = newsroom.submissionNotice;
-// WhatsApp click-to-chat: wa.me/<digits>?text=<url-encoded message>
-const sub = issue.construction?.submissions;
-const submitHref = sub ? `https://wa.me/${sub.whatsapp}?text=${encodeURIComponent(sub.message)}` : undefined;
+const pn = newsroom.pencil.notes;
 const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${newspaper.name}`;
+
+// WhatsApp click-to-chat: wa.me/<digits>?text=<url-encoded message>
+const sub = c.submissions;
+const submitHref = sub ? `https://wa.me/${sub.whatsapp}?text=${encodeURIComponent(sub.message)}` : undefined;
 ---
-<Document docTitle={docTitle} pageKey="newsroom" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number), Astro.site).href}>
-  <div class="site-shell is-proof">
+<Document docTitle={docTitle} pageKey="newsroom" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number), Astro.site).href} eggs={issue.eggs}>
+  <div class="site-shell is-proof" style={appearanceVars(meta.appearance)}>
     <span class="crop-mark crop-mark--tr" aria-hidden="true"></span>
     <span class="crop-mark crop-mark--tl" aria-hidden="true"></span>
     <span class="crop-mark crop-mark--br" aria-hidden="true"></span>
@@ -50,12 +59,23 @@ const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${
 
     <main class="news-main proof-main">
       <div class="container">
+        {c.pencil && (
+          <button class="red-pencil" type="button" aria-pressed="false" data-pencil>
+            <span class="red-pencil-body" aria-hidden="true"></span>
+            <span class="red-pencil-label">{newsroom.pencil.label}</span>
+          </button>
+        )}
+
         <section class="proof-front">
           <span class="proof-kicker">{library.issueLabel} {meta.number} · {month}</span>
           <h1 class="proof-headline">
             <span class="proof-disputed">{ph.headlineDisputed}</span>
+            <span class="pencil-note pencil-note--headline" aria-hidden="true">{pn.headline}</span>
           </h1>
-          <p class="proof-deck">{newsroom.lead}</p>
+          <p class="proof-deck">
+            {newsroom.lead}
+            <span class="pencil-note pencil-note--deck" aria-hidden="true">{pn.deck}</span>
+          </p>
         </section>
 
         <div class="proof-grid">
@@ -63,56 +83,102 @@ const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${
             <button class="proof-frame" type="button" data-proof-frame>
               <span class="proof-frame-label">{ph.imageSearch}</span>
               <span class="proof-frame-stamp" aria-hidden="true">{newsroom.stamp}</span>
+              <span class="pencil-note pencil-note--frame" aria-hidden="true">{pn.frame}</span>
             </button>
             <div class="proof-type" aria-hidden="true">
               <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span class="pencil-note pencil-note--type">{pn.type}</span>
             </div>
             <p class="proof-placeholder">{ph.awaiting}</p>
           </article>
 
           <article class="proof-story">
             {submitHref && (
-              <aside class="submit-notice" aria-labelledby="submit-notice-heading">
+              <aside class="submit-notice" aria-labelledby="submit-notice-label">
                 <span class="submit-notice-tape submit-notice-tape--a" aria-hidden="true"></span>
                 <span class="submit-notice-tape submit-notice-tape--b" aria-hidden="true"></span>
-                <p class="submit-notice-label">{sn.label}</p>
+                <h2 class="submit-notice-label" id="submit-notice-label">{sn.label}</h2>
                 <p class="submit-notice-vacancy">{sn.vacancy}</p>
-                <h2 class="submit-notice-heading" id="submit-notice-heading">{sn.heading}</h2>
-                <p class="submit-notice-text">{sn.text}</p>
-                <a class="submit-notice-button" href={submitHref} target="_blank" rel="noopener noreferrer" data-submit-whatsapp>
-                  {sn.button}
-                </a>
-                <p class="submit-notice-channel">{sn.channel}</p>
+                <p class="submit-notice-questions">{sn.questions}</p>
+                <a class="submit-notice-link" href="#submission-envelope" data-open-envelope>[ {sn.button} ]</a>
               </aside>
             )}
             <div class="proof-type proof-type--short" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>
-            <p class="proof-redacted" tabindex="0">{ph.underReview}</p>
+            <p class="proof-redacted" tabindex="0">
+              {ph.underReview}
+              <span class="pencil-note pencil-note--redaction" aria-hidden="true">{pn.redaction}</span>
+            </p>
             <div class="proof-type proof-type--ghost" aria-hidden="true">
               <span></span><span></span><span></span><span></span>
             </div>
-            <p class="proof-placeholder proof-placeholder--boxed">{ph.noReply}</p>
+            <p class="proof-placeholder proof-placeholder--boxed">
+              {ph.noReply}
+              <span class="pencil-note pencil-note--noreply" aria-hidden="true">{pn.noReply}</span>
+            </p>
           </article>
 
-          <aside class="proof-board">
-            <span class="paperclip" aria-hidden="true"></span>
-            <ul class="proof-status">
-              {newsroom.status.map((line) => <li>{line}</li>)}
-            </ul>
-            {progress.length > 0 && (
-              <dl class="proof-progress">
-                {progress.map(([key, item]) => (
-                  <div>
-                    <dt>{newsroom.progressLabels[key as keyof typeof newsroom.progressLabels]}</dt>
-                    <dd>{item!.total !== undefined ? `${item!.done} / ${item!.total}` : item!.done}</dd>
-                  </div>
-                ))}
-              </dl>
+          <aside class="proof-desk">
+            {submitHref && (
+              <details class="envelope" id="submission-envelope">
+                <summary class="envelope-front">
+                  <span class="envelope-flap" aria-hidden="true"></span>
+                  <span class="envelope-stamp" aria-hidden="true"></span>
+                  <span class="envelope-address">{sn.envelope}</span>
+                </summary>
+                <div class="envelope-letter">
+                  <h2 class="envelope-heading">{sn.heading}</h2>
+                  <p class="envelope-text">{sn.text}</p>
+                  <a class="submit-notice-button" href={submitHref} target="_blank" rel="noopener noreferrer" data-submit-whatsapp>{sn.button}</a>
+                  <p class="submit-notice-channel">{sn.channel}</p>
+                </div>
+              </details>
             )}
-            <div class="proof-reserved">
-              <span>{ph.reserved}</span>
+
+            <div class="proof-board">
+              <span class="paperclip" aria-hidden="true"></span>
+              <ul class="proof-status">
+                {newsroom.status.map((line) => <li>{line}</li>)}
+              </ul>
+              <span class="pencil-note pencil-note--board" aria-hidden="true">{pn.board}</span>
+
+              {production.length > 0 && (
+                <dl class="proof-production">
+                  {production.map((line) => (
+                    <div class={`production-line is-${line.state}`} data-category={line.category}>
+                      <dt>{line.label}</dt>
+                      <dd>{line.stateLabel}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              {progress.length > 0 && (
+                <dl class="proof-progress">
+                  {progress.map(([key, item]) => (
+                    <div>
+                      <dt>{newsroom.progressLabels[key as keyof typeof newsroom.progressLabels]}</dt>
+                      <dd>{item!.total !== undefined ? `${item!.done} / ${item!.total}` : item!.done}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              <div class="proof-reserved">
+                <span>{ph.reserved}</span>
+                <span class="pencil-note pencil-note--reserved" aria-hidden="true">{pn.reserved}</span>
+              </div>
             </div>
+
+            {incoming.map((item) => (
+              <div class={`incoming-slip is-${item.state}`} data-incoming={item.id}>
+                <span class="paperclip" aria-hidden="true"></span>
+                <p class="incoming-label">{newsroom.incoming.label}</p>
+                {newsroom.incoming.states[item.state] && <p class="incoming-state">{newsroom.incoming.states[item.state]}</p>}
+                {item.teaser && <Teaser teaser={item.teaser} index={0} />}
+              </div>
+            ))}
           </aside>
         </div>
 

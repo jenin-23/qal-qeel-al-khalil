@@ -1,0 +1,460 @@
+/* ==================================================================
+   On the proof: the desk column, the readers envelope, the editors
+   notice, the red pencil and its marks, production lines, incoming
+   slips, redactions.
+   ================================================================== */
+.proof-desk{
+  display:grid;
+  align-content:start;
+  gap:30px;
+  padding-inline-start:var(--col-gap);
+}
+
+/* ---- «تنويه من هيئة التحرير»: a taped editors notice -------------- */
+.submit-notice{
+  position:relative;
+  margin:2px 0 24px;
+  padding:22px 18px 16px;
+  border:2px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-7px;
+  background-color:var(--paper);
+  background-image:var(--fibers), var(--grain);
+  box-shadow:0 14px 24px -16px rgba(40, 29, 12, .6);
+  text-align:center;
+  transform:rotate(-.8deg);
+}
+
+.submit-notice-tape{
+  position:absolute;
+  top:-11px;
+  width:62px;
+  height:22px;
+  background:rgba(236, 226, 196, .8);
+  border:1px solid rgba(33, 29, 24, .12);
+  box-shadow:0 1px 2px rgba(0, 0, 0, .12);
+}
+
+.submit-notice-tape--a{ right:18px; transform:rotate(5deg); }
+.submit-notice-tape--b{ left:18px; transform:rotate(-6deg); }
+
+.submit-notice-label{
+  display:inline-block;
+  margin:0 0 10px;
+  padding:1px 12px 0;
+  background:var(--press-red);
+  color:var(--paper-fresh);
+  font-family:var(--font-poster);
+  font-size:16px;
+  font-weight:400;
+  line-height:1.6;
+}
+
+.submit-notice-vacancy{
+  margin:0 0 10px;
+  font-size:16px;
+  line-height:1.85;
+  color:var(--ink-body);
+}
+
+.submit-notice-questions{
+  margin:0 0 12px;
+  padding-top:10px;
+  border-top:1px dashed var(--rule);
+  font-family:var(--font-display);
+  font-size:19px;
+  font-weight:700;
+  line-height:1.6;
+  color:var(--ink);
+}
+
+.submit-notice-link{
+  font-family:var(--font-body);
+  font-size:16px;
+  font-weight:700;
+  color:var(--press-red);
+  text-decoration:underline;
+  text-decoration-color:rgba(122, 33, 27, .4);
+  text-underline-offset:6px;
+}
+
+.submit-notice-link:hover,
+.submit-notice-link:focus-visible{
+  text-decoration-color:currentColor;
+}
+
+/* ---- the envelope: إلى هيئة التحرير ------------------------------- */
+.envelope{
+  position:relative;
+  transform:rotate(-1.6deg);
+  transition:transform .35s var(--ease-paper);
+}
+
+.envelope:hover{
+  transform:rotate(-.6deg) translateY(-2px);
+}
+
+.envelope-front{
+  position:relative;
+  display:grid;
+  place-items:center;
+  min-height:150px;
+  padding:56px 20px 22px;
+  list-style:none;
+  border:1px solid rgba(33, 29, 24, .3);
+  background-color:#ead9b4;
+  background-image:var(--fibers), var(--grain);
+  box-shadow:0 16px 26px -16px rgba(40, 29, 12, .65);
+  cursor:pointer;
+}
+
+.envelope-front::-webkit-details-marker{
+  display:none;
+}
+
+/* the flap: a triangle of folded paper */
+.envelope-flap{
+  position:absolute;
+  inset:0 0 auto;
+  height:62px;
+  background:linear-gradient(to bottom, #e2cfa6, #dcc79c);
+  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  transform-origin:top;
+  transition:transform .45s var(--ease-paper);
+}
+
+.envelope-flap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom, rgba(33, 29, 24, .06), transparent 70%);
+}
+
+/* a red editorial seal where a postage stamp would be */
+.envelope-stamp{
+  position:absolute;
+  top:12px;
+  left:14px;
+  width:34px;
+  height:40px;
+  border:2px dashed rgba(122, 33, 27, .55);
+  background:
+    radial-gradient(circle at 50% 46%, var(--press-red) 0 6px, transparent 7px),
+    var(--paper-fresh);
+  transform:rotate(6deg);
+}
+
+.envelope-address{
+  position:relative;
+  padding:4px 16px 2px;
+  border-bottom:1.5px solid var(--ink);
+  font-family:var(--font-display);
+  font-size:24px;
+  font-weight:700;
+  color:var(--ink);
+}
+
+.envelope-front:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:4px;
+}
+
+.envelope[open] .envelope-flap{
+  transform:scaleY(-1);
+}
+
+/* the letter inside slides out */
+.envelope-letter{
+  position:relative;
+  margin:-10px 10px 0;
+  padding:22px 18px 18px;
+  border:1px solid rgba(33, 29, 24, .22);
+  background-color:var(--paper-fresh);
+  background-image:repeating-linear-gradient(to bottom, transparent 0 31px, rgba(70, 120, 170, .12) 31px 32px), var(--grain);
+  box-shadow:0 14px 24px -16px rgba(40, 29, 12, .55);
+  text-align:center;
+}
+
+.envelope[open] .envelope-letter{
+  animation:letterOut .45s var(--ease-paper);
+}
+
+.envelope-heading{
+  margin:0 0 8px;
+  font-family:var(--font-display);
+  font-size:28px;
+  line-height:1.3;
+  color:var(--ink);
+}
+
+.envelope-text{
+  margin:0 0 18px;
+  font-size:16px;
+  line-height:1.9;
+  color:var(--ink-body);
+}
+
+/* the action: a rubber stamp, not a floating chat bubble */
+.submit-notice-button{
+  display:inline-block;
+  padding:8px 22px 5px;
+  border:2.5px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:3px;
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:21px;
+  line-height:1.5;
+  transform:rotate(-2deg);
+  filter:url(#press-stamp);
+  transition:transform .16s ease, color .16s ease, background-color .2s ease;
+}
+
+.submit-notice-button:hover{
+  color:var(--red-deep);
+  background-color:rgba(122, 33, 27, .06);
+  transform:rotate(-3.2deg);
+}
+
+.submit-notice-button:active{
+  transform:rotate(-3.2deg) translateY(1px) scale(.96);
+}
+
+.submit-notice-button:focus-visible{
+  outline-color:var(--ink);
+  box-shadow:0 0 0 5px var(--paper), 0 0 0 7px var(--ink);
+}
+
+.submit-notice-channel{
+  margin:12px 0 0;
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--ink-faded);
+}
+
+@keyframes letterOut{
+  from{ transform:translateY(-26px); opacity:0; }
+  to{ transform:none; opacity:1; }
+}
+
+/* ---- قلم هيئة التحرير: the red pencil ------------------------------ */
+.red-pencil{
+  position:absolute;
+  top:6px;
+  right:0;
+  z-index:5;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:4px 0;
+  border:0;
+  background:none;
+  font-family:var(--font-body);
+  font-size:var(--t-small);
+  font-weight:700;
+  color:var(--ink-faded);
+  cursor:pointer;
+}
+
+.red-pencil-body{
+  position:relative;
+  width:118px;
+  height:13px;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, .18) 0 30%, transparent 30% 66%, rgba(0, 0, 0, .14) 66%),
+    var(--press-red);
+  clip-path:polygon(0 0, 86% 0, 100% 50%, 86% 100%, 0 100%);
+  transform:rotate(-8deg);
+  transition:transform .3s var(--ease-paper);
+}
+
+/* sharpened wood and the red lead */
+.red-pencil-body::after{
+  content:"";
+  position:absolute;
+  inset-block:0;
+  right:0;
+  width:16px;
+  background:linear-gradient(to left, var(--press-red) 0 32%, #d8b58a 32%);
+  clip-path:polygon(0 0, 100% 50%, 0 100%);
+}
+
+.red-pencil:hover .red-pencil-body{
+  transform:rotate(-12deg) translateX(-3px);
+}
+
+.red-pencil[aria-pressed="true"]{
+  color:var(--press-red);
+}
+
+.red-pencil[aria-pressed="true"] .red-pencil-body{
+  transform:rotate(-24deg) translate(-6px, 6px);
+}
+
+.red-pencil:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:4px;
+}
+
+/* the marks it makes: hidden until the pencil is taken up */
+.pencil-note{
+  position:absolute;
+  z-index:4;
+  display:none;
+  font-family:"Aref Ruqaa", var(--font-display);
+  font-size:20px;
+  font-weight:700;
+  line-height:1.2;
+  color:var(--press-red);
+  white-space:nowrap;
+  pointer-events:none;
+  transform:rotate(var(--r, -6deg));
+}
+
+.pencil-on .pencil-note{
+  display:block;
+  animation:pencilMark .35s var(--ease-paper) both;
+}
+
+.proof-headline,
+.proof-deck,
+.proof-frame,
+.proof-type,
+.proof-redacted,
+.proof-placeholder--boxed,
+.proof-reserved,
+.proof-board{
+  position:relative;
+}
+
+.pencil-note--headline{ top:-6px; inset-inline-start:-6px; --r:-10deg; font-size:24px; }
+.pencil-on .pencil-note--deck{ display:inline-block; position:relative; margin-inline-start:8px; --r:8deg; font-size:26px; }
+.pencil-note--frame{ bottom:12px; inset-inline-end:14px; --r:-4deg; }
+.pencil-note--type{ top:-26px; inset-inline-end:0; --r:4deg; }
+.pencil-note--redaction{ top:-20px; inset-inline-start:8%; --r:-7deg; }
+.pencil-note--noreply{ top:-18px; inset-inline-end:6px; --r:6deg; }
+.pencil-note--reserved{ top:-6px; inset-inline-start:-8px; --r:-9deg; }
+.pencil-note--board{ top:6px; inset-inline-start:-26px; --r:-14deg; font-size:17px; }
+
+/* under the pencil, the circle the editor drew round the type */
+.pencil-on .proof-type::after{
+  content:"";
+  position:absolute;
+  inset:-6px -4px;
+  border:1.5px solid rgba(122, 33, 27, .55);
+  border-radius:46% 54% 50% 50% / 60% 50% 50% 40%;
+  transform:rotate(-1.5deg);
+  animation:pencilMark .4s var(--ease-paper) .1s both;
+}
+
+@keyframes pencilMark{
+  from{ opacity:0; transform:rotate(var(--r, -6deg)) scale(1.25); }
+  to{ opacity:1; transform:rotate(var(--r, -6deg)); }
+}
+
+/* ---- production lines (only when configured) ----------------------- */
+.proof-production{
+  display:grid;
+  gap:2px;
+  margin:12px 0 0;
+}
+
+.production-line{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:5px 0;
+  border-bottom:1px dotted rgba(33, 29, 24, .35);
+  font-size:15px;
+}
+
+.production-line dt{ font-weight:700; }
+.production-line dd{ margin:0; color:var(--ink-faded); }
+.production-line.is-approved dd,
+.production-line.is-ready dd{ color:var(--press-red); font-weight:700; }
+
+/* ---- incoming material: a slip clipped on (only when real) --------- */
+.incoming-slip{
+  position:relative;
+  padding:20px 16px 14px;
+  border:1px solid rgba(33, 29, 24, .22);
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:0 12px 20px -14px rgba(40, 29, 12, .55);
+  transform:rotate(-1.2deg);
+  text-align:center;
+}
+
+.incoming-slip:nth-of-type(2n){ transform:rotate(1deg); }
+
+.incoming-label{
+  margin:0;
+  font-family:var(--font-display);
+  font-size:19px;
+  font-weight:700;
+}
+
+.incoming-state{
+  margin:4px 0 0;
+  color:var(--red-faded);
+  font-size:15px;
+}
+
+/* ---- redactions (component) --------------------------------------- */
+.redaction{
+  display:inline-block;
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--ink);
+  font:inherit;
+  letter-spacing:-1px;
+}
+
+button.redaction{
+  cursor:pointer;
+  transition:transform .2s ease;
+}
+
+button.redaction:hover{
+  transform:translateX(-1px) rotate(-.4deg);
+}
+
+.redaction-reveal{
+  display:none;
+}
+
+.redaction[aria-expanded="true"] .redaction-bar{
+  display:none;
+}
+
+.redaction[aria-expanded="true"] .redaction-reveal{
+  display:inline;
+  color:var(--press-red);
+}
+
+/* ---- narrower desks ------------------------------------------------- */
+@media (max-width: 900px){
+  .red-pencil{
+    position:relative;
+    top:auto;
+    right:auto;
+    margin:0 0 6px auto;
+  }
+}
+
+@media (max-width: 760px){
+  .proof-desk{
+    grid-template-columns:1fr;
+  }
+
+  .submit-notice,
+  .envelope{
+    transform:none;
+  }
+
+  .pencil-note--board{
+    inset-inline-start:auto;
+    inset-inline-end:8px;
+  }
+}

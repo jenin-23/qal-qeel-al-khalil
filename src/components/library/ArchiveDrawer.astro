@@ -1,0 +1,75 @@
+---
+/* ------------------------------------------------------------------ *
+ * محفوظات هيئة التحرير: a small card-index drawer on the storage shelf.
+ * A discovery, not navigation. Opening it shows folder tabs; every
+ * folder holds only real material (src/universe/archives.ts) and says
+ * «[بانتظار المادة]» until it has some.
+ * ------------------------------------------------------------------ */
+import { Image } from 'astro:assets';
+import { drawer } from '../../universe/archives';
+import { newsroom } from '../../universe/newsroom';
+import { paperUi } from '../../universe/ui';
+
+const folders = drawer.folders.filter((f) => !(f.hiddenWhenEmpty && f.items.length === 0));
+---
+<button class="archive-drawer" type="button" data-drawer-open aria-haspopup="dialog" aria-controls="archiveDrawer">
+  <span class="drawer-card">{drawer.label}</span>
+  <span class="drawer-pull" aria-hidden="true"></span>
+</button>
+
+<dialog class="modal drawer-dialog" id="archiveDrawer" aria-labelledby="archiveDrawerTitle">
+  <div class="modal-card drawer-card-index">
+    <button class="modal-close" type="button" aria-label={paperUi.closeLabel} data-close>×</button>
+    <h2 id="archiveDrawerTitle">{drawer.label}</h2>
+
+    <div class="drawer-tabs" role="tablist" aria-label={drawer.label}>
+      {folders.map((folder, i) => (
+        <button
+          class:list={['drawer-tab', { 'is-sealed': folder.sealed }]}
+          type="button"
+          role="tab"
+          id={`folder-tab-${folder.id}`}
+          aria-controls={`folder-${folder.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          data-folder-tab
+        >{folder.label}</button>
+      ))}
+    </div>
+
+    {folders.map((folder, i) => (
+      <div
+        class="drawer-folder"
+        role="tabpanel"
+        id={`folder-${folder.id}`}
+        aria-labelledby={`folder-tab-${folder.id}`}
+        hidden={i !== 0}
+      >
+        {folder.items.length === 0 ? (
+          <p class="drawer-empty">{newsroom.placeholders.awaiting}</p>
+        ) : (
+          <ul class="drawer-items">
+            {folder.items.map((item) => (
+              <li class={`drawer-item drawer-item--${item.type}`}>
+                {item.type === 'headline' && <p class="drawer-headline">{item.text}</p>}
+                {item.type === 'correction' && <p>{item.text}</p>}
+                {item.type === 'document' && (
+                  <article>
+                    <h3>{item.title}</h3>
+                    <div set:html={item.html} />
+                  </article>
+                )}
+                {item.type === 'photo' && (
+                  <figure class="drawer-photo">
+                    <Image src={item.image} alt={item.alt} widths={[320, 640]} sizes="320px" />
+                    {(item.date || item.caption) && <figcaption>{[item.date, item.caption].filter(Boolean).join(' · ')}</figcaption>}
+                  </figure>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ))}
+  </div>
+</dialog>

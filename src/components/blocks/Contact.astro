@@ -1,5 +1,6 @@
 ---
 import type { ContactBlock } from '../../lib/types';
+import { newspaper } from '../../universe/newspaper';
 interface Props { block: ContactBlock }
 const { block } = Astro.props;
 const { form } = block;
@@ -18,7 +19,7 @@ const { form } = block;
         <p>{form.subheading}</p>
       </div>
 
-      <form class="contact-form">
+      <form class="contact-form" data-whatsapp={newspaper.contact.whatsapp} data-greeting={newspaper.contact.greeting}>
         {form.fields.map((field, i) => {
           const id = `contact-field-${i + 1}`;
           return (

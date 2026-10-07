@@ -32,8 +32,30 @@ export const newsroom = {
     vacancy: 'لا تزال بعض المساحات شاغرة لأسباب بعضها تحريري وبعضها يعود إلى عدم إرسالكم شيئاً.',
     heading: 'لديك ما يستحق النشر؟',
     text: 'أرسل ما لديك إلى هيئة التحرير: خبر، صورة، موقف، مقال، إعلان، أو أي مادة ترى أن من الأفضل توثيقها قبل أن ينكرها أصحابها.',
+    questions: 'خبر؟ صورة؟ مقال؟ إعلان؟ معلومة لا ينبغي أن تضيع؟',
     button: 'أرسل إلى هيئة التحرير',
     channel: 'واتساب — باب المساهمات مفتوح',
+    /** the envelope's address line */
+    envelope: 'إلى هيئة التحرير',
+  },
+  /** قلم هيئة التحرير: the red pencil and its sparse proof marks (approved) */
+  pencil: {
+    label: 'قلم هيئة التحرير',
+    notes: {
+      headline: 'راجع',
+      deck: '؟',
+      frame: 'ننتظر الصورة',
+      redaction: 'تأكيد',
+      noReply: 'مصدر؟',
+      reserved: 'هل يُنشر؟',
+      type: '↓ هنا',
+      board: 'قيد المراجعة',
+    },
+  },
+  /** a slip clipped on when real material arrives (approved) */
+  incoming: {
+    label: 'ورد حديثاً إلى هيئة التحرير',
+    states: { reviewing: '[قيد المراجعة]' } as Partial<Record<string, string>>,
   },
   /** labels for real production counts (shown only when provided) */
   progressLabels: {

@@ -34,6 +34,35 @@ export interface IssueMeta {
   /** Copyright line in the footer. */
   copyright?: string;
   archive?: ArchiveCard;
+  /** How this edition looks as a physical object. Deterministic, never random. */
+  appearance?: IssueAppearance;
+  /**
+   * The release event (editing → published). When `announce` is set, the
+   * library may stage the printing sequence once per browser until `until`.
+   * Infrastructure only: the sequence itself is added at Issue 002's launch.
+   */
+  release?: { announce: boolean; until?: string };
+}
+
+/**
+ * Physical character of a printed edition, all 0-1 unless noted.
+ * Used on the library shelf and, very lightly, on the issue's own headlines.
+ */
+export interface IssueAppearance {
+  /** 0 fresh newsprint … 1 decades in a drawer */
+  paperAge: number;
+  /** strength of the black plate on headlines (0.7-1) */
+  printOpacity: number;
+  /** ink bleeding into the paper on display type */
+  inkSpread: number;
+  /** red plate misregistration, in px (0-1.5) */
+  registrationOffset: number;
+  /** how visible the fold is */
+  creaseLevel: number;
+  /** sheets visible in the stack on the shelf (1-6) */
+  sheets: number;
+  /** a proof of loose sheets rather than a folded copy */
+  loose?: boolean;
 }
 
 export interface ArchiveCard {
@@ -283,6 +312,10 @@ export interface Issue {
   entertainment?: EntertainmentDef;
   /** While status is 'editing': what the newsroom proof may show. */
   construction?: ConstructionDef;
+  /** Real contributors (future press credentials). Empty until real. */
+  contributors?: Contributor[];
+  /** Easter eggs enabled for this issue (ids from src/universe/eggs.ts). */
+  eggs?: string[];
 }
 
 /* ---- an issue in the newsroom (status: 'editing') ----------------- */
@@ -324,7 +357,60 @@ export type Teaser =
   /** a short cryptic classified line */
   | { type: 'classified'; text: string }
   /** a small fragment of a future article */
-  | { type: 'snippet'; text: string };
+  | { type: 'snippet'; text: string }
+  /** a production note pinned to the proof (approved wording only) */
+  | { type: 'production-note'; text: string };
+
+/* ---- production states (truthful only) ---------------------------- */
+
+export type ProductionState = 'waiting' | 'received' | 'reviewing' | 'approved' | 'ready';
+
+/**
+ * One line on the production board, e.g.
+ * { category: 'images', label: 'الصور', state: 'received', stateLabel: 'قيد الاستلام' }.
+ * Labels are written by the editors (nothing is generated) and only
+ * configured lines are shown.
+ */
+export interface ProductionLine {
+  category: 'articles' | 'images' | 'ads' | 'sections' | 'fatwa' | 'layout' | 'print' | (string & {});
+  label: string;
+  state: ProductionState;
+  stateLabel: string;
+}
+
+/**
+ * Material that really arrived. Shown as a clipped slip
+ * («ورد حديثاً إلى هيئة التحرير»); the material itself stays private
+ * unless `teaser` is given.
+ */
+export interface IncomingItem {
+  id: string;
+  /** ISO date it arrived */
+  receivedAt?: string;
+  state: ProductionState;
+  /** optional, approved public hint */
+  teaser?: Teaser;
+}
+
+/** A real contributor to an issue (future press credentials). Never invented. */
+export interface Contributor {
+  name: string;
+  /** e.g. 'مراسل غير متفرغ' */
+  role: string;
+  credential?: boolean;
+}
+
+/**
+ * A redaction: permanent, revealable (only if `reveal` is provided) or
+ * answered by an editorial response. Never hides invented text.
+ */
+export interface RedactionDef {
+  mode: 'permanent' | 'revealable' | 'response';
+  /** approximate length in characters of the blacked-out run */
+  length: number;
+  reveal?: string;
+  response?: string;
+}
 
 /** Readers sending material to the newsroom for this issue (WhatsApp click-to-chat). */
 export interface SubmissionsDef {
@@ -336,6 +422,12 @@ export interface SubmissionsDef {
 
 export interface ConstructionDef {
   progress?: IssueProgress;
+  /** production board lines; nothing is shown until one is configured */
+  production?: ProductionLine[];
+  /** real arrivals, newest first */
+  incoming?: IncomingItem[];
   teasers?: Teaser[];
   submissions?: SubmissionsDef;
+  /** the editor's red pencil (annotation layer over the proof) */
+  pencil?: boolean;
 }

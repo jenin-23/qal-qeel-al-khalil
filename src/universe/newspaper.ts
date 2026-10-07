@@ -38,6 +38,11 @@ export const newspaper = {
     { key: 'contact', label: 'تواصل معنا' },
   ] as { key: 'library' | 'archive' | 'about' | 'contact'; label: string }[],
   city: 'عمّان – الأردن',
+  /** تواصل معنا: the contact form opens a WhatsApp chat with هيئة التحرير */
+  contact: {
+    whatsapp: '962791432787',
+    greeting: 'مرحباً هيئة تحرير قال قيل،',
+  },
   footerLinks: [
     { key: 'about', label: 'من نحن' },
     { key: 'contact', label: 'تواصل معنا' },

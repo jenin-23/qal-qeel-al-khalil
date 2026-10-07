@@ -16,6 +16,8 @@ export const meta: IssueMeta = {
     statusLabel: "مفتوح",
     statusTone: 'published',
   },
+  // the archived copy: older paper, a fold, a few copies stacked
+  appearance: { paperAge: 0.55, printOpacity: 0.93, inkSpread: 0.6, registrationOffset: 0.6, creaseLevel: 0.7, sheets: 4 },
 };
 
 export const ui: IssueUI = {

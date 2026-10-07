@@ -14,7 +14,10 @@ import { initBirthday } from './birthday';
 import { initCoin } from './coin';
 import { initQuiz } from './quiz';
 import { initPopupAds } from './popup-ads';
-import { initLibrary } from './library';
+import { initLibrary, initIssueSide } from './library';
+import { initEggs } from './eggs';
+import { initPencil } from './pencil';
+import { initPrint } from './print';
 import { initNewsroom } from './newsroom';
 
 const issue = readJSON<IssueData>('issue-data');
@@ -22,7 +25,11 @@ const entertainment = readJSON<EntertainmentData>('entertainment-data');
 
 initModals();
 initLibrary();
+initIssueSide();
 initNewsroom();
+initPencil();
+initPrint();
+initEggs();
 initTickers();
 initArticleToggles();
 

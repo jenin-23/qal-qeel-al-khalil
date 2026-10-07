@@ -4,12 +4,14 @@
  * A readable issue shows its real front page in miniature (name, date,
  * its own front headline and photograph). An issue still in editing is
  * an unassembled proof: loose sheets, empty frames, red marks, a clip.
- * Everything is drawn from the issue's data; nothing is invented.
+ * Physical character (age, ink, fold, thickness) comes from
+ * meta.appearance: deterministic per issue, never random.
  * ------------------------------------------------------------------ */
 import { Image } from 'astro:assets';
 import type { ArticleImage, Issue } from '../../lib/types';
 import { isEditing } from '../../lib/issues';
 import { issueUrl } from '../../lib/url';
+import { appearanceVars, stackShadow } from '../../lib/appearance';
 import { newspaper } from '../../universe/newspaper';
 import { library } from '../../universe/library';
 import { newsroom } from '../../universe/newsroom';
@@ -33,13 +35,17 @@ const photo = issue.articles.map((a) => a.image).find((img): img is ArticleImage
 const label = [`${library.issueLabel} ${meta.number}`, dateLine, editing ? newsroom.stamp : '']
   .filter(Boolean)
   .join(' · ');
+const style = `${appearanceVars(meta.appearance)};--stack:${stackShadow(meta.appearance)}`;
 ---
-<li class="shelf-slot" style={`--i:${index}`}>
+<li class="shelf-slot" style={`--i:${index}`} data-issue-slot={meta.number}>
   <a
     class:list={['shelf-paper', { 'is-editing': editing }]}
     href={issueUrl(meta.number)}
+    style={style}
     data-take
+    data-issue={meta.number}
     data-status={meta.status}
+    data-release={meta.release?.announce ? meta.release.until ?? 'on' : undefined}
     aria-label={label}
   >
     {editing && (
@@ -49,6 +55,8 @@ const label = [`${library.issueLabel} ${meta.number}`, dateLine, editing ? newsr
         <span class="editor-slip"><span></span><span></span><span></span></span>
       </span>
     )}
+
+    <span class="paper-stack" aria-hidden="true"></span>
 
     <span class="paper-front" aria-hidden="true">
       <span class="pf-rule"></span>
@@ -92,4 +100,6 @@ const label = [`${library.issueLabel} ${meta.number}`, dateLine, editing ? newsr
     <span>{library.issueLabel} {meta.number}</span>
     <span class="shelf-label-date">{dateLine}</span>
   </span>
+  <!-- visual memory only: marks the copy last read; never opens it -->
+  <span class="shelf-recent" hidden>{library.recentlyRead}</span>
 </li>

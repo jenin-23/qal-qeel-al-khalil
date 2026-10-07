@@ -9,4 +9,8 @@ export const library = {
   issueLabel: 'العدد',
   /** link to the structured index */
   archiveLabel: 'الأرشيف',
+  /** quiet mark on the copy this browser read last (approved wording) */
+  recentlyRead: 'شوهد مؤخراً',
+  /** the printed edition of a completed issue (approved wording) */
+  printEdition: 'نسخة للطباعة',
 };

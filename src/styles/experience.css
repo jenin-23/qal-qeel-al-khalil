@@ -1,0 +1,396 @@
+/* ==================================================================
+   The living archive: details that reward a closer look.
+   Year shelves, physical stacks, the editors drawer, page transitions,
+   the reading mark, ink character, selections, eggs.
+   ================================================================== */
+
+/* ---- selection: printed in faded press red ------------------------ */
+::selection{
+  background:rgba(154, 74, 61, .26);
+  color:var(--ink);
+}
+
+/* ---- each edition's ink (meta.appearance), on display type only ---- */
+.site-shell .brand,
+.site-shell .lead-title,
+.site-shell .story-title,
+.site-shell .home-hero-title{
+  /* black plate strength, a hair of ink spread, the red plate slightly off */
+  color:rgb(33 29 24 / var(--print-opacity, .96));
+  text-shadow:
+    0 0 calc(var(--ink-spread, .4) * 1px) rgba(33, 29, 24, .45),
+    var(--reg-offset, .4px) 0 0 rgba(122, 33, 27, .14);
+}
+
+/* rules are drawn by hand-set brass, never perfectly even */
+.story-card,
+.news-hero{
+  border-bottom-color:rgb(33 29 24 / var(--print-opacity, .96));
+}
+
+/* ---- the library: one shelf per year ------------------------------ */
+.shelf-year{
+  position:relative;
+}
+
+.shelf-year + .shelf-year{
+  margin-top:6px;
+}
+
+/* the year, on a printed card tacked to the shelf's edge */
+.shelf-year-label{
+  position:absolute;
+  top:12px;
+  inset-inline-start:-8px;
+  z-index:3;
+  margin:0;
+  padding:2px 12px 1px;
+  border:1px solid rgba(33, 29, 24, .55);
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:0 2px 4px rgba(0, 0, 0, .45);
+  font-family:var(--font-display);
+  font-size:17px;
+  font-weight:700;
+  line-height:1.5;
+  color:var(--ink);
+  transform:rotate(-2deg);
+}
+
+/* ---- pulling a copy off the shelf: the layers part a little ------- */
+.shelf-paper:hover .paper-front,
+.shelf-paper:focus-visible .paper-front{
+  transform:translate(2px, -3px);
+}
+
+.shelf-paper:hover .paper-stack,
+.shelf-paper:focus-visible .paper-stack{
+  transform:translate(-1px, 1px);
+}
+
+/* the proof's loose sheets fan out when handled */
+.shelf-paper.is-editing:hover .loose-sheet--a{ transform:translate(13px, -10px) rotate(6.5deg); }
+.shelf-paper.is-editing:hover .loose-sheet--b{ transform:translate(-11px, 7px) rotate(-5deg); }
+.loose-sheet{ transition:transform .4s var(--ease-paper); }
+
+/* ---- visual memory: the copy read last sits a touch forward -------- */
+.shelf-slot.is-recent .shelf-paper{
+  transform:translateY(-5px) rotate(calc(var(--lean) * .5));
+}
+
+.shelf-recent{
+  position:absolute;
+  bottom:30px;
+  inset-inline-end:14px;
+  z-index:3;
+  padding:0 6px;
+  background:var(--paper-fresh);
+  border:1px solid rgba(122, 33, 27, .5);
+  font-size:11px;
+  font-weight:700;
+  line-height:1.7;
+  color:var(--press-red);
+  transform:rotate(-4deg);
+  pointer-events:none;
+}
+
+.shelf-recent[hidden]{
+  display:none;
+}
+
+/* ---- محفوظات هيئة التحرير: a card-index drawer --------------------- */
+.archive-drawer{
+  position:relative;
+  display:grid;
+  place-items:center;
+  gap:12px;
+  width:min(250px, 34%);
+  height:118px;
+  padding:16px 14px 18px;
+  border:1px solid rgba(0, 0, 0, .55);
+  background:
+    linear-gradient(to bottom, rgba(255, 230, 190, .1), transparent 35%),
+    linear-gradient(to bottom, #6b5039, #4b3726);
+  box-shadow:
+    inset 0 0 0 3px rgba(0, 0, 0, .18),
+    0 8px 14px -8px rgba(0, 0, 0, .8);
+  cursor:pointer;
+  transition:transform .35s var(--ease-paper);
+}
+
+/* the label card in its brass-less holder */
+.drawer-card{
+  padding:3px 12px 2px;
+  border:1px solid rgba(33, 29, 24, .6);
+  outline:2px solid rgba(0, 0, 0, .35);
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  font-family:var(--font-display);
+  font-size:15px;
+  font-weight:700;
+  line-height:1.55;
+  color:var(--ink);
+  white-space:nowrap;
+}
+
+.drawer-pull{
+  width:56px;
+  height:10px;
+  border-radius:0 0 8px 8px;
+  border:2px solid #2c2017;
+  border-top:0;
+  box-shadow:0 2px 2px rgba(0, 0, 0, .4);
+}
+
+.archive-drawer:hover,
+.archive-drawer.is-open{
+  transform:translateY(5px);
+}
+
+.archive-drawer:focus-visible{
+  outline:2px solid var(--paper-fresh);
+  outline-offset:5px;
+}
+
+/* inside: an index of folders */
+.drawer-card-index{
+  width:min(640px, 100%);
+  text-align:right;
+}
+
+.drawer-card-index h2{
+  text-align:center;
+}
+
+.drawer-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin:14px 0 0;
+  padding:0 4px;
+  border-bottom:1px solid var(--ink);
+}
+
+.drawer-tab{
+  position:relative;
+  bottom:-1px;
+  padding:5px 12px 4px;
+  border:1px solid rgba(33, 29, 24, .45);
+  border-bottom-color:var(--ink);
+  border-radius:4px 4px 0 0;
+  background:#e6d8b6;
+  font-family:var(--font-body);
+  font-size:14px;
+  font-weight:700;
+  color:var(--ink-faded);
+  cursor:pointer;
+}
+
+.drawer-tab[aria-selected="true"]{
+  border-bottom-color:var(--paper-fresh);
+  background:var(--paper-fresh);
+  color:var(--ink);
+}
+
+.drawer-tab.is-sealed::after{
+  content:"" / "";
+  display:inline-block;
+  width:7px;
+  height:7px;
+  margin-inline-start:7px;
+  border-radius:50%;
+  background:var(--press-red);
+  vertical-align:1px;
+}
+
+.drawer-tab:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:2px;
+}
+
+.drawer-folder{
+  min-height:150px;
+  padding:22px 18px;
+  border:1px solid var(--ink);
+  border-top:0;
+  background-color:var(--paper-fresh);
+  background-image:repeating-linear-gradient(to bottom, transparent 0 31px, rgba(70, 120, 170, .1) 31px 32px);
+}
+
+.drawer-empty{
+  margin:30px 0;
+  text-align:center;
+  color:var(--red-faded);
+  font-size:17px;
+}
+
+.drawer-items{
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+/* ---- the Easter-egg notice: an official slip, then gone ----------- */
+.egg-notice{
+  position:fixed;
+  top:24px;
+  left:50%;
+  z-index:1200;
+  padding:12px 22px 10px;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-5px;
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:0 14px 26px -14px rgba(33, 29, 24, .6);
+  font-family:var(--font-display);
+  font-size:18px;
+  line-height:1.7;
+  color:var(--ink);
+  text-align:center;
+  opacity:0;
+  transform:translate(-50%, -12px) rotate(-.6deg);
+  transition:opacity .35s ease, transform .5s var(--ease-paper);
+  pointer-events:none;
+}
+
+.egg-notice p{
+  margin:0;
+}
+
+.egg-notice p + p{
+  font-family:var(--font-body);
+  font-size:14px;
+  color:var(--ink-faded);
+}
+
+.egg-notice.is-shown{
+  opacity:1;
+  transform:translate(-50%, 0) rotate(-.6deg);
+}
+
+/* ---- the reading mark: a registration target riding the sheet edge - */
+.reading-mark{
+  position:fixed;
+  top:0;
+  left:calc(50% - min(var(--sheet-max), 100vw - 64px) / 2 - 22px);
+  z-index:2;
+  width:14px;
+  height:14px;
+  border:1px solid rgba(33, 29, 24, .55);
+  border-radius:50%;
+  pointer-events:none;
+  translate:0 72px;
+}
+
+.reading-mark::before,
+.reading-mark::after{
+  content:"";
+  position:absolute;
+  background:rgba(33, 29, 24, .55);
+}
+
+.reading-mark::before{ left:50%; top:-5px; bottom:-5px; width:1px; }
+.reading-mark::after{ top:50%; left:-5px; right:-5px; height:1px; }
+
+@supports (animation-timeline: scroll()){
+  @media (prefers-reduced-motion: no-preference){
+    .reading-mark{
+      animation:readingMark linear both;
+      animation-timeline:scroll(root block);
+    }
+  }
+}
+
+@keyframes readingMark{
+  from{ translate:0 72px; }
+  to{ translate:0 calc(100vh - 72px); }
+}
+
+@media (max-width: 760px){
+  .reading-mark{
+    display:none;
+  }
+}
+
+/* ---- pages turn like sheets (browsers with View Transitions) ------- */
+@view-transition{
+  navigation:auto;
+}
+
+::view-transition-old(root){
+  animation:sheetOut .26s ease both;
+}
+
+::view-transition-new(root){
+  animation:sheetIn .36s var(--ease-paper) both;
+}
+
+/* the copy taken from the shelf becomes the open issue (and back) */
+::view-transition-group(issue-sheet){
+  z-index:10;
+  animation-duration:.62s;
+  animation-timing-function:cubic-bezier(.2, .8, .2, 1);
+}
+
+::view-transition-old(issue-sheet){
+  animation:copyFold .32s ease both;
+}
+
+::view-transition-new(issue-sheet){
+  animation:copyUnfold .5s var(--ease-paper) .1s both;
+}
+
+::view-transition-old(issue-sheet),
+::view-transition-new(issue-sheet){
+  height:100%;
+  object-fit:cover;
+  object-position:top;
+}
+
+@keyframes sheetOut{
+  to{ opacity:0; transform:translateX(10px); }
+}
+
+@keyframes sheetIn{
+  from{ opacity:0; transform:translateY(8px); }
+}
+
+@keyframes copyFold{
+  to{ opacity:0; }
+}
+
+@keyframes copyUnfold{
+  from{ opacity:0; transform:scaleY(.94); transform-origin:top; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  @view-transition{
+    navigation:none;
+  }
+}
+
+/* arriving through a View Transition: the browser animates, not CSS */
+.press-js.vt-active .site-shell{
+  opacity:1;
+  transform:none;
+  transition:none;
+}
+
+/* ---- archive references above the masthead ------------------------ */
+.masthead-refs{
+  display:flex;
+  justify-content:flex-end;
+  gap:18px;
+  margin:-14px 0 8px;
+}
+
+.masthead-refs .library-ref{
+  margin:0;
+}
+
+/* the print reference carries a tiny registration target */
+.print-ref::before{
+  content:"⌖" / "";
+  font-size:12px;
+}

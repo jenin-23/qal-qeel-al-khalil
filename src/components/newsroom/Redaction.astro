@@ -1,0 +1,25 @@
+---
+/* ------------------------------------------------------------------ *
+ * A redaction bar. Permanent by default; "revealable" only when the
+ * data supplies the reveal; "response" shows an editorial answer
+ * instead. Never hides invented text: no reveal, nothing to reveal.
+ * ------------------------------------------------------------------ */
+import type { RedactionDef } from '../../lib/types';
+
+interface Props {
+  def: RedactionDef;
+}
+const { def } = Astro.props;
+const bar = '█'.repeat(Math.max(3, Math.min(40, def.length)));
+const interactive = (def.mode === 'revealable' && def.reveal) || (def.mode === 'response' && def.response);
+---
+{interactive ? (
+  <button class={`redaction redaction--${def.mode}`} type="button" aria-expanded="false" data-redaction>
+    <span class="redaction-bar" aria-hidden="true">{bar}</span>
+    <span class="redaction-reveal">{def.mode === 'revealable' ? def.reveal : def.response}</span>
+  </button>
+) : (
+  <span class="redaction redaction--permanent" aria-hidden="true">
+    <span class="redaction-bar" aria-hidden="true">{bar}</span>
+  </span>
+)}

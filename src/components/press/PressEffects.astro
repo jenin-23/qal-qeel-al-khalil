@@ -8,14 +8,50 @@
 ---
 <!-- motion starts from a hidden state only when this script can also end it -->
 <script is:inline>
-  document.documentElement.classList.add('press-js');
-  // arriving with a newspaper just taken from the library shelf
-  try {
-    if (sessionStorage.getItem('qqak:arrive') === 'library' && document.body.dataset.page !== 'library') {
-      document.documentElement.classList.add('arrive-from-library');
+  (function () {
+    var html = document.documentElement;
+    var page = document.body.dataset.page;
+    html.classList.add('press-js');
+
+    // arriving with a newspaper just taken from the library shelf?
+    var arrive = null;
+    try {
+      arrive = JSON.parse(sessionStorage.getItem('qqak:arrive') || 'null');
       sessionStorage.removeItem('qqak:arrive');
-    }
-  } catch (e) {}
+    } catch (e) {}
+    var fromShelf = arrive && page !== 'library';
+    var crossDocVT = 'onpagereveal' in window && 'CSSViewTransitionRule' in window;
+
+    // no View Transitions: the CSS arrival plays instead
+    if (fromShelf && !crossDocVT) html.classList.add('arrive-from-library');
+
+    // leaving for a page that does not take part (a 404, a redirect stub)
+    // aborts the transition; that is fine, so keep it quiet
+    window.addEventListener('pageswap', function (e) {
+      if (!e.viewTransition) return;
+      var q = function () {};
+      e.viewTransition.ready.catch(q);
+      e.viewTransition.finished.catch(q);
+      e.viewTransition.updateCallbackDone.catch(q);
+    });
+
+    // View Transitions: the browser animates; the taken copy opens into this sheet
+    window.addEventListener('pagereveal', function (e) {
+      if (!e.viewTransition) return;
+      var quiet = function () {};
+      e.viewTransition.ready.catch(quiet);
+      e.viewTransition.finished.catch(quiet);
+      e.viewTransition.updateCallbackDone.catch(quiet);
+      html.classList.add('vt-active');
+      if (!fromShelf) return;
+      var shell = document.querySelector('.site-shell');
+      if (!shell) return;
+      shell.style.viewTransitionName = 'issue-sheet';
+      var clear = function () { shell.style.viewTransitionName = ''; };
+      // a skipped/aborted transition rejects: clean up either way, quietly
+      e.viewTransition.finished.then(clear, clear);
+    });
+  })();
 </script>
 <svg class="press-defs" width="0" height="0" aria-hidden="true" focusable="false">
   <!-- slightly uneven ink edges, as if pressed from worn type -->

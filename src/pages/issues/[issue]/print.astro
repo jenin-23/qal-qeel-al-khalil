@@ -1,0 +1,12 @@
+---
+/* /issues/NNN/print.html: the printed edition of a readable issue. */
+import type { GetStaticPaths } from 'astro';
+import PrintEdition from '../../../components/print/PrintEdition.astro';
+import { readableIssues, getIssue } from '../../../lib/issues';
+
+export const getStaticPaths = (() =>
+  readableIssues.filter((i) => i.pages.home).map((i) => ({ params: { issue: i.meta.number } }))) satisfies GetStaticPaths;
+
+const issue = getIssue(Astro.params.issue!);
+---
+<PrintEdition issue={issue} />
