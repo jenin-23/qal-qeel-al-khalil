@@ -337,7 +337,7 @@
 .pencil-note--board{ top:6px; inset-inline-start:-26px; --r:-14deg; font-size:17px; }
 
 /* under the pencil, the circle the editor drew round the type */
-.pencil-on .proof-type::after{
+.pencil-on .proof-story--lead .proof-type::after{
   content:"";
   position:absolute;
   inset:-6px -4px;

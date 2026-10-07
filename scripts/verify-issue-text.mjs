@@ -109,8 +109,18 @@ function textSegments(html, scoped = false) {
       } else if (child.nodeType === 1) walk(child);
     }
   };
-  if (scoped) for (const sel of CONTENT_REGIONS) body.querySelectorAll(sel).forEach(walk);
-  else walk(body);
+  if (scoped) {
+    for (const sel of CONTENT_REGIONS) body.querySelectorAll(sel).forEach(walk);
+    return out;
+  }
+  // The classified-ads column moved after the stories in the document (screen
+  // readers meet stories first; the layout is unchanged). Compare in one
+  // canonical order for original and build alike: the page without the ads
+  // column, then the ads column itself. Both remain strict, in-order checks.
+  const adsColumns = body.querySelectorAll('.left-ads-sidebar');
+  adsColumns.forEach((el) => el.remove());
+  walk(body);
+  adsColumns.forEach(walk);
   return out;
 }
 

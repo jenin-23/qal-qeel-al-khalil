@@ -202,10 +202,23 @@ await fp.waitForTimeout(FRESH_WAIT);
 check((await fp.evaluate(() => document.body.dataset.page)) === 'library' && navigations.length === navCount + 1, 'returning visitor (storage set, history) stays in the library');
 await fresh.close();
 
+// the shelf→issue transition, in its own fresh browser (a long session can
+// leave the tab backgrounded, and browsers skip transitions for hidden pages)
+{
+  const tctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const tp = await tctx.newPage();
+  await tp.goto(url('/'), { waitUntil: 'networkidle' });
+  const t0 = Date.now();
+  await tp.locator('a[data-take][href$="/issues/001/"]').click();
+  await tp.waitForURL(/issues\/001\/$/);
+  const took = Date.now() - t0;
+  const arrived = await tp.evaluate(() => { const h = document.documentElement.classList; return h.contains('arrive-from-library') || h.contains('vt-active'); });
+  check(arrived && took < 1500, `taking 001 off the shelf opens it as the opened copy (${took}ms; View Transition or fallback)`);
+  await tctx.close();
+}
 await page.bringToFront(); // an earlier test opened (and closed) a WhatsApp tab
 await page.locator('a[data-take][href$="/issues/001/"]').click();
 await page.waitForURL(/issues\/001\/$/);
-check(await page.evaluate(() => { const h = document.documentElement.classList; return h.contains('arrive-from-library') || h.contains('vt-active'); }), 'taking 001 off the shelf opens /issues/001/ as the opened copy (View Transition or fallback)');
 await page.locator('[data-to-library]').click();
 await page.waitForURL(/qal-qeel-al-khalil\/$/);
 check(true, 'the masthead reference leads back to the library');

@@ -193,7 +193,7 @@
 }
 
 .left-ads-sidebar{
-  order:2; /* ads on the outer (left) column; stories lead from the right */
+  /* after the stories in the document; the outer (left) column on screen */
   padding-inline-start:24px;
 }
 

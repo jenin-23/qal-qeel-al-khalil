@@ -16,10 +16,6 @@ const inlineAfter = (id: string) => issue.ads.inline.filter((ad) => ad.page === 
 ---
 {block.sidebar ? (
   <section class="news-page-layout single-left-sidebar">
-    <aside class="news-sidebar left-ads-sidebar">
-      {sidebarAds.map((ad, i) => <SidebarAd ad={ad} index={i} />)}
-    </aside>
-
     <div class="news-articles-column">
       {articles.map((article) => (
         <Fragment>
@@ -28,6 +24,11 @@ const inlineAfter = (id: string) => issue.ads.inline.filter((ad) => ad.page === 
         </Fragment>
       ))}
     </div>
+
+    <!-- classifieds after the stories: read in that order, shown in the outer column -->
+    <aside class="news-sidebar left-ads-sidebar">
+      {sidebarAds.map((ad, i) => <SidebarAd ad={ad} index={i} />)}
+    </aside>
   </section>
 ) : (
   <section class="articles-grid">

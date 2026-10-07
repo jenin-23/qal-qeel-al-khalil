@@ -67,6 +67,8 @@ const clientData = {
     <Footer issue={issue} pageKey={pageKey} tagline={footerTagline} />
   </div>
 
+  <!-- a registration target on the sheet edge that quietly follows reading -->
+  <span class="reading-mark" aria-hidden="true"></span>
   <ComingSoonModal ui={issue.ui} />
   <Toast text={issue.ui.toastInitial} />
   <PopupAdHost issue={issue} />
