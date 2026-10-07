@@ -2,7 +2,8 @@
 import type { DelayRange, IssueUI } from '../lib/types';
 
 export interface IssueData {
-  issue: string;
+  /** null on newspaper-level pages */
+  issue: string | null;
   ui: IssueUI;
   popup: {
     enabled: boolean;

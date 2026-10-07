@@ -1,0 +1,7 @@
+---
+/* /issues/001/about.html existed briefly; the page belongs to the newspaper now. */
+import Redirect from '../../../components/Redirect.astro';
+import { aboutUrl } from '../../../lib/url';
+import { paperPages } from '../../../universe/pages';
+---
+<Redirect target={aboutUrl()} title={paperPages.about.docTitle} />

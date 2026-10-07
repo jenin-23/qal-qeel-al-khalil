@@ -32,8 +32,8 @@ const PAGES = [
   { name: 'columns', path: '/issues/001/columns.html' },
   { name: 'entertainment-gate', path: '/issues/001/entertainment.html' },
   { name: 'entertainment', path: '/issues/001/entertainment.html', birthday: { day: '15', month: '6', year: '1990' } },
-  { name: 'about', path: '/issues/001/about.html' },
-  { name: 'contact', path: '/issues/001/contact.html' },
+  { name: 'about', path: '/about.html' },
+  { name: 'contact', path: '/contact.html' },
   { name: 'archive', path: '/archive.html' },
 ];
 const WIDTHS = [

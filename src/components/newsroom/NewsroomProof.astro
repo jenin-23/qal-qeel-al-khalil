@@ -29,6 +29,10 @@ const month = monthLabel(meta.month, meta.year);
 const teasers = issue.construction?.teasers ?? [];
 const progress = Object.entries(issue.construction?.progress ?? {}).filter(([, v]) => v);
 const ph = newsroom.placeholders;
+const sn = newsroom.submissionNotice;
+// WhatsApp click-to-chat: wa.me/<digits>?text=<url-encoded message>
+const sub = issue.construction?.submissions;
+const submitHref = sub ? `https://wa.me/${sub.whatsapp}?text=${encodeURIComponent(sub.message)}` : undefined;
 const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${newspaper.name}`;
 ---
 <Document docTitle={docTitle} pageKey="newsroom" issueNumber={meta.number} canonical={new URL(issueUrl(meta.number), Astro.site).href}>
@@ -67,6 +71,20 @@ const docTitle = `${library.issueLabel} ${meta.number} · ${newsroom.stamp} | ${
           </article>
 
           <article class="proof-story">
+            {submitHref && (
+              <aside class="submit-notice" aria-labelledby="submit-notice-heading">
+                <span class="submit-notice-tape submit-notice-tape--a" aria-hidden="true"></span>
+                <span class="submit-notice-tape submit-notice-tape--b" aria-hidden="true"></span>
+                <p class="submit-notice-label">{sn.label}</p>
+                <p class="submit-notice-vacancy">{sn.vacancy}</p>
+                <h2 class="submit-notice-heading" id="submit-notice-heading">{sn.heading}</h2>
+                <p class="submit-notice-text">{sn.text}</p>
+                <a class="submit-notice-button" href={submitHref} target="_blank" rel="noopener noreferrer" data-submit-whatsapp>
+                  {sn.button}
+                </a>
+                <p class="submit-notice-channel">{sn.channel}</p>
+              </aside>
+            )}
             <div class="proof-type proof-type--short" aria-hidden="true">
               <span></span><span></span><span></span>
             </div>

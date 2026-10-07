@@ -5,16 +5,15 @@
  * Published issues come from the registry; upcoming placeholders from
  * src/universe/archive.ts until an issue with that number is published.
  * ------------------------------------------------------------------ */
-import IssueLayout from '../layouts/IssueLayout.astro';
+import PaperLayout from '../layouts/PaperLayout.astro';
 import Hero from '../components/blocks/Hero.astro';
 import Note from '../components/blocks/Note.astro';
 import IssueCard from '../components/archive/IssueCard.astro';
-import { readableIssues, shelfIssues, isEditing, latestIssue } from '../lib/issues';
+import { readableIssues, shelfIssues, isEditing } from '../lib/issues';
 import { issueUrl, archiveUrl } from '../lib/url';
 import { archivePage, upcoming } from '../universe/archive';
 import type { ArchiveCard } from '../lib/types';
 
-const shell = latestIssue();
 
 type Entry = { number: string; card: ArchiveCard; href?: string; dateLabel?: string };
 const listed: Entry[] = readableIssues
@@ -37,8 +36,7 @@ const entries: Entry[] = [
     }),
 ].sort((a, b) => a.number.localeCompare(b.number));
 ---
-<IssueLayout
-  issue={shell}
+<PaperLayout
   pageKey="archive"
   docTitle={archivePage.docTitle}
   ticker={archivePage.ticker}
@@ -59,4 +57,4 @@ const entries: Entry[] = [
   </section>
 
   {archivePage.notes.map((note) => <Note block={note} />)}
-</IssueLayout>
+</PaperLayout>

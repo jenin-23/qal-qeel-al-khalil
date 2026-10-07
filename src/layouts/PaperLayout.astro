@@ -1,0 +1,46 @@
+---
+/* ------------------------------------------------------------------ *
+ * Shell for newspaper-level pages (من نحن, تواصل معنا, the archive):
+ * the same paper, but no issue is open. Library navigation only.
+ * ------------------------------------------------------------------ */
+import type { TickerDef } from '../lib/types';
+import Document from './Document.astro';
+import PaperMasthead from '../components/shell/PaperMasthead.astro';
+import Ticker from '../components/shell/Ticker.astro';
+import Footer from '../components/shell/Footer.astro';
+import Toast from '../components/shell/Toast.astro';
+import { paperUi } from '../universe/ui';
+
+interface Props {
+  pageKey: 'about' | 'contact' | 'archive';
+  docTitle: string;
+  ticker: TickerDef;
+  footerTagline?: string | null;
+  canonical?: string;
+}
+const { pageKey, docTitle, ticker, footerTagline, canonical } = Astro.props;
+
+// interface wording for the shared scripts (contact form, toast); no issue, no ads
+const clientData = {
+  issue: null,
+  ui: paperUi,
+  popup: { enabled: false, firstDelay: [0, 0], repeatDelay: [0, 0], minAfterNavigation: 0, ids: [] },
+};
+---
+<Document docTitle={docTitle} pageKey={pageKey} canonical={canonical}>
+  <div class="site-shell">
+    <PaperMasthead pageKey={pageKey} />
+    <Ticker ticker={ticker} />
+
+    <main class="news-main">
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+
+    <Footer pageKey={pageKey} tagline={footerTagline} />
+  </div>
+
+  <Toast text={paperUi.toastInitial} />
+  <script type="application/json" id="issue-data" set:html={JSON.stringify(clientData)} />
+</Document>

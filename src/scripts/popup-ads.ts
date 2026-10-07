@@ -45,7 +45,7 @@ export function initPopupAds(data: IssueData): void {
   };
 
   function pick(): string {
-    const last = state.last?.[data.issue];
+    const last = state.last?.[data.issue ?? ''];
     const choices = cfg.ids.length > 1 ? cfg.ids.filter((id) => id !== last) : cfg.ids;
     return choices[Math.floor(Math.random() * choices.length)];
   }
@@ -65,7 +65,7 @@ export function initPopupAds(data: IssueData): void {
     if (!template) return;
     slot!.replaceChildren(template.content.cloneNode(true));
 
-    state.last = { ...state.last, [data.issue]: id };
+    state.last = { ...state.last, [data.issue ?? '']: id };
     state.nextDueAt = Date.now() + randomBetween(cfg.repeatDelay);
     session.write(POPUP_SESSION_KEY, state);
     openDialog(dialog!);

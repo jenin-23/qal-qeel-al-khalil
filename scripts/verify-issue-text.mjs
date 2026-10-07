@@ -33,15 +33,23 @@ const PAGE_MAP = {
   'news.html': ['issues/001/news.html'],
   'columns.html': ['issues/001/columns.html'],
   'entertainment.html': ['issues/001/entertainment.html'],
-  'about.html': ['issues/001/about.html'],
-  'contact.html': ['issues/001/contact.html'],
+  // من نحن / تواصل معنا belong to the newspaper, not to an issue
+  'about.html': ['about.html'],
+  'contact.html': ['contact.html'],
   'archive.html': ['archive.html'],
 };
 
-// While 001 is the newest published issue, "/" is its front page too.
 // "/" is now the library (مكتبة قال قيل), not an issue page.
 const ROOT_IS_001 = false;
 if (ROOT_IS_001) PAGE_MAP['index.html'].push('index.html');
+
+/**
+ * Newspaper-level pages are no longer printed inside Issue 001's masthead,
+ * so for them the check covers the page's own content: its ticker, its body
+ * (<main>) and its footer description, which must be unchanged word for word.
+ */
+const NEWSPAPER_LEVEL = new Set(['about.html', 'contact.html', 'archive.html']);
+const CONTENT_REGIONS = ['.ticker-wrap', 'main', '.footer-brand p'];
 
 // the masthead's archive reference back to the library, on every issue page
 const LIBRARY_REF = 'مكتبة قال قيل';
@@ -59,7 +67,7 @@ const ALLOWED_ADDITIONS = {
   'columns.html': { reason: 'library reference in the masthead', text: [LIBRARY_REF] },
   'about.html': { reason: 'shared toast; library reference', text: [...SHELL_ADDITIONS.toast, LIBRARY_REF] },
   'archive.html': {
-    reason: 'shared toast; archive card shows the issue date + "enter issue" button',
+    reason: 'archive cards: the issue date and the "enter issue" button',
     text: [...SHELL_ADDITIONS.toast, '١-٤-٢٠٢٦', 'ادخل العدد', LIBRARY_REF],
   },
   'contact.html': {
@@ -85,7 +93,7 @@ const ALLOWED_ATTRIBUTE_CHANGES = {
 const norm = (s) => s.replace(/\s+/g, ' ').trim();
 const read = (p) => fs.readFileSync(p, 'utf8');
 
-function textSegments(html) {
+function textSegments(html, scoped = false) {
   const root = parse(html, { comment: false, blockTextElements: { script: false, style: false, noscript: false } });
   // the original entertainment.html never closes .site-shell; browsers cope, the parser loses <body>
   const body = root.querySelector('body') ?? root.querySelector('html') ?? root;
@@ -99,14 +107,16 @@ function textSegments(html) {
       } else if (child.nodeType === 1) walk(child);
     }
   };
-  walk(body);
+  if (scoped) for (const sel of CONTENT_REGIONS) body.querySelectorAll(sel).forEach(walk);
+  else walk(body);
   return out;
 }
 
-function attributes(html) {
+function attributes(html, scoped = false) {
   const root = parse(html);
   const found = [];
-  for (const el of root.querySelectorAll('*')) {
+  const els = scoped ? CONTENT_REGIONS.flatMap((sel) => root.querySelectorAll(sel).flatMap((r) => [r, ...r.querySelectorAll('*')])) : root.querySelectorAll('*');
+  for (const el of els) {
     for (const name of ['alt', 'placeholder', 'aria-label', 'data-phone', 'id', 'title']) {
       const v = el.getAttribute(name);
       if (v != null && v !== '') found.push(`${name}=${norm(v)}`);
@@ -134,7 +144,8 @@ if (!fs.existsSync(DIST)) {
 /* 1 + 2: per page ------------------------------------------------------- */
 for (const [orig, targets] of Object.entries(PAGE_MAP)) {
   const origHtml = read(path.join(ORIGINAL, orig));
-  const base = textSegments(origHtml);
+  const scoped = NEWSPAPER_LEVEL.has(orig);
+  const base = textSegments(origHtml, scoped);
   const origTitle = norm(parse(origHtml).querySelector('title').text);
   const allowed = new Set(ALLOWED_ADDITIONS[orig]?.text ?? []);
 
@@ -146,7 +157,8 @@ for (const [orig, targets] of Object.entries(PAGE_MAP)) {
       continue;
     }
     const html = read(file);
-    const built = textSegments(html);
+    const built = textSegments(html, scoped);
+    if (scoped) ok('newspaper-level page: ticker, body and footer description compared');
 
     const title = norm(parse(html).querySelector('title').text);
     title === origTitle ? ok(`<title> unchanged`) : fail(`<title> "${origTitle}" became "${title}"`);
@@ -171,14 +183,28 @@ for (const [orig, targets] of Object.entries(PAGE_MAP)) {
     else ok('no added text');
 
     // attributes
-    const builtAttrs = new Set(attributes(html));
-    const missing = attributes(origHtml).filter((a) => {
+    const builtAttrs = new Set(attributes(html, scoped));
+    const missing = attributes(origHtml, scoped).filter((a) => {
       if (builtAttrs.has(a)) return false;
       const [name, ...rest] = a.split('=');
       return !(ALLOWED_ATTRIBUTE_CHANGES[name] ?? []).includes(rest.join('='));
     });
     missing.length ? missing.forEach((a) => fail(`attribute lost: ${a}`)) : ok('placeholders, labels, phone numbers, ids and anchors preserved');
   }
+}
+
+/* root guard: the website is the library; no issue ever opens by itself -- */
+console.log('\nroot (/)');
+{
+  const html = read(path.join(DIST, 'index.html'));
+  const root = parse(html);
+  const checks = [
+    [root.querySelector('body')?.getAttribute('data-page') === 'library', 'dist/index.html is the library (مكتبة قال قيل)'],
+    [!root.querySelector('#issue-data') && !root.querySelector('.masthead'), 'no issue masthead or issue data at the root'],
+    [!/http-equiv=["']?refresh/i.test(html) && !/location\.(replace|assign)\s*\(/.test(html), 'no redirect of any kind at the root'],
+    [!/serviceWorker/.test(html), 'no service worker registration'],
+  ];
+  for (const [cond, msg] of checks) (cond ? ok : fail)(msg);
 }
 
 /* 3: script strings ----------------------------------------------------- */
@@ -211,12 +237,20 @@ console.log('\nIssue 001 isolation');
     : fail('horoscope predictions differ from the original');
 
   for (const f of fs.readdirSync(path.join(DIST, 'issues/001'))) {
-    const d = JSON.parse(parse(read(path.join(DIST, 'issues/001', f))).querySelector('#issue-data').text);
+    const island = parse(read(path.join(DIST, 'issues/001', f))).querySelector('#issue-data');
+    if (!island) continue; // a redirect stub (e.g. about.html → /about.html)
+    const d = JSON.parse(island.text);
     if (d.issue !== '001') fail(`${f} carries data of issue ${d.issue}`);
   }
   ok('every 001 page carries only issue 001 data (ads pool: ' + JSON.stringify(issueData.popup.ids) + ')');
 
-  for (const page of ['news', 'columns', 'entertainment', 'about', 'contact']) {
+  for (const [from, to] of [['about.html', 'about.html'], ['contact.html', 'contact.html']]) {
+    const html = read(path.join(DIST, 'issues/001', from));
+    html.includes(`/qal-qeel-al-khalil/${to}`) && html.includes('location.hash')
+      ? ok(`/issues/001/${from} → /${to} (newspaper-level, keeps #anchor)`)
+      : fail(`/issues/001/${from} does not forward to /${to}`);
+  }
+  for (const page of ['news', 'columns', 'entertainment']) {
     const html = read(path.join(DIST, `${page}.html`));
     const target = `/issues/001/${page}.html`;
     html.includes(target) && html.includes('location.hash')

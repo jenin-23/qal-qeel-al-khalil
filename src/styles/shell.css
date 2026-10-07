@@ -335,3 +335,9 @@
   color:var(--press-red);
   text-decoration-color:currentColor;
 }
+
+/* newspaper-level masthead: no issue open, so no issue ears */
+.masthead--paper .masthead-grid{
+  grid-template-columns:1fr;
+  grid-template-areas:"brand";
+}

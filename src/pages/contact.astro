@@ -1,0 +1,18 @@
+---
+/* contact: a newspaper-level page (not part of any issue). Text unchanged. */
+import PaperLayout from '../layouts/PaperLayout.astro';
+import Blocks from '../components/blocks/Blocks.astro';
+import { paperPages } from '../universe/pages';
+import { contactUrl } from '../lib/url';
+
+const page = paperPages.contact;
+---
+<PaperLayout
+  pageKey="contact"
+  docTitle={page.docTitle}
+  ticker={page.ticker}
+  footerTagline={page.footerTagline}
+  canonical={new URL(contactUrl(), Astro.site).href}
+>
+  <Blocks blocks={page.blocks} pageKey="contact" />
+</PaperLayout>

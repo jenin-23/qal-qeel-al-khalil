@@ -1,0 +1,18 @@
+---
+/* about: a newspaper-level page (not part of any issue). Text unchanged. */
+import PaperLayout from '../layouts/PaperLayout.astro';
+import Blocks from '../components/blocks/Blocks.astro';
+import { paperPages } from '../universe/pages';
+import { aboutUrl } from '../lib/url';
+
+const page = paperPages.about;
+---
+<PaperLayout
+  pageKey="about"
+  docTitle={page.docTitle}
+  ticker={page.ticker}
+  footerTagline={page.footerTagline}
+  canonical={new URL(aboutUrl(), Astro.site).href}
+>
+  <Blocks blocks={page.blocks} pageKey="about" />
+</PaperLayout>

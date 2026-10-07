@@ -10,7 +10,7 @@ import Toc from './Toc.astro';
 import Articles from './Articles.astro';
 import Entertainment from './Entertainment.astro';
 
-interface Props { blocks: Block[]; issue: Issue; pageKey: PageKey }
+interface Props { blocks: Block[]; /** absent on newspaper-level pages */ issue?: Issue; pageKey: PageKey }
 const { blocks, issue, pageKey } = Astro.props;
 ---
 {blocks.map((block) =>
@@ -21,6 +21,6 @@ const { blocks, issue, pageKey } = Astro.props;
   : block.type === 'contact' ? <Contact block={block} />
   : block.type === 'front' ? <Front block={block} />
   : block.type === 'toc' ? <Toc block={block} />
-  : block.type === 'articles' ? <Articles block={block} issue={issue} pageKey={pageKey} />
-  : <Entertainment block={block} issue={issue} />
+  : block.type === 'articles' ? <Articles block={block} issue={issue!} pageKey={pageKey} />
+  : <Entertainment block={block} issue={issue!} />
 )}

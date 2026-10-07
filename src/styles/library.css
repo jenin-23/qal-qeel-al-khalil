@@ -698,3 +698,60 @@ body.is-taking .library-plaque{
     height:90px;
   }
 }
+
+/* ---- library navigation: printed index tabs under the plaque -------- */
+.library-nav{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:-14px auto 26px;
+  width:fit-content;
+  max-width:100%;
+  padding:6px 8px 5px;
+  border:1px solid rgba(33, 29, 24, .55);
+  background-color:var(--paper-deep);
+  background-image:var(--grain);
+  box-shadow:0 10px 18px -12px rgba(0, 0, 0, .75);
+}
+
+.library-nav-link{
+  position:relative;
+  padding:3px 16px 4px;
+  font-family:var(--font-display);
+  font-size:18px;
+  font-weight:700;
+  color:var(--ink);
+  transition:color .2s ease;
+}
+
+.library-nav-link + .library-nav-link::before{
+  content:"";
+  position:absolute;
+  inset-inline-start:0;
+  top:28%;
+  bottom:28%;
+  border-inline-start:1px solid var(--rule);
+}
+
+.library-nav-link:hover{
+  color:var(--press-red);
+}
+
+.library-nav-link.is-current{
+  color:var(--press-red);
+  text-decoration:underline;
+  text-decoration-thickness:2px;
+  text-underline-offset:7px;
+}
+
+.library-nav-link:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:2px;
+}
+
+@media (max-width: 420px){
+  .library-nav-link{
+    padding-inline:10px;
+    font-size:16px;
+  }
+}

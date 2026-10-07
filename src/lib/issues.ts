@@ -37,13 +37,6 @@ export function getIssue(number: string): Issue {
   return found;
 }
 
-/** The newest full newspaper (used for the archive page's shell). */
-export function latestIssue(): Issue {
-  const latest = readableIssues.at(-1);
-  if (!latest) throw new Error('No published issue');
-  return latest;
-}
-
 export function hasPage(issue: Issue, page: PageKey): boolean {
   return Boolean(issue.pages[page]);
 }

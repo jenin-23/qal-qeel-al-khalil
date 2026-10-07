@@ -1,0 +1,7 @@
+---
+/* /issues/001/contact.html existed briefly; the page belongs to the newspaper now. */
+import Redirect from '../../../components/Redirect.astro';
+import { contactUrl } from '../../../lib/url';
+import { paperPages } from '../../../universe/pages';
+---
+<Redirect target={contactUrl()} title={paperPages.contact.docTitle} />

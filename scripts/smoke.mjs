@@ -87,12 +87,13 @@ await page.check('input[name=q1][value=c]');
 await page.click('#quizForm button');
 check((await page.locator('#quizResult').textContent()).startsWith('أنت من فئة الوعي المتعب'), 'quiz result works');
 
-// --- coming soon, from a page that used to lack the modal
-await page.goto(url('/issues/001/contact.html'));
+// --- coming soon (inside an issue) and the newspaper-level contact form
+await page.goto(url('/issues/001/columns.html'));
 await page.click('[data-coming]');
-check(await page.locator('#comingModal').evaluate((d) => d.open), 'Contact: التحقيقات opens the coming-soon modal');
+check(await page.locator('#comingModal').evaluate((d) => d.open), 'Issue 001: التحقيقات opens the coming-soon modal');
 check((await page.locator('#comingText').textContent()) === 'يزم محنا حكينا قادم، مش حتلاقي اشي.', 'coming-soon shows the original text');
 await page.keyboard.press('Escape');
+await page.goto(url('/contact.html'));
 await page.fill('#contact-field-3', 'test');
 await page.click('.contact-form button');
 check((await page.locator('#copyToast').textContent()) === 'تم استلام الرسالة نظرياً. شكراً على الثقة.', 'Contact: form toast now appears');
@@ -110,21 +111,39 @@ await page.goto(url('/columns.html#habbab-story'));
 await page.waitForURL(/issues\/001\/columns\.html#habbab-story$/);
 check(page.url().endsWith('/issues/001/columns.html#habbab-story'), 'legacy /columns.html#habbab-story → /issues/001/columns.html#habbab-story');
 
-for (const legacy of ['news.html#tat3eem-story', 'news.html#eslam-story', 'entertainment.html', 'about.html', 'contact.html']) {
+for (const legacy of ['news.html#tat3eem-story', 'news.html#eslam-story', 'entertainment.html']) {
   await page.goto(url(`/${legacy}`));
   const [file, hash] = legacy.split('#');
   await page.waitForURL(new RegExp(`issues/001/${file.replace('.', '\\.')}${hash ? '#' + hash : ''}$`));
   check(true, `legacy /${legacy} → /issues/001/${legacy}`);
 }
+await page.goto(url('/issues/001/about.html#x'));
+await page.waitForURL(/qal-qeel-al-khalil\/about\.html#x$/);
+check(true, 'briefly-live /issues/001/about.html → newspaper-level /about.html (keeps #anchor)');
+await page.goto(url('/issues/001/news.html#eslam-story'));
+check(page.url().endsWith('/issues/001/news.html#eslam-story') && (await page.evaluate(() => document.body.dataset.issue)) === '001', 'direct/shared Issue 001 link with anchor opens Issue 001');
 
-// --- every newspaper page: loads, has the shell, no script errors
-const ISSUE_PAGES = ['/issues/001/', '/issues/001/news.html', '/issues/001/columns.html', '/issues/001/entertainment.html', '/issues/001/about.html', '/issues/001/contact.html', '/archive.html'];
-const PAGES = ['/', ...ISSUE_PAGES, '/issues/002/'];
+// --- every issue page: loads, has the issue shell, no script errors
+const ISSUE_PAGES = ['/issues/001/', '/issues/001/news.html', '/issues/001/columns.html', '/issues/001/entertainment.html'];
+const PAPER_PAGES = ['/about.html', '/contact.html', '/archive.html'];
+const PAGES = ['/', ...ISSUE_PAGES, ...PAPER_PAGES, '/issues/002/'];
 for (const p of ISSUE_PAGES) {
   const before = errors.length;
   const res = await page.goto(url(p));
   const shell = await page.evaluate(() => ['.masthead', '.site-nav', '.ticker', '.site-footer', '#copyToast', '.library-ref'].every((s) => document.querySelector(s)));
   check(res.ok() && shell && errors.length === before, `${p} loads with masthead, nav, ticker, footer, toast, library reference`);
+}
+
+// --- newspaper-level pages: library navigation only, no issue sections
+const LIBRARY_NAV = ['المكتبة', 'الأرشيف', 'من نحن', 'تواصل معنا'];
+const ISSUE_SECTIONS = ['الأخبار', 'الأعمدة', 'المنوعات', 'التحقيقات'];
+const navOf = () => page.evaluate(() => [...document.querySelectorAll('.nav-link, .library-nav-link')].map((a) => a.textContent.trim()));
+for (const p of PAPER_PAGES) {
+  const before = errors.length;
+  const res = await page.goto(url(p));
+  const nav = await navOf();
+  const issueBits = await page.evaluate(() => !!document.querySelector('.meta-box, [data-coming]'));
+  check(res.ok() && errors.length === before && JSON.stringify(nav) === JSON.stringify(LIBRARY_NAV) && !issueBits, `${p}: newspaper-level page, nav = ${LIBRARY_NAV.join(' | ')}`);
 }
 
 // --- the library (/)
@@ -139,6 +158,38 @@ check(lib.papers.every((p) => p.status !== 'draft'), 'no draft issue stands on t
 check(lib.papers.some((p) => p.href.endsWith('/issues/001/') && ['published', 'archived'].includes(p.status)), 'Issue 001 is on the shelf as a finished newspaper');
 check(lib.papers.some((p) => p.href.endsWith('/issues/002/') && p.status === 'editing'), 'Issue 002 is on the shelf as an unfinished copy (editing)');
 check(lib.papers.length === 2, `exactly the public issues are shelved (${lib.papers.length})`);
+const libNav = await navOf();
+const libLinks = await page.evaluate(() => [...document.querySelectorAll('a')].map((a) => a.textContent.trim()));
+check(JSON.stringify(libNav) === JSON.stringify(LIBRARY_NAV) && !ISSUE_SECTIONS.some((s) => libLinks.includes(s)), `library navigation = ${LIBRARY_NAV.join(' | ')}; no issue sections`);
+
+// --- the root never moves on by itself: fresh and returning visitors
+const FRESH_WAIT = 4000;
+const fresh = await browser.newContext({ viewport: { width: 1280, height: 900 } }); // no storage, cookies, cache, SW
+const fp = await fresh.newPage();
+const navigations = [];
+fp.on('framenavigated', (f) => f === fp.mainFrame() && navigations.push(f.url()));
+await fp.goto(url('/'), { waitUntil: 'networkidle' });
+await fp.waitForTimeout(FRESH_WAIT);
+const freshState = await fp.evaluate(() => ({ page: document.body.dataset.page, title: document.title, sw: !!navigator.serviceWorker?.controller }));
+check(freshState.page === 'library' && freshState.title.startsWith('مكتبة قال قيل') && !freshState.sw, 'fresh visit to / shows مكتبة قال قيل (no service worker)');
+check(navigations.length === 1 && /qal-qeel-al-khalil\/$/.test(fp.url()), `/ never navigates by itself (stayed ${FRESH_WAIT / 1000}s on ${new URL(fp.url()).pathname})`);
+// returning visitor: has read Issue 001, has storage set, comes back to /
+await fp.goto(url('/issues/001/entertainment.html'));
+await fp.fill('#birthDay', '3');
+await fp.fill('#birthMonth', '4');
+await fp.fill('#birthYear', '1991');
+await fp.click('#birthdayForm button');
+await fp.goto(url('/'));
+await fp.locator('a[data-take][href$="/issues/001/"]').click();
+await fp.waitForURL(/issues\/001\/$/);
+await fp.goBack();
+await fp.waitForTimeout(800);
+check((await fp.evaluate(() => document.body.dataset.page)) === 'library', 'returning via Back: still the library, paper back on the shelf');
+const navCount = navigations.length;
+await fp.goto(url('/'), { waitUntil: 'networkidle' });
+await fp.waitForTimeout(FRESH_WAIT);
+check((await fp.evaluate(() => document.body.dataset.page)) === 'library' && navigations.length === navCount + 1, 'returning visitor (storage set, history) stays in the library');
+await fresh.close();
 
 await page.locator('a[data-take][href$="/issues/001/"]').click();
 await page.waitForURL(/issues\/001\/$/);
@@ -165,6 +216,21 @@ await page.keyboard.press('Enter');
 check((await page.locator('[data-proof-note]').getAttribute('aria-expanded')) === 'true', 'internal note unfolds (keyboard)');
 check((await page.locator('.proof-note-text').textContent()) === 'ملاحظة داخلية — ليس للنشر', '…and says nothing useful');
 
+// --- «أرسل إلى هيئة التحرير»: WhatsApp submissions for Issue 002
+const SUBMIT_MESSAGE = 'مرحباً هيئة تحرير قال قيل، لدي مادة أود إرسالها للعدد 002:';
+const cta = page.locator('a[data-submit-whatsapp]');
+check((await cta.count()) === 1 && (await cta.textContent()).trim() === 'أرسل إلى هيئة التحرير', 'Issue 002 has one submission notice with «أرسل إلى هيئة التحرير»');
+const href = await cta.getAttribute('href');
+const wa = new URL(href);
+check(wa.origin === 'https://wa.me' && wa.pathname === '/962791432787', `WhatsApp click-to-chat targets 962791432787 (${wa.origin}${wa.pathname})`);
+check(wa.searchParams.get('text') === SUBMIT_MESSAGE && href.includes(encodeURIComponent(SUBMIT_MESSAGE)), 'pre-filled Arabic message is exactly right and URL-encoded');
+check((await cta.getAttribute('target')) === '_blank' && /noopener/.test(await cta.getAttribute('rel')) && /noreferrer/.test(await cta.getAttribute('rel')), 'opens in a new tab with rel="noopener noreferrer"');
+const [popup] = await Promise.all([page.context().waitForEvent('page'), cta.click({ modifiers: [] })]);
+check(/^https:\/\/(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com|www\.whatsapp\.com)/.test(popup.url()) || popup.url() === 'about:blank', `click opens a new window toward WhatsApp (${popup.url().slice(0, 40)}…)`);
+await popup.close();
+check(page.url().endsWith('/issues/002/'), 'the proof stays open behind it');
+check((await page.locator('a[href^="https://wa.me"]').count()) === 1 && !(await page.goto(url('/contact.html')), await page.locator('a[href*="wa.me"]').count()), 'تواصل معنا stays the normal contact page (no WhatsApp there)');
+
 // --- archive: the folded copy opens its edition
 await page.goto(url('/archive.html'));
 await page.locator('.archive-item').first().click({ position: { x: 40, y: 40 } });
@@ -179,9 +245,15 @@ const focused = () =>
     return { cls: el.className, href: el.getAttribute('href'), ring: cs.outlineStyle !== 'none' || cs.boxShadow !== 'none' };
   });
 await page.goto(url('/'));
-await page.keyboard.press('Tab');
-const shelfFocus = await focused();
-check(shelfFocus.cls.includes('shelf-paper') && shelfFocus.ring, 'library: Tab reaches the first newspaper with a visible focus ring');
+const tabbed = [];
+let shelfFocus;
+for (let i = 0; i < 8; i++) {
+  await page.keyboard.press('Tab');
+  shelfFocus = await focused();
+  tabbed.push(shelfFocus.cls);
+  if (shelfFocus.cls.includes('shelf-paper')) break;
+}
+check(tabbed[0].includes('library-nav-link') && shelfFocus.cls.includes('shelf-paper') && shelfFocus.ring, `library: Tab goes through the library navigation (${tabbed.length - 1} links) to the first newspaper, focus ring visible`);
 await page.keyboard.press('Enter');
 await page.waitForURL(/issues\/001\/$/);
 check(true, 'library: Enter takes the newspaper and opens it');
@@ -247,6 +319,12 @@ for (const p of PAGES) {
   const overflow = await mp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   check(overflow <= 0, `${p} at 360px: no horizontal overflow`);
 }
+await mp.goto(url('/issues/002/'));
+const ctaBox = await mp.locator('a[data-submit-whatsapp]').boundingBox();
+check(!!ctaBox && ctaBox.x >= 0 && ctaBox.x + ctaBox.width <= 360 && ctaBox.width > 120, 'mobile: «أرسل إلى هيئة التحرير» fully on screen and tappable');
+await mp.goto(url('/'));
+const libNavBox = await mp.locator('.library-nav').boundingBox();
+check(!!libNavBox && libNavBox.x >= 0 && libNavBox.x + libNavBox.width <= 360, 'mobile: library navigation fits');
 await mobile.close();
 
 await browser.close();

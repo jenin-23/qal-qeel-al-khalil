@@ -1,21 +1,22 @@
 ---
+/* Colophon. Its links (من نحن · تواصل معنا · الأرشيف) always lead to
+   the newspaper-level pages, whichever issue or page it is printed on. */
 import type { Issue } from '../../lib/types';
 import { newspaper } from '../../universe/newspaper';
-import { issueUrl, archiveUrl } from '../../lib/url';
-import { hasPage } from '../../lib/issues';
+import { paperUrl } from '../../lib/url';
 
 interface Props {
-  issue: Issue;
+  /** omitted on newspaper-level pages */
+  issue?: Issue;
   pageKey: string;
   tagline?: string | null;
 }
 const { issue, pageKey, tagline } = Astro.props;
-const n = issue.meta.number;
 
-const links = newspaper.footerLinks.flatMap((link) => {
-  if (link.key === 'archive') return [{ ...link, href: archiveUrl() }];
-  return hasPage(issue, link.key) ? [{ ...link, href: issueUrl(n, link.key) }] : [];
-});
+const links = newspaper.footerLinks.map((link) => ({ ...link, href: paperUrl(link.key as 'about' | 'contact' | 'archive') }));
+const year = issue?.meta.year ?? new Date().getFullYear();
+const copyright = issue?.meta.copyright ?? `© ${year} ${newspaper.name}`;
+const city = issue ? issue.meta.city : newspaper.city;
 ---
 <footer class="site-footer">
   <div class="container">
@@ -38,8 +39,8 @@ const links = newspaper.footerLinks.flatMap((link) => {
       </div>
 
       <div class="footer-bottom">
-        <span>{issue.meta.copyright ?? `© ${issue.meta.year} ${newspaper.name}`}</span>
-        {issue.meta.city && <span>{issue.meta.city}</span>}
+        <span>{copyright}</span>
+        {city && <span>{city}</span>}
       </div>
     </div>
   </div>

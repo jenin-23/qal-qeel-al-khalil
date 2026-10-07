@@ -33,6 +33,11 @@ const issue: Issue = {
   construction: {
     // progress: {},  ← only real numbers, once there are some
     teasers: [],
+    // «أرسل إلى هيئة التحرير»: readers send material for this issue
+    submissions: {
+      whatsapp: '962791432787',
+      message: 'مرحباً هيئة تحرير قال قيل، لدي مادة أود إرسالها للعدد 002:',
+    },
   },
   // Interface microcopy is written when the issue is published
   // (Issue 001's values are in src/issues/001/issue.ts).

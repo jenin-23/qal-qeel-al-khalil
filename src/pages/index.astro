@@ -8,7 +8,7 @@
 import Document from '../layouts/Document.astro';
 import ShelfNewspaper from '../components/library/ShelfNewspaper.astro';
 import { shelfIssues } from '../lib/issues';
-import { archiveUrl } from '../lib/url';
+import { paperUrl } from '../lib/url';
 import { newspaper } from '../universe/newspaper';
 import { library } from '../universe/library';
 
@@ -21,6 +21,17 @@ const year = shelfIssues.at(-1)?.meta.year ?? new Date().getFullYear();
       <h1 class="library-title">{library.name}</h1>
       <p class="library-tagline">{newspaper.tagline}</p>
     </header>
+
+    <!-- newspaper-level navigation only: issue sections appear once an issue is opened -->
+    <nav class="library-nav" aria-label={library.name}>
+      {newspaper.paperNav.map((item) => (
+        <a
+          class:list={['library-nav-link', { 'is-current': item.key === 'library' }]}
+          href={paperUrl(item.key)}
+          aria-current={item.key === 'library' ? 'page' : undefined}
+        >{item.label}</a>
+      ))}
+    </nav>
 
     <section class="bookcase" aria-labelledby="library-shelf-title">
       <h2 id="library-shelf-title" class="sr-only">{library.name}</h2>
@@ -58,8 +69,8 @@ const year = shelfIssues.at(-1)?.meta.year ?? new Date().getFullYear();
     </section>
 
     <footer class="library-foot">
-      <a class="footer-link" href={archiveUrl()}>{library.archiveLabel}</a>
       <span>© {year} {newspaper.name}</span>
+      <span>{newspaper.city}</span>
     </footer>
   </div>
 </Document>

@@ -33,6 +33,7 @@ URLs:
 | URL | What |
 |---|---|
 | `/` | **مكتبة قال قيل**: the library. Every public issue stands on the shelf as a newspaper. |
+| `/about.html`, `/contact.html` | من نحن / تواصل معنا: newspaper-level pages (not part of any issue). |
 | `/archive.html` | The structured, chronological archive. |
 | `/issues/001/…` | Issue 001, permanently. |
 | `/issues/002/` | While 002 is in editing: the newsroom proof (unfinished on purpose). |
@@ -104,3 +105,14 @@ The browser tests need Chromium once: `npx playwright install chromium`.
 Pushing to `main` runs `.github/workflows/deploy.yml`: build, `verify:001`,
 then deploy to GitHub Pages (Pages source: **GitHub Actions**; repository
 variable `DEPLOY_ENABLED=true`).
+
+## Navigation contexts
+
+- **Library level** (`/`, من نحن, تواصل معنا, the archive):
+  المكتبة | الأرشيف | من نحن | تواصل معنا. No issue sections.
+- **Inside an issue**: that issue's own section bar, plus the
+  «مكتبة قال قيل» reference above the masthead to step back out.
+
+An issue opens only when its newspaper is taken from the shelf or its URL
+is opened directly. `verify:001` fails the build if the root ever stops
+being the library.

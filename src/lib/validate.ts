@@ -58,6 +58,9 @@ export function validateIssue(issue: Issue): void {
   if (issue.meta.status === 'editing' && Object.keys(issue.pages).length) {
     fail('an issue in editing has no reader pages yet; publish it to open its sections');
   }
+  const sub = issue.construction?.submissions;
+  if (sub && !/^[1-9]\d{7,14}$/.test(sub.whatsapp)) fail('construction.submissions.whatsapp must be digits only, international format, no +');
+
   if (issue.meta.status === 'editing') {
     for (const [key, item] of Object.entries(issue.construction?.progress ?? {})) {
       if (item && (item.done < 0 || (item.total !== undefined && item.done > item.total))) fail(`progress.${key} is not a real count`);

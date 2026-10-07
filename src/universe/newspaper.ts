@@ -27,6 +27,17 @@ export const newspaper = {
     { key: 'investigations', label: 'التحقيقات', comingSoon: true },
     { key: 'archive', label: 'الأرشيف' },
   ] as { key: PageKey | 'archive'; label: string; comingSoon?: boolean }[],
+  /**
+   * Navigation at the newspaper level (library, من نحن, تواصل معنا,
+   * archive). Issue sections appear only once an issue is opened.
+   */
+  paperNav: [
+    { key: 'library', label: 'المكتبة' },
+    { key: 'archive', label: 'الأرشيف' },
+    { key: 'about', label: 'من نحن' },
+    { key: 'contact', label: 'تواصل معنا' },
+  ] as { key: 'library' | 'archive' | 'about' | 'contact'; label: string }[],
+  city: 'عمّان – الأردن',
   footerLinks: [
     { key: 'about', label: 'من نحن' },
     { key: 'contact', label: 'تواصل معنا' },

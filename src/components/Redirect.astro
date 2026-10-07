@@ -1,0 +1,24 @@
+---
+/* A permanent forward that keeps ?query and #anchor (old/shared links). */
+interface Props {
+  target: string;
+  title: string;
+}
+const { target, title } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>{title}</title>
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href={new URL(target, Astro.site).href} />
+  <script is:inline define:vars={{ target }}>
+    location.replace(target + location.search + location.hash);
+  </script>
+  <meta http-equiv="refresh" content={`0; url=${target}`} />
+</head>
+<body>
+  <a href={target}>{title}</a>
+</body>
+</html>

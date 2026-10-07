@@ -26,6 +26,15 @@ export const newsroom = {
   },
   /** revealed when an internal note is opened; followed by nothing useful */
   internalNote: 'ملاحظة داخلية — ليس للنشر',
+  /** the contribution notice on an issue in editing (approved wording) */
+  submissionNotice: {
+    label: 'تنويه من هيئة التحرير',
+    vacancy: 'لا تزال بعض المساحات شاغرة لأسباب بعضها تحريري وبعضها يعود إلى عدم إرسالكم شيئاً.',
+    heading: 'لديك ما يستحق النشر؟',
+    text: 'أرسل ما لديك إلى هيئة التحرير: خبر، صورة، موقف، مقال، إعلان، أو أي مادة ترى أن من الأفضل توثيقها قبل أن ينكرها أصحابها.',
+    button: 'أرسل إلى هيئة التحرير',
+    channel: 'واتساب — باب المساهمات مفتوح',
+  },
   /** labels for real production counts (shown only when provided) */
   progressLabels: {
     articles: 'المواد',

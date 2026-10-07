@@ -326,7 +326,16 @@ export type Teaser =
   /** a small fragment of a future article */
   | { type: 'snippet'; text: string };
 
+/** Readers sending material to the newsroom for this issue (WhatsApp click-to-chat). */
+export interface SubmissionsDef {
+  /** international number, digits only, no + (e.g. '962791432787') */
+  whatsapp: string;
+  /** pre-filled opening line of the reader's message */
+  message: string;
+}
+
 export interface ConstructionDef {
   progress?: IssueProgress;
   teasers?: Teaser[];
+  submissions?: SubmissionsDef;
 }
