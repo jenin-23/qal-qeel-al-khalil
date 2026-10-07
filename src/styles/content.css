@@ -646,3 +646,25 @@
   animation:stampDown .36s var(--ease-stamp);
   pointer-events:none;
 }
+
+/* keyboard focus on controls whose frame is already an outline:
+   a second, ink ring outside the stamp */
+.story-toggle-btn:focus-visible,
+.coin-button:focus-visible,
+.copy-phone-btn:focus-visible,
+.modal-close:focus-visible{
+  outline-color:var(--ink);
+  box-shadow:0 0 0 4px var(--paper), 0 0 0 6px var(--ink);
+}
+
+.copy-btn:focus-visible,
+.footer-link:focus-visible,
+.reaction-btn:focus-visible,
+.birthday-change-btn:focus-visible,
+.nav-link:focus-visible,
+.headline-chip:focus-visible,
+.toc-links a:focus-visible,
+.lead-title a:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:4px;
+}

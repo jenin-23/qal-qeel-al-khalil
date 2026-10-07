@@ -26,7 +26,8 @@ const ratio = img?.ratio ?? 'fixed';
       alt={img.alt}
       class:list={['story-img', img.position ?? 'center']}
       widths={[480, 860, 1200]}
-      sizes="(max-width: 980px) 100vw, 860px"
+      sizes="(max-width: 980px) 100vw, 1200px"
+      style={img.focus ? `object-position:${img.focus}` : undefined}
     />
     {img.caption && <figcaption class="story-caption">{img.caption}</figcaption>}
   </figure>

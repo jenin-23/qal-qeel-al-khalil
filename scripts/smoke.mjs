@@ -95,7 +95,80 @@ await page.goto(url('/columns.html#habbab-story'));
 await page.waitForURL(/issues\/001\/columns\.html#habbab-story$/);
 check(page.url().endsWith('/issues/001/columns.html#habbab-story'), 'legacy /columns.html#habbab-story → /issues/001/columns.html#habbab-story');
 
+for (const legacy of ['news.html#tat3eem-story', 'news.html#eslam-story', 'entertainment.html', 'about.html', 'contact.html']) {
+  await page.goto(url(`/${legacy}`));
+  const [file, hash] = legacy.split('#');
+  await page.waitForURL(new RegExp(`issues/001/${file.replace('.', '\\.')}${hash ? '#' + hash : ''}$`));
+  check(true, `legacy /${legacy} → /issues/001/${legacy}`);
+}
+
+// --- every page: loads, has the shell, no script errors
+const PAGES = ['/', '/issues/001/', '/issues/001/news.html', '/issues/001/columns.html', '/issues/001/entertainment.html', '/issues/001/about.html', '/issues/001/contact.html', '/archive.html'];
+for (const p of PAGES) {
+  const before = errors.length;
+  const res = await page.goto(url(p));
+  const shell = await page.evaluate(() => ['.masthead', '.site-nav', '.ticker', '.site-footer', '#copyToast'].every((s) => document.querySelector(s)));
+  check(res.ok() && shell && errors.length === before, `${p} loads with masthead, nav, ticker, footer, toast`);
+}
+check((await page.goto(url('/'), { waitUntil: 'load' }), (await page.locator('.meta-box strong').first().textContent()) === '001'), '/ shows the latest published issue (001)');
+check((await page.goto(url('/issues/002/'))).status() === 404, 'draft issue 002 is not published');
+
+// --- archive: the folded copy opens its edition
+await page.goto(url('/archive.html'));
+await page.locator('.archive-item').first().click({ position: { x: 40, y: 40 } });
+await page.waitForURL(/issues\/001\/$/);
+check(true, 'archive card for 001 opens /issues/001/');
+
+// --- keyboard: focus is visible, dialogs trap and return focus
+await page.goto(url('/issues/001/news.html'));
+await page.keyboard.press('Tab');
+const firstFocus = await page.evaluate(() => {
+  const el = document.activeElement;
+  const cs = getComputedStyle(el);
+  return { cls: el.className, ring: cs.outlineStyle !== 'none' || cs.boxShadow !== 'none' };
+});
+check(firstFocus.cls.includes('nav-link') && firstFocus.ring, 'first Tab lands on the section bar with a visible focus ring');
+const coming = page.locator('[data-coming]');
+await coming.focus();
+await page.keyboard.press('Enter');
+check(await page.locator('#comingModal').evaluate((d) => d.open), 'coming-soon opens from the keyboard');
+check(await page.evaluate(() => document.getElementById('comingModal').contains(document.activeElement)), 'focus moves into the dialog');
+await page.keyboard.press('Escape');
+check(await page.evaluate(() => document.activeElement?.hasAttribute('data-coming')), 'Escape closes and focus returns to the opener');
+await page.locator('#ziad-story .story-toggle-btn').focus();
+await page.keyboard.press('Enter');
+check((await page.locator('#ziad-story .story-toggle-btn').getAttribute('aria-expanded')) === 'true', 'article stamp works from the keyboard');
+
+// --- toast stamps repeatedly without locking the page (press effect)
+await ctx.grantPermissions(['clipboard-read', 'clipboard-write']);
+for (let i = 0; i < 3; i++) await page.locator('#tat3eem-story .reaction-btn').nth(i).click();
+check((await page.locator('#copyToast').textContent()) === 'تم تسجيل انطباعك التحريري.', 'repeated toasts stay responsive');
+
 check(errors.length === 0, `no script errors${errors.length ? ': ' + errors.join(' | ') : ''}`);
+
+// --- reduced motion: no entrance motion, no ticker movement, all content visible
+const reduced = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+const rp = await reduced.newPage();
+await rp.goto(url('/issues/001/news.html'));
+const motion = await rp.evaluate(() => ({
+  shell: getComputedStyle(document.querySelector('.site-shell')).opacity,
+  ticker: getComputedStyle(document.querySelector('.ticker-group')).animationName,
+  img: getComputedStyle(document.querySelector('.story-img')).opacity,
+}));
+check(motion.shell === '1' && motion.ticker === 'none' && motion.img === '1', 'prefers-reduced-motion: page static and fully visible');
+await reduced.close();
+
+// --- mobile: no sideways scrolling on any page
+const mobile = await browser.newContext({ viewport: { width: 360, height: 780 } });
+const mp = await mobile.newPage();
+for (const p of PAGES) {
+  await mp.goto(url(p));
+  await mp.waitForTimeout(400);
+  const overflow = await mp.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  check(overflow <= 0, `${p} at 360px: no horizontal overflow`);
+}
+await mobile.close();
+
 await browser.close();
 server.close();
 process.exit(failed ? 1 : 0);

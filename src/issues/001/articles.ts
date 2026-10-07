@@ -101,7 +101,7 @@ export const articles: Article[] = [
     meta: "قال و قيل آل خليل – قسم اللغة والسلوكيات العائلية",
     title: "مصطلحات آل خليل “حباب تتلقفك”: من تعجّب جدّة إلى نظام تعبير متكامل",
     body: bodies["habbab-story"],
-    image: { src: habbabStory, alt: "تصميم بخلفية حمراء ليد تمسك وردة فاتحة اللون، مع عبارة «حباب تتلقفك»", ratio: 'fixed', position: "center" },
+    image: { src: habbabStory, alt: "تصميم بخلفية حمراء ليد تمسك وردة فاتحة اللون، مع عبارة «حباب تتلقفك»", ratio: 'fixed', position: "center", focus: '50% 37%' },
     toggle: {
       more: "افتح ملف المصطلح",
       less: "يكفي هذا القدر من التوثيق"

@@ -1,16 +1,14 @@
 /* ------------------------------------------------------------------ *
- * Visual before/after comparison of Issue 001.
+ * Visual baseline of the newspaper.
  *
- *   before = tests/fixtures/issue-001-original (the site as it was)
- *   after  = dist/ (current build; run `npm run build` first)
+ *   npm run screenshots              capture dist/ and compare with the
+ *                                    committed baseline (tests/visual-baseline)
+ *   npm run screenshots -- --update  overwrite the baseline
+ *   npm run screenshots -- news 390  filter by page and/or width
  *
- * Renders every page at three widths with animations frozen, then
- * writes before/after/diff PNGs to tests/output/screenshots/ and prints
- * the share of pixels that differ. This complements verify:001: text
- * can be identical while the layout is not, and vice versa.
- *
- *   npm run screenshots              all pages, all widths
- *   npm run screenshots -- news 375  filter by page and/or width
+ * Pages are captured in their settled state (entrance motion skipped,
+ * ticker frozen) so runs are comparable. Run `npm run build` first.
+ * Text integrity is checked separately by verify:001; this is for looks.
  * ------------------------------------------------------------------ */
 import fs from 'node:fs';
 import http from 'node:http';
@@ -21,113 +19,113 @@ import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ORIGINAL = path.join(ROOT, 'tests/fixtures/issue-001-original');
 const DIST = path.join(ROOT, 'dist');
-const OUT = path.join(ROOT, 'tests/output/screenshots');
+const BASELINE = path.join(ROOT, 'tests/visual-baseline');
+const CURRENT = path.join(ROOT, 'tests/output/screenshots');
 const BASE = '/qal-qeel-al-khalil';
 
 const PAGES = [
-  { name: 'home', before: '/index.html', after: `${BASE}/issues/001/` },
-  { name: 'news', before: '/news.html', after: `${BASE}/issues/001/news.html` },
-  { name: 'columns', before: '/columns.html', after: `${BASE}/issues/001/columns.html` },
-  { name: 'entertainment', before: '/entertainment.html', after: `${BASE}/issues/001/entertainment.html` },
-  { name: 'entertainment-after-birthday', before: '/entertainment.html', after: `${BASE}/issues/001/entertainment.html`, birthday: true },
-  { name: 'about', before: '/about.html', after: `${BASE}/issues/001/about.html` },
-  { name: 'contact', before: '/contact.html', after: `${BASE}/issues/001/contact.html` },
-  { name: 'archive', before: '/archive.html', after: `${BASE}/archive.html` },
+  { name: 'root', path: '/' },
+  { name: 'home', path: '/issues/001/' },
+  { name: 'news', path: '/issues/001/news.html' },
+  { name: 'columns', path: '/issues/001/columns.html' },
+  { name: 'entertainment-gate', path: '/issues/001/entertainment.html' },
+  { name: 'entertainment', path: '/issues/001/entertainment.html', birthday: { day: '15', month: '6', year: '1990' } },
+  { name: 'about', path: '/issues/001/about.html' },
+  { name: 'contact', path: '/issues/001/contact.html' },
+  { name: 'archive', path: '/archive.html' },
 ];
-const WIDTHS = [1440, 768, 375];
+const WIDTHS = [
+  { label: 'desktop', width: 1440, height: 900 },
+  { label: 'tablet', width: 820, height: 1180 },
+  { label: 'mobile', width: 390, height: 844 },
+];
 
 const args = process.argv.slice(2);
-const pageFilter = args.filter((a) => !/^\d+$/.test(a));
-const widthFilter = args.filter((a) => /^\d+$/.test(a)).map(Number);
+const update = args.includes('--update');
+const filters = args.filter((a) => !a.startsWith('--'));
+const pageFilter = filters.filter((a) => !/^\d+$/.test(a));
+const widthFilter = filters.filter((a) => /^\d+$/.test(a)).map(Number);
 
-const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png' };
+const server = http.createServer((req, res) => {
+  let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  if (p.startsWith(BASE)) p = p.slice(BASE.length) || '/';
+  if (p.endsWith('/')) p += 'index.html';
+  const file = path.join(DIST, p);
+  if (!file.startsWith(DIST) || !fs.existsSync(file)) return res.writeHead(404).end();
+  res.writeHead(200, { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' });
+  fs.createReadStream(file).pipe(res);
+});
+await new Promise((r) => server.listen(0, r));
+const url = (p) => `http://localhost:${server.address().port}${BASE}${p}`;
 
-function serve(dir, prefix = '') {
-  const server = http.createServer((req, res) => {
-    let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-    if (prefix && p.startsWith(prefix)) p = p.slice(prefix.length) || '/';
-    if (p.endsWith('/')) p += 'index.html';
-    const file = path.join(dir, p);
-    if (!file.startsWith(dir) || !fs.existsSync(file)) {
-      res.writeHead(404).end();
-      return;
-    }
-    res.writeHead(200, { 'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream' });
-    fs.createReadStream(file).pipe(res);
-  });
-  return new Promise((resolve) => server.listen(0, () => resolve(server)));
-}
+// settled state: no entrance motion, nothing mid-animation
+const SETTLE = `*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}`;
 
-const FREEZE = `*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}`;
-
-async function capture(browser, url, width, birthday) {
-  const context = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1, locale: 'ar' });
-  const page = await context.newPage();
-  await page.goto(url, { waitUntil: 'networkidle' });
-  await page.addStyleTag({ content: FREEZE });
-  if (birthday) {
-    await page.fill('#birthDay', '15');
-    await page.fill('#birthMonth', '6');
-    await page.fill('#birthYear', '1990');
-    await page.click('#birthdayForm button');
-    await page.waitForTimeout(150);
-  }
-  // load lazy images, then return to the top
-  await page.evaluate(async () => {
-    for (let y = 0; y < document.body.scrollHeight; y += 600) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 30));
-    }
-    window.scrollTo(0, 0);
-    await document.fonts.ready;
-    await Promise.all([...document.images].map((img) => (img.complete ? null : new Promise((r) => (img.onload = img.onerror = r)))));
-  });
-  await page.waitForTimeout(200);
-  const buf = await page.screenshot({ fullPage: true });
-  await context.close();
-  return PNG.sync.read(buf);
-}
-
-function pad(img, width, height) {
-  if (img.width === width && img.height === height) return img;
-  const out = new PNG({ width, height });
-  out.data.fill(255);
-  PNG.bitblt(img, out, 0, 0, img.width, img.height, 0, 0);
-  return out;
-}
-
-const before = await serve(ORIGINAL);
-const after = await serve(DIST, BASE);
-const urlOf = (server, p) => `http://localhost:${server.address().port}${p}`;
-for (const d of ['before', 'after', 'diff']) fs.mkdirSync(path.join(OUT, d), { recursive: true });
+const out = update ? BASELINE : CURRENT;
+fs.mkdirSync(out, { recursive: true });
+fs.mkdirSync(path.join(CURRENT, 'diff'), { recursive: true });
 
 const browser = await chromium.launch();
 const rows = [];
 for (const pg of PAGES) {
   if (pageFilter.length && !pageFilter.some((f) => pg.name.startsWith(f))) continue;
-  for (const width of WIDTHS) {
-    if (widthFilter.length && !widthFilter.includes(width)) continue;
-    const a = await capture(browser, urlOf(before, pg.before), width, pg.birthday);
-    const b = await capture(browser, urlOf(after, pg.after), width, pg.birthday);
-    const w = Math.max(a.width, b.width);
-    const h = Math.max(a.height, b.height);
-    const A = pad(a, w, h);
-    const B = pad(b, w, h);
-    const diff = new PNG({ width: w, height: h });
-    const changed = pixelmatch(A.data, B.data, diff.data, w, h, { threshold: 0.1 });
-    const name = `${pg.name}-${width}.png`;
-    fs.writeFileSync(path.join(OUT, 'before', name), PNG.sync.write(a));
-    fs.writeFileSync(path.join(OUT, 'after', name), PNG.sync.write(b));
-    fs.writeFileSync(path.join(OUT, 'diff', name), PNG.sync.write(diff));
-    const pct = ((changed / (w * h)) * 100).toFixed(2);
-    rows.push({ page: pg.name, width, 'before h': a.height, 'after h': b.height, 'changed %': pct });
-    console.log(`${pg.name.padEnd(30)} ${String(width).padStart(4)}px  height ${a.height} → ${b.height}  changed ${pct}%`);
+  for (const vp of WIDTHS) {
+    if (widthFilter.length && !widthFilter.includes(vp.width)) continue;
+    const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: 1 });
+    const page = await ctx.newPage();
+    await page.goto(url(pg.path), { waitUntil: 'networkidle' });
+    await page.addStyleTag({ content: SETTLE });
+    await page.evaluate(() => document.documentElement.classList.remove('press-js'));
+    if (pg.birthday) {
+      await page.fill('#birthDay', pg.birthday.day);
+      await page.fill('#birthMonth', pg.birthday.month);
+      await page.fill('#birthYear', pg.birthday.year);
+      await page.click('#birthdayForm button');
+    }
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 700) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 25));
+      }
+      window.scrollTo(0, 0);
+      await document.fonts.ready;
+      await Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => (i.onload = i.onerror = r)))));
+    });
+    await page.waitForTimeout(150);
+    const name = `${pg.name}-${vp.label}`;
+    const jpg = path.join(out, `${name}.jpg`);
+    await page.screenshot({ path: jpg, fullPage: true, type: 'jpeg', quality: 72 });
+
+    // compare against the baseline using lossless captures of both
+    let note = update ? 'baseline updated' : 'no baseline';
+    const basePath = path.join(BASELINE, `${name}.jpg`);
+    if (!update && fs.existsSync(basePath)) {
+      const cur = PNG.sync.read(await page.screenshot({ fullPage: true }));
+      const basePage = await ctx.newPage();
+      await basePage.setContent(`<img src="data:image/jpeg;base64,${fs.readFileSync(basePath).toString('base64')}" style="display:block">`);
+      await basePage.setViewportSize({ width: cur.width, height: Math.min(cur.height, 16000) });
+      const ref = PNG.sync.read(await basePage.locator('img').screenshot());
+      const w = Math.max(cur.width, ref.width);
+      const h = Math.max(cur.height, ref.height);
+      const pad = (img) => {
+        if (img.width === w && img.height === h) return img;
+        const o = new PNG({ width: w, height: h });
+        o.data.fill(255);
+        PNG.bitblt(img, o, 0, 0, img.width, img.height, 0, 0);
+        return o;
+      };
+      const diff = new PNG({ width: w, height: h });
+      const changed = pixelmatch(pad(ref).data, pad(cur).data, diff.data, w, h, { threshold: 0.25 });
+      fs.writeFileSync(path.join(CURRENT, 'diff', `${name}.png`), PNG.sync.write(diff));
+      note = `${((changed / (w * h)) * 100).toFixed(2)}% changed vs baseline (height ${ref.height} → ${cur.height})`;
+    }
+    rows.push({ name, note });
+    console.log(`${name.padEnd(32)} ${note}`);
+    await ctx.close();
   }
 }
 await browser.close();
-before.close();
-after.close();
-fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(rows, null, 2));
-console.log(`\nImages: ${path.relative(ROOT, OUT)}/{before,after,diff}/`);
+server.close();
+console.log(`\n${update ? 'Baseline' : 'Screenshots'}: ${path.relative(ROOT, out)}`);

@@ -1,65 +1,168 @@
-/* Responsive */
+/* ==================================================================
+   Narrower screens: the same newspaper, seen closer.
+   ================================================================== */
 @media (max-width: 1100px){
-  .news-page-layout.single-left-sidebar{
-    grid-template-columns:270px minmax(0, 1fr);
+  .news-page-layout{
+    grid-template-columns:minmax(0, 1fr) 250px;
   }
-
-  .ent-page-grid{
-    grid-template-columns:1fr;
-  }
-
 }
 
-@media (max-width: 980px){
-  .masthead-grid,
-  .news-hero,
-  .quiz-grid,
-  .birthday-grid{
-    grid-template-columns:1fr;
-  }
-
-  .news-page-layout.single-left-sidebar{
-    grid-template-columns:1fr;
-  }
-
-  .left-ads-sidebar{
-    position:static;
-    order:2;
+/* nameplate gets the full width; the two ears sit beneath it */
+@media (max-width: 1000px){
+  .masthead-grid{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "ear-a ear-b";
+    gap:12px 14px;
+    padding-bottom:12px;
   }
 
   .brand-box{
-    border-inline:none;
-    border-block:1px solid var(--line);
-    padding:14px 0;
-    margin:2px 0;
+    grid-area:brand;
+  }
+
+  .meta-box{
+    grid-area:ear-a;
+    padding:6px 8px 5px;
   }
 
   .meta-left{
-    text-align:right;
+    grid-area:ear-b;
   }
 
- 
+  .meta-box strong{
+    font-size:22px;
+  }
+
+  .meta-left strong{
+    font-size:18px;
+  }
+}
+
+@media (max-width: 900px){
+  .news-hero{
+    grid-template-columns:1fr;
+  }
+
+  .lead-story{
+    padding-inline-end:0;
+    border-inline-end:0;
+  }
+
+  .headline-stack{
+    margin-top:16px;
+    padding-top:12px;
+    padding-inline-start:0;
+    border-top:1px solid var(--ink);
+  }
+
+  /* ads move below the stories as a two-column classified block */
+  .news-page-layout{
+    grid-template-columns:1fr;
+  }
+
+  .news-articles-column{
+    padding-inline-end:0;
+    border-inline-end:0;
+  }
+
+  .left-ads-sidebar{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:20px;
+    align-items:start;
+    margin-top:30px;
+    padding:22px 0 0;
+    border-top:4px double var(--ink);
+  }
+
+  .ad-flyer{
+    margin-bottom:0;
+  }
+}
+
+@media (max-width: 760px){
+  /* close-up: the sheet fills the screen, no desk around it */
+  body{
+    background:var(--paper);
+  }
+
+  body::before,
+  body::after{
+    content:none;
+  }
+
+  .site-shell{
+    width:100%;
+    min-height:100vh;
+    margin:0;
+    box-shadow:inset 0 0 60px rgba(150, 118, 62, .16);
+  }
+
+  .topbar{
+    padding-top:14px;
+  }
+
+
+  .tagline{
+    font-size:17px;
+  }
+
+  /* section bar as a balanced 3 × 2 grid, separators only within a row */
+  .nav-links{
+    display:grid;
+    grid-template-columns:repeat(3, auto);
+    justify-content:center;
+  }
+
+  .nav-link{
+    padding:6px 14px 8px;
+    font-size:17px;
+    text-align:center;
+  }
+
+  .nav-link:nth-child(3n + 1)::before{
+    content:none;
+  }
+
+  .nav-link::after{
+    inset-inline:8px;
+  }
+
+  .ticker-label{
+    padding:4px 10px 3px 20px;
+    font-size:15px;
+  }
+
+  .ticker-track{
+    font-size:15px;
+  }
 }
 
 @media (max-width: 640px){
-  .container{
-    width:min(calc(100% - 20px), var(--max));
-  }
-
-  .masthead-grid,
-  .lead-story,
-  .headline-stack,
-  .toc-card,
-  .story-content,
-  .footer-card,
-  .modal-card,
-  .home-hero-card,
-  .home-note-card{
-    padding:18px;
+  .news-main{
+    padding-top:20px;
   }
 
   .lead-title{
-    font-size:32px;
+    font-size:34px;
+  }
+
+  .lead-subtitle{
+    font-size:19px;
+  }
+
+  .chip-title{
+    font-size:20px;
+  }
+
+  .toc-card{
+    padding:14px 16px 10px;
+  }
+
+  .toc-links a{
+    font-size:18px;
   }
 
   .story-title{
@@ -70,46 +173,139 @@
     font-size:18px;
   }
 
-  .ticker{
-    gap:0;
+  .story-body > p:first-child{
+    font-size:19px;
   }
 
-  .ticker-label{
-    display:none;
+  .story-img{
+    height:220px;
   }
 
+  .left-ads-sidebar{
+    grid-template-columns:1fr;
+  }
+
+  .footer-brand h3{
+    font-size:28px;
+  }
+
+  .modal-card{
+    padding:34px 20px 24px;
+  }
+
+  .toast{
+    max-width:calc(100% - 32px);
+    white-space:normal;
+    text-align:center;
+  }
+}
+
+/* ---- page compositions on narrower paper ---------------------------- */
+@media (max-width: 900px){
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+
+  .contact-grid > .story-card:first-child{
+    padding-inline-end:0;
+    border-inline-end:0;
+  }
+
+  .contact-grid > .story-card:last-child{
+    margin:24px 0 0;
+  }
+
+  .ent-main-column{
+    grid-template-columns:1fr;
+  }
+
+  .ent-main-column > .story-card:nth-child(1),
+  .ent-main-column > .story-card:nth-child(2){
+    padding-inline:0;
+    border-inline-end:0;
+  }
+}
+
+@media (max-width: 760px){
+  body[data-page="home"] .news-main .container,
+  body[data-page="archive"] .news-main .container{
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  body[data-page="archive"] .news-main .container{
+    gap:20px 0;
+  }
+
+  .about-extra-grid{
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  .quiz-grid{
+    grid-template-columns:1fr;
+  }
+
+  .quiz-question:nth-child(odd),
+  .quiz-question:nth-child(even){
+    padding-inline:0;
+    border-inline-end:0;
+  }
+
+  .home-hero-card{
+    padding-bottom:20px;
+  }
+
+  .home-hero-text{
+    font-size:19px;
+  }
+
+  .better-archive-list{
+    gap:30px;
+    padding-inline:6px 12px;
+  }
+}
+
+@media (max-width: 640px){
+  body[data-page="home"] .home-hero-title,
   .home-hero-title{
-    font-size:40px;
+    font-size:34px;
+  }
+
+  .home-note-card{
+    padding:16px 18px 14px;
+  }
+
+  .zodiac-display{
+    padding:16px 14px;
+  }
+
+  #zodiacText{
+    font-size:19px;
   }
 
   .coin{
-    width:140px;
-    height:140px;
+    width:136px;
+    height:136px;
   }
 
   .coin-face{
     font-size:42px;
   }
 
-  .coin-result{
-    font-size:19px;
-  }
-
-  .zodiac-sign-text{
-    font-size:20px;
-  }
-
-  .ent-fatwa-big .fatwa-card h3{
+  .ent-fatwa-big .section-heading h2{
     font-size:28px;
   }
 
-  .ent-fatwa-big .fatwa-card p,
-  .ent-fatwa-big .fatwa-card li,
-  .quiz-question label{
-    font-size:17px;
+  .quiz-question h3{
+    font-size:20px;
   }
 
-  .quiz-question h3{
-    font-size:26px;
+  .birthday-grid{
+    gap:10px;
+  }
+
+  .contact-grid > .story-card:last-child{
+    padding:18px 16px;
   }
 }

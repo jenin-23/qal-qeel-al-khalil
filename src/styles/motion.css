@@ -10,6 +10,13 @@
     transform:translateY(14px) rotate(-.45deg);
   }
 
+  @media (max-width: 760px){
+    /* close-up: the page drops into place without tilting */
+    .press-js .site-shell{
+      transform:translateY(12px);
+    }
+  }
+
   .press-js.press-settled .site-shell{
     opacity:1;
     transform:none;

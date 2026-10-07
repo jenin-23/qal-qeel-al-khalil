@@ -1,0 +1,801 @@
+/* ==================================================================
+   Page compositions. Each section of the paper keeps the same type,
+   rules and ink, but is set the way that section would be printed.
+   ================================================================== */
+
+/* ---- section leaders (hero) & boxed notices: shared ----------------- */
+.home-hero-card{
+  margin-bottom:26px;
+  padding:6px 0 26px;
+  border-bottom:4px double var(--ink);
+  text-align:center;
+}
+
+.home-hero-kicker{
+  display:inline-block;
+  padding:2px 14px 1px;
+  background:var(--press-red);
+  color:var(--paper-fresh);
+  font-family:var(--font-poster);
+  font-size:17px;
+  line-height:1.6;
+}
+
+.home-hero-title{
+  max-width:20ch;
+  margin:14px auto 12px;
+  font-family:var(--font-display);
+  font-size:var(--t-h1);
+  line-height:1.15;
+  font-weight:700;
+  color:var(--ink);
+  text-wrap:balance;
+}
+
+.home-hero-text{
+  max-width:46em;
+  margin:0 auto;
+  padding-top:12px;
+  border-top:1px solid var(--rule);
+  font-family:var(--font-display);
+  font-size:var(--t-deck);
+  line-height:1.8;
+  color:var(--ink-faded);
+}
+
+/* a boxed notice, as editors print announcements */
+.home-note-card{
+  position:relative;
+  padding:20px 24px 18px;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:-6px;
+  background-color:rgba(244, 237, 218, .45);
+}
+
+.home-note-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--rule);
+  font-family:var(--font-display);
+  font-size:21px;
+  font-weight:700;
+  color:var(--press-red);
+}
+
+.home-note-title::before{
+  content:"❖" / "";
+  font-size:13px;
+}
+
+.home-note-card p{
+  margin:0;
+  font-size:var(--t-body);
+  line-height:1.95;
+  color:var(--ink-body);
+}
+
+/* long-form text that is never collapsed (About, Contact) */
+.story-body.no-collapse{
+  max-height:none;
+  overflow:visible;
+  mask-image:none;
+}
+
+/* stamp-style action buttons (coin, quiz, birthday, contact) */
+.coin-button{
+  display:inline-block;
+  padding:7px 22px 4px;
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:2px;
+  border-radius:2px;
+  background:transparent;
+  color:var(--press-red);
+  font-family:var(--font-poster);
+  font-size:19px;
+  line-height:1.5;
+  transform:rotate(-1.2deg);
+  filter:url(#press-stamp);
+  transition:transform .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.coin-button:hover{
+  color:var(--red-deep);
+  border-color:var(--red-deep);
+  outline-color:var(--red-deep);
+  transform:rotate(-2.4deg);
+}
+
+.coin-button:active{
+  transform:rotate(-2.4deg) translateY(1px) scale(.96);
+}
+
+/* printed form fields: write on the dotted line */
+.form-field,
+.birthday-field{
+  display:grid;
+  gap:4px;
+  text-align:right;
+}
+
+.form-field label,
+.birthday-field label{
+  font-family:var(--font-display);
+  font-size:18px;
+  font-weight:700;
+  color:var(--ink);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea,
+.birthday-field input{
+  width:100%;
+  padding:6px 2px 5px;
+  border:0;
+  border-bottom:1.5px dotted var(--ink);
+  border-radius:0;
+  background:transparent;
+  font-family:var(--font-body);
+  font-size:17px;
+  color:var(--ink);
+}
+
+.form-field select{
+  appearance:none;
+  padding-inline-end:22px;
+  background:linear-gradient(45deg, transparent 50%, var(--ink) 50%) left 6px center / 7px 7px no-repeat;
+  cursor:pointer;
+}
+
+.form-field textarea{
+  resize:vertical;
+  min-height:150px;
+  line-height:34px;
+  padding-top:0;
+  /* ruled writing lines */
+  background:repeating-linear-gradient(to bottom, transparent 0 33px, var(--rule-soft) 33px 34px);
+  border-bottom:0;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus,
+.birthday-field input:focus{
+  outline:none;
+  border-bottom-color:var(--press-red);
+  border-bottom-style:solid;
+  background-color:rgba(122, 33, 27, .04);
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder{
+  color:var(--ink-faded);
+  opacity:.75;
+}
+
+/* ==================================================================
+   HOME: the editorial leader, then two boxed notices side by side
+   ================================================================== */
+body[data-page="home"] .news-main .container{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:0 30px;
+  align-items:start;
+}
+
+body[data-page="home"] .home-hero-card{
+  grid-column:1 / -1;
+  padding:22px 0 34px;
+}
+
+body[data-page="home"] .home-hero-title{
+  font-size:clamp(40px, 5.6vw, 72px);
+}
+
+/* ==================================================================
+   COLUMNS: full-width features; three columns of text on wide paper
+   ================================================================== */
+.articles-grid{
+  display:block;
+}
+
+.articles-grid .story-img{
+  height:clamp(240px, 34vw, 440px);
+}
+
+@media (min-width: 1180px){
+  .articles-grid .story-body{
+    column-count:3;
+    column-gap:32px;
+  }
+}
+
+/* ==================================================================
+   ABOUT: statement in columns, two notices, one closing notice
+   ================================================================== */
+body[data-page="about"] .story-card{
+  margin-bottom:26px;
+  padding-bottom:26px;
+}
+
+.about-extra-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:24px 30px;
+  margin-bottom:24px;
+}
+
+/* ==================================================================
+   CONTACT: the letter on one side, a printed coupon on the other
+   ================================================================== */
+.contact-grid{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items:start;
+}
+
+.contact-grid > .story-card{
+  margin:0;
+  padding-bottom:0;
+  border-bottom:0;
+}
+
+.contact-grid > .story-card:first-child{
+  padding-inline-end:var(--col-gap);
+  border-inline-end:1px solid var(--rule);
+  align-self:stretch;
+}
+
+.contact-grid > .story-card:last-child{
+  margin-inline-start:var(--col-gap);
+  padding:22px 26px 20px;
+  border:2px dashed var(--ink);
+  background-color:rgba(244, 237, 218, .5);
+}
+
+.contact-grid .story-body{
+  column-count:1;
+}
+
+.contact-form{
+  display:grid;
+  gap:18px;
+}
+
+.contact-form .coin-button{
+  justify-self:start;
+  margin-top:4px;
+}
+
+.contact-note{
+  margin-top:16px;
+  padding-top:10px;
+  border-top:1px dashed var(--rule);
+  font-size:var(--t-meta);
+  line-height:1.8;
+  color:var(--ink-faded);
+}
+
+/* ==================================================================
+   ENTERTAINMENT: horoscope box and coin side by side, then the fatwa
+   column and the questionnaire across the page
+   ================================================================== */
+.ent-main-column{
+  display:grid;
+  grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr);
+}
+
+.ent-main-column > .story-card:nth-child(1){
+  padding-inline-end:var(--col-gap);
+  border-inline-end:1px solid var(--rule);
+}
+
+.ent-main-column > .story-card:nth-child(2){
+  padding-inline-start:var(--col-gap);
+}
+
+.ent-main-column > .story-card:nth-child(n + 3){
+  grid-column:1 / -1;
+}
+
+/* horoscope: the classic double-framed box */
+.zodiac-display{
+  padding:22px 22px 20px;
+  border:4px double var(--ink);
+  text-align:center;
+}
+
+#zodiacName{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-bottom:8px;
+  font-family:var(--font-display);
+  font-size:30px;
+  font-weight:700;
+  line-height:1.35;
+  color:var(--press-red);
+}
+
+#zodiacName::before,
+#zodiacName::after{
+  content:"❖" / "";
+  font-size:13px;
+}
+
+#zodiacText{
+  font-family:var(--font-display);
+  font-size:22px;
+  line-height:1.85;
+  color:var(--ink);
+}
+
+.birthday-change{
+  margin-top:14px;
+  text-align:center;
+}
+
+.birthday-change-btn{
+  padding:2px 0;
+  border:0;
+  background:none;
+  font-family:var(--font-body);
+  font-size:var(--t-meta);
+  font-weight:600;
+  color:var(--ink);
+  text-decoration:underline;
+  text-decoration-color:var(--rule);
+  text-underline-offset:7px;
+}
+
+.birthday-change-btn::before{
+  content:"※" / "";
+  margin-inline-end:6px;
+  color:var(--press-red);
+}
+
+.birthday-change-btn:hover{
+  color:var(--press-red);
+  text-decoration-color:currentColor;
+}
+
+/* coin: a struck piece with an engraved ring */
+.coin-area{
+  display:grid;
+  justify-items:center;
+  gap:20px;
+  padding-top:6px;
+}
+
+.coin-wrapper{
+  perspective:1200px;
+}
+
+.coin{
+  position:relative;
+  width:164px;
+  height:164px;
+  transform-style:preserve-3d;
+  transition:transform 1s var(--ease-paper);
+}
+
+.coin.flipped{
+  transform:rotateY(180deg) rotateZ(8deg);
+}
+
+.coin-face{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px double var(--ink);
+  border-radius:50%;
+  background-color:var(--paper-fresh);
+  background-image:var(--grain);
+  box-shadow:
+    inset 0 0 0 9px var(--paper-fresh),
+    inset 0 0 0 10px var(--ink),
+    0 10px 22px -12px rgba(33, 29, 24, .6);
+  font-family:var(--font-display);
+  font-size:52px;
+  font-weight:700;
+  color:var(--ink);
+  backface-visibility:hidden;
+}
+
+.coin-back{
+  transform:rotateY(180deg);
+  color:var(--press-red);
+}
+
+.coin-result{
+  font-family:var(--font-display);
+  font-size:21px;
+  line-height:1.8;
+  color:var(--ink);
+  text-align:center;
+}
+
+/* fatwa: a column with masthead-like heading and byline */
+.ent-fatwa-big .section-heading{
+  text-align:center;
+}
+
+.ent-fatwa-big .section-heading h2{
+  justify-content:center;
+  font-size:36px;
+}
+
+.ent-fatwa-big .section-heading h2::after{
+  content:none;
+}
+
+.ent-fatwa-big .section-heading p{
+  font-family:var(--font-display);
+  font-size:19px;
+  color:var(--press-red);
+}
+
+.ent-fatwa-big .section-heading p::before,
+.ent-fatwa-big .section-heading p::after{
+  content:"—" / "";
+  margin-inline:10px;
+  color:var(--ink-faded);
+}
+
+.fatwa-card{
+  padding-top:16px;
+  border-top:3px solid var(--ink);
+  font-size:var(--t-body);
+  line-height:2;
+  color:var(--ink-body);
+}
+
+.fatwa-card h3{
+  margin:0 auto 18px;
+  max-width:28ch;
+  font-family:var(--font-display);
+  font-size:clamp(25px, 2.6vw, 32px);
+  line-height:1.5;
+  color:var(--ink);
+  text-align:center;
+  text-wrap:balance;
+}
+
+.fatwa-card p{
+  margin:0 0 14px;
+}
+
+/* the reader's question, set apart */
+.fatwa-card h3 + p{
+  color:var(--ink-faded);
+  font-style:italic;
+}
+
+.fatwa-card .fatwa-end{
+  margin-top:6px;
+  padding:12px 0 0;
+  border-top:1px solid var(--ink);
+  font-family:var(--font-display);
+  font-size:22px;
+  font-weight:700;
+  color:var(--ink);
+  text-align:center;
+}
+
+@media (min-width: 1000px){
+  .fatwa-card{
+    column-count:2;
+    column-gap:34px;
+    column-rule:1px solid var(--rule-soft);
+  }
+
+  .fatwa-card h3,
+  .fatwa-card .fatwa-end{
+    column-span:all;
+  }
+}
+
+/* quiz: a printed questionnaire */
+.quiz-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  border-top:1px solid var(--ink);
+}
+
+.quiz-question{
+  padding:16px 0 12px;
+  border-bottom:1px dotted var(--rule);
+}
+
+.quiz-question:nth-child(odd){
+  padding-inline-end:var(--col-gap);
+  border-inline-end:1px solid var(--rule);
+}
+
+.quiz-question:nth-child(even){
+  padding-inline-start:var(--col-gap);
+}
+
+.quiz-question h3{
+  margin:0 0 10px;
+  font-family:var(--font-display);
+  font-size:23px;
+  line-height:1.5;
+  color:var(--ink);
+}
+
+.quiz-question label{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin-bottom:8px;
+  font-size:17px;
+  line-height:1.8;
+  color:var(--ink-body);
+  cursor:pointer;
+}
+
+.quiz-question input{
+  appearance:none;
+  flex:0 0 auto;
+  width:15px;
+  height:15px;
+  margin:0;
+  border:1.5px solid var(--ink);
+  border-radius:50%;
+  transform:translateY(2px);
+  cursor:pointer;
+}
+
+.quiz-question input:checked{
+  border-color:var(--press-red);
+  background:var(--press-red);
+  box-shadow:inset 0 0 0 2.5px var(--paper);
+  animation:stampDown .3s var(--ease-stamp);
+}
+
+.quiz-question input:focus-visible{
+  outline:2px solid var(--press-red);
+  outline-offset:3px;
+}
+
+.quiz-question label:has(input:checked){
+  color:var(--ink);
+}
+
+.quiz-actions{
+  display:flex;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.quiz-result{
+  margin-top:20px;
+  padding:14px 20px 12px;
+  border:1px dashed var(--rule);
+  font-family:var(--font-display);
+  font-size:20px;
+  line-height:1.85;
+  color:var(--ink-faded);
+  text-align:center;
+}
+
+.quiz-result.show-result{
+  border:2px solid var(--press-red);
+  outline:1px solid var(--press-red);
+  outline-offset:3px;
+  color:var(--ink);
+  animation:stampDown .4s var(--ease-stamp);
+}
+
+/* birthday notice */
+.birthday-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:14px;
+  margin-top:18px;
+}
+
+.birthday-field input{
+  text-align:center;
+  font-family:var(--font-display);
+  font-size:22px;
+}
+
+.centered-actions{
+  justify-content:center;
+}
+
+/* ==================================================================
+   ARCHIVE: issues as folded copies and clippings on the archive table
+   ================================================================== */
+body[data-page="archive"] .toc-card{
+  padding:0;
+  border:0;
+  outline:0;
+  background:none;
+}
+
+.better-archive-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));
+  gap:38px 32px;
+  padding:16px 8px 28px;
+}
+
+.archive-item{
+  --tilt:-1deg;
+  position:relative;
+  display:grid;
+  align-content:start;
+  gap:6px;
+  padding:26px 22px 20px;
+  border:1px solid rgba(33, 29, 24, .22);
+  background-color:var(--paper-fresh);
+  background-image:var(--fibers), var(--grain);
+  box-shadow:0 1px 0 rgba(33, 29, 24, .05), 0 14px 26px -16px rgba(40, 29, 12, .5);
+  transform:rotate(var(--tilt));
+  transition:transform .35s var(--ease-paper), box-shadow .35s var(--ease-paper);
+}
+
+.archive-item:nth-child(3n + 2){ --tilt:.8deg; }
+.archive-item:nth-child(3n){ --tilt:-.35deg; }
+
+/* a published issue: a folded copy, with older copies stacked under it */
+.archive-item:has(.archive-side){
+  padding-top:30px;
+  background-image:
+    linear-gradient(to bottom, transparent 47%, rgba(70, 52, 22, .09) 49.6%, rgba(255, 252, 240, .35) 50.2%, transparent 53%),
+    linear-gradient(var(--ink), var(--ink)),
+    linear-gradient(var(--ink), var(--ink)),
+    var(--fibers),
+    var(--grain);
+  background-size:100% 100%, calc(100% - 44px) 4px, calc(100% - 44px) 1px, auto, auto;
+  background-position:0 0, 22px 14px, 22px 21px, 0 0, 0 0;
+  background-repeat:no-repeat, no-repeat, no-repeat, repeat, repeat;
+  /* an older copy lying underneath */
+  box-shadow:
+    -8px 7px 0 -1px var(--paper-deep),
+    -8px 7px 0 0 rgba(33, 29, 24, .2),
+    0 16px 30px -16px rgba(40, 29, 12, .55);
+}
+
+.archive-item:has(.archive-side):hover,
+.archive-item:has(.archive-side):focus-within{
+  transform:translateY(-5px) rotate(0deg);
+  box-shadow:
+    -10px 10px 0 -1px var(--paper-deep),
+    -10px 10px 0 0 rgba(33, 29, 24, .2),
+    0 28px 42px -18px rgba(40, 29, 12, .6);
+}
+
+/* announced but not printed: a thin slip pinned to the table */
+.archive-item:not(:has(.archive-side)){
+  border-style:dashed;
+  background-color:rgba(244, 237, 218, .6);
+  box-shadow:none;
+}
+
+.archive-number{
+  justify-self:start;
+  padding:2px 14px 0;
+  border:1px solid var(--ink);
+  outline:1px solid var(--ink);
+  outline-offset:2px;
+  font-family:var(--font-display);
+  font-size:30px;
+  font-weight:700;
+  line-height:1.3;
+  color:var(--ink);
+}
+
+.archive-main h3{
+  margin:6px 0 0;
+  font-family:var(--font-display);
+  font-size:30px;
+  line-height:1.25;
+  color:var(--ink);
+}
+
+.archive-item-date{
+  font-size:var(--t-small);
+  font-weight:600;
+  color:var(--ink-faded);
+}
+
+.archive-item-date::before{
+  content:"◆" / "";
+  margin-inline-end:6px;
+  font-size:9px;
+  color:var(--press-red);
+  vertical-align:2px;
+}
+
+.archive-main p{
+  margin:6px 0 0;
+  font-size:16.5px;
+  line-height:1.85;
+  color:var(--ink-body);
+}
+
+/* status: a rubber stamp on the copy */
+.archive-status{
+  position:absolute;
+  top:16px;
+  inset-inline-end:16px;
+  padding:3px 12px 1px;
+  border:2px solid currentColor;
+  font-family:var(--font-poster);
+  font-size:16px;
+  line-height:1.5;
+  transform:rotate(-7deg);
+  filter:url(#press-stamp);
+}
+
+.published-status{ color:var(--press-red); }
+.pending-status{ color:var(--ink-faded); }
+.sensitive-status{ color:var(--red-faded); border-style:double; border-width:4px; }
+
+.archive-side{
+  display:contents;
+}
+
+.archive-side .footer-link{
+  position:static;
+  justify-self:start;
+  margin-top:8px;
+}
+
+/* the whole copy is the link into its edition */
+.archive-side .footer-link::after{
+  content:"";
+  position:absolute;
+  inset:0;
+}
+
+.archive-cover{
+  margin:0 0 6px;
+}
+
+.archive-cover img{
+  display:block;
+  width:100%;
+  height:auto;
+  border:1px solid var(--ink);
+  filter:grayscale(.7) sepia(.2) contrast(1.1);
+}
+
+body[data-page="archive"] .news-main .container{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:0 30px;
+  align-items:start;
+}
+
+body[data-page="archive"] .home-hero-card,
+body[data-page="archive"] .toc-card{
+  grid-column:1 / -1;
+}
+
+body[data-page="archive"] .toc-card .section-heading{
+  margin-bottom:6px;
+}
+
+/* numbers are written on the line, not dialled with spinner arrows */
+.birthday-field input[type="number"]{
+  appearance:textfield;
+}
+
+.birthday-field input[type="number"]::-webkit-inner-spin-button,
+.birthday-field input[type="number"]::-webkit-outer-spin-button{
+  appearance:none;
+  margin:0;
+}

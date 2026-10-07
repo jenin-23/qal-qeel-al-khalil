@@ -128,6 +128,8 @@ export interface ArticleImage {
   ratio?: ImageRatio;
   /** object-position keyword used by the existing .story-img modifiers. */
   position?: 'top' | 'center' | 'left' | 'right';
+  /** Exact focal point (CSS object-position), e.g. '50% 36%'. Overrides position. */
+  focus?: string;
   /** Editorial cartoon presentation: whole image on paper, never cropped. */
   variant?: 'photo' | 'cartoon';
 }
