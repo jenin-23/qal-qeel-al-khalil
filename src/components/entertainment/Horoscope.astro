@@ -1,0 +1,25 @@
+---
+/* The prediction text comes from the issue; scripts/horoscope.ts only
+   maps the stored birthday to a sign and looks it up. */
+import type { BirthdayDef, HoroscopeDef } from '../../lib/types';
+
+interface Props { def: HoroscopeDef; birthday: BirthdayDef }
+const { def, birthday } = Astro.props;
+---
+<article class="story-card">
+  <div class="story-content">
+    <div class="section-heading">
+      <h2>{def.heading}</h2>
+      <p>{def.sub}</p>
+    </div>
+
+    <div class="zodiac-display" aria-live="polite">
+      <div id="zodiacName">{def.initialSign}</div>
+      <div id="zodiacText">{def.initialText}</div>
+    </div>
+
+    <div class="birthday-change" hidden data-birthday-change-wrap>
+      <button class="birthday-change-btn" type="button" data-birthday-change>{birthday.changeLabel}</button>
+    </div>
+  </div>
+</article>

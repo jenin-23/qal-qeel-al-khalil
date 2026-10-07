@@ -1,0 +1,38 @@
+---
+import type { Article, Issue } from '../../lib/types';
+import { issueUrl } from '../../lib/url';
+import ArticleFigure from './ArticleFigure.astro';
+import Reactions from './Reactions.astro';
+
+interface Props {
+  article: Article;
+  issue: Issue;
+}
+const { article, issue } = Astro.props;
+const bodyId = `${article.id}-body`;
+---
+<article class="story-card" id={article.id}>
+  <ArticleFigure image={article.image} />
+
+  <div class="story-content">
+    <div class="story-meta">{article.meta}</div>
+    <h2 class="story-title">{article.title}</h2>
+
+    <div class="story-body is-collapsed" id={bodyId} set:html={article.body} />
+
+    <div class="story-actions">
+      <button class="story-toggle-btn" type="button" aria-expanded="false" aria-controls={bodyId}>
+        <span class="more-text">{article.toggle.more}</span>
+        <span class="less-text">{article.toggle.less}</span>
+      </button>
+      <button class="copy-btn" type="button">{issue.ui.copyArticle.label}</button>
+      {article.links?.map((link) => (
+        <a class="footer-link" href={issueUrl(issue.meta.number, link.page)}>{link.label}</a>
+      ))}
+
+      {article.reactions && (
+        <Reactions articleId={article.id} label={article.reactions.label} options={article.reactions.options} />
+      )}
+    </div>
+  </div>
+</article>

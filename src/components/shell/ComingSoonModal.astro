@@ -1,0 +1,15 @@
+---
+import type { IssueUI } from '../../lib/types';
+
+interface Props {
+  ui: IssueUI;
+}
+const { ui } = Astro.props;
+---
+<dialog class="modal" id="comingModal" aria-labelledby="comingTitle">
+  <div class="modal-card">
+    <button class="modal-close" id="closeModal" type="button" aria-label={ui.closeLabel} data-close>×</button>
+    <h2 id="comingTitle">{ui.coming.title}</h2>
+    <p id="comingText">{ui.coming.text}</p>
+  </div>
+</dialog>

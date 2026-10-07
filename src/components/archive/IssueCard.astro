@@ -1,0 +1,37 @@
+---
+/* One archive entry. Published issues link into their edition;
+   upcoming placeholders render exactly as plain announcements. */
+import { Image } from 'astro:assets';
+import type { ArchiveCard } from '../../lib/types';
+import { newspaper } from '../../universe/newspaper';
+
+interface Props {
+  number: string;
+  card: ArchiveCard;
+  href?: string;
+  dateLabel?: string;
+}
+const { number, card, href, dateLabel } = Astro.props;
+const statusClass = `archive-status ${card.statusTone}-status`;
+---
+<article class="archive-item better-archive-item">
+  {card.cover && (
+    <figure class="archive-cover">
+      <Image src={card.cover} alt={card.coverAlt ?? ''} widths={[480, 960]} sizes="(max-width: 780px) 100vw, 900px" />
+    </figure>
+  )}
+  <div class="archive-number">{number}</div>
+  <div class="archive-main">
+    <h3>{card.title}</h3>
+    {dateLabel && <div class="archive-item-date">{dateLabel}</div>}
+    <p>{card.description}</p>
+  </div>
+  {href ? (
+    <div class="archive-side">
+      <div class={statusClass}>{card.statusLabel}</div>
+      <a class="footer-link" href={href}>{newspaper.archive.enterIssueLabel}</a>
+    </div>
+  ) : (
+    <div class={statusClass}>{card.statusLabel}</div>
+  )}
+</article>

@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageAd } from '../../lib/types';
+
+interface Props {
+  ad: ImageAd;
+  sizes: string;
+  loading?: 'lazy' | 'eager';
+}
+const { ad, sizes, loading = 'lazy' } = Astro.props;
+---
+{ad.href ? (
+  <a href={ad.href} target="_blank" rel="noopener sponsored">
+    <Image src={ad.image} alt={ad.alt} widths={[400, 720, 1080]} sizes={sizes} loading={loading} />
+  </a>
+) : (
+  <Image src={ad.image} alt={ad.alt} widths={[400, 720, 1080]} sizes={sizes} loading={loading} />
+)}

@@ -1,0 +1,10 @@
+---
+import type { HeroBlock } from '../../lib/types';
+interface Props { block: HeroBlock }
+const { block } = Astro.props;
+---
+<section class="home-hero-card">
+  <div class="home-hero-kicker">{block.kicker}</div>
+  <h1 class="home-hero-title" set:html={block.title} />
+  <p class="home-hero-text" set:html={block.html} />
+</section>

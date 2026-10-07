@@ -1,0 +1,46 @@
+---
+import type { Issue } from '../../lib/types';
+import { newspaper } from '../../universe/newspaper';
+import { issueUrl, archiveUrl } from '../../lib/url';
+import { hasPage } from '../../lib/issues';
+
+interface Props {
+  issue: Issue;
+  pageKey: string;
+  tagline?: string | null;
+}
+const { issue, pageKey, tagline } = Astro.props;
+const n = issue.meta.number;
+
+const links = newspaper.footerLinks.flatMap((link) => {
+  if (link.key === 'archive') return [{ ...link, href: archiveUrl() }];
+  return hasPage(issue, link.key) ? [{ ...link, href: issueUrl(n, link.key) }] : [];
+});
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-card">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3>{newspaper.name}</h3>
+          {tagline && <p>{tagline}</p>}
+        </div>
+
+        <div class="footer-actions">
+          {links.map((link) => (
+            <a
+              class:list={['footer-link', { active: link.key === pageKey }]}
+              href={link.href}
+              aria-current={link.key === pageKey ? 'page' : undefined}
+            >{link.label}</a>
+          ))}
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>{issue.meta.copyright}</span>
+        <span>{issue.meta.city}</span>
+      </div>
+    </div>
+  </div>
+</footer>

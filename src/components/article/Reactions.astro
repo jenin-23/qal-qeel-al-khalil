@@ -1,0 +1,18 @@
+---
+/* "شعورك تجاه المقال؟" — one component, article-specific options. */
+interface Props {
+  articleId: string;
+  label: string;
+  options: string[];
+}
+const { articleId, label, options } = Astro.props;
+const labelId = `${articleId}-reactions`;
+---
+<div class="article-reactions">
+  <div class="reaction-label" id={labelId}>{label}</div>
+  <div class="reaction-options" role="group" aria-labelledby={labelId}>
+    {options.map((option) => (
+      <button class="reaction-btn" type="button" aria-pressed="false">{option}</button>
+    ))}
+  </div>
+</div>

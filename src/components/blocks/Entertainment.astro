@@ -1,0 +1,21 @@
+---
+import type { EntertainmentBlock, Issue } from '../../lib/types';
+import Horoscope from '../entertainment/Horoscope.astro';
+import CoinFlip from '../entertainment/CoinFlip.astro';
+import Fatwa from '../entertainment/Fatwa.astro';
+import Quiz from '../entertainment/Quiz.astro';
+
+interface Props { block: EntertainmentBlock; issue: Issue }
+const { block, issue } = Astro.props;
+const ent = issue.entertainment!;
+---
+<section class="ent-page-grid">
+  <div class="ent-main-column">
+    {block.modules.map((mod) =>
+      mod === 'horoscope' ? <Horoscope def={ent.horoscope!} birthday={issue.birthday!} />
+      : mod === 'coin' ? <CoinFlip def={ent.coin!} />
+      : mod === 'fatwa' ? <Fatwa def={ent.fatwa!} />
+      : <Quiz def={ent.quiz!} />
+    )}
+  </div>
+</section>

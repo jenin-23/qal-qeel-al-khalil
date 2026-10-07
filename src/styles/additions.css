@@ -1,0 +1,196 @@
+/* ==================================================================
+   Added in the multi-issue refactor. Components that did not exist
+   in Issue 001's design; they reuse the same tokens and card language.
+   ================================================================== */
+
+/* ---- accessibility ------------------------------------------------ */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border:0;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible{
+  outline:none;
+  box-shadow:var(--focus-ring);
+}
+
+/* long Arabic words / URLs never push the page sideways */
+.story-body,
+.ad-body,
+.modal-card p,
+.lead-title,
+.story-title,
+.home-hero-title,
+.chip-title,
+.toc-links a{
+  overflow-wrap:break-word;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{
+    scroll-behavior:auto;
+  }
+
+  *,
+  *::before,
+  *::after{
+    transition-duration:.01ms !important;
+  }
+}
+
+/* ---- article figures --------------------------------------------- */
+figure.story-image{
+  margin:0;
+}
+
+/* aspect-ratio based figures (future issues); 'fixed' keeps the 280px strip */
+.story-image[data-ratio]:not([data-ratio="fixed"]){
+  height:auto;
+}
+
+.story-image[data-ratio]:not([data-ratio="fixed"]) .story-img{
+  aspect-ratio:var(--ratio);
+  height:auto;
+}
+
+.story-image.has-caption{
+  height:auto;
+}
+
+.story-image.has-caption[data-ratio="fixed"] .story-img{
+  height:280px;
+}
+
+.story-caption{
+  padding:10px 22px;
+  border-top:1px solid var(--line);
+  background:var(--paper-2);
+  color:var(--muted);
+  font-family:var(--font-ui);
+  font-size:13px;
+  line-height:1.7;
+}
+
+/* editorial cartoon: whole drawing on newsprint, never cropped */
+.story-image.is-cartoon{
+  padding:18px;
+  background:var(--paper-2);
+}
+
+.story-image.is-cartoon .story-img{
+  object-fit:contain;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+
+/* ---- in-page image ads -------------------------------------------- */
+.inline-ad{
+  margin:0;
+  padding:12px;
+  background:linear-gradient(180deg, #fffdf9, #f8efe4);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+.inline-ad img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+}
+
+.inline-ad figcaption{
+  margin-top:8px;
+  color:var(--muted);
+  font-family:var(--font-ui);
+  font-size:13px;
+  text-align:center;
+}
+
+/* ---- popup image ads ---------------------------------------------- */
+.popup-ad-card{
+  width:min(520px, 100%);
+  padding:56px 18px 18px;
+}
+
+.popup-ad-slot img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:min(62vh, 640px);
+  object-fit:contain;
+  border-radius:14px;
+}
+
+.popup-ad-card .story-actions{
+  margin-top:14px;
+  padding-top:12px;
+}
+
+/* ---- birthday ----------------------------------------------------- */
+.birthday-change{
+  margin-top:14px;
+}
+
+.birthday-change-btn{
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--red);
+  font-family:var(--font-ui);
+  font-size:13px;
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:4px;
+  cursor:pointer;
+}
+
+.birthday-change-btn:hover{
+  color:var(--red-dark);
+}
+
+/* ---- archive: published issues are links into their edition ------- */
+.archive-item-date{
+  margin:0 0 6px;
+  color:#8a7c70;
+  font-family:var(--font-ui);
+  font-size:13px;
+}
+
+.archive-side{
+  display:grid;
+  gap:10px;
+  justify-items:stretch;
+}
+
+.archive-cover{
+  grid-column:1 / -1;
+  margin:0;
+}
+
+.archive-cover img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+  border:1px solid var(--line);
+}
+
+@media (max-width: 780px){
+  .archive-side{
+    justify-items:start;
+  }
+}
+
+.inline-ad figure{
+  margin:0;
+}

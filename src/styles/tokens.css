@@ -1,0 +1,27 @@
+/* ==================================================================
+   Design tokens: the newspaper's identity. Shared by every issue.
+   Breakpoints in use (kept exactly as designed in Issue 001):
+   1100px · 980px · 900px · 780px · 640px
+   ================================================================== */
+:root{
+  --bg:#f5efe5;
+  --bg-soft:#fbf7f1;
+  --paper:#fffdf9;
+  --paper-2:#f8f1e7;
+  --ink:#1b1714;
+  --muted:#6f655c;
+  --line:#d7c9b6;
+  --red:#8f2d1f;
+  --red-dark:#6f1f15;
+  --red-soft:#efe1dc;
+  --shadow:0 10px 28px rgba(80, 56, 34, .08);
+  --radius:18px;
+  --max:1200px;
+
+  /* Typography: Amiri headlines, Noto Naskh body, Cairo interface */
+  --font-display:"Amiri", serif;
+  --font-body:"Noto Naskh Arabic", serif;
+  --font-ui:"Cairo", sans-serif;
+
+  --focus-ring:0 0 0 3px rgba(143, 45, 31, .35);
+}

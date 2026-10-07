@@ -1,0 +1,46 @@
+---
+import type { ContactBlock } from '../../lib/types';
+interface Props { block: ContactBlock }
+const { block } = Astro.props;
+const { form } = block;
+---
+<div class="contact-grid">
+  <article class="story-card">
+    <div class="story-content">
+      <div class="story-body no-collapse" set:html={block.introHtml} />
+    </div>
+  </article>
+
+  <article class="story-card">
+    <div class="story-content">
+      <div class="section-heading">
+        <h2>{form.heading}</h2>
+        <p>{form.subheading}</p>
+      </div>
+
+      <form class="contact-form">
+        {form.fields.map((field, i) => {
+          const id = `contact-field-${i + 1}`;
+          return (
+            <div class="form-field">
+              <label for={id}>{field.label}</label>
+              {field.kind === 'select' ? (
+                <select id={id}>
+                  {field.options?.map((o) => <option>{o}</option>)}
+                </select>
+              ) : field.kind === 'textarea' ? (
+                <textarea id={id} rows={field.rows ?? 5} placeholder={field.placeholder}></textarea>
+              ) : (
+                <input id={id} type="text" placeholder={field.placeholder} />
+              )}
+            </div>
+          );
+        })}
+
+        <button class="coin-button">{form.submit}</button>
+      </form>
+
+      <div class="contact-note">{form.note}</div>
+    </div>
+  </article>
+</div>

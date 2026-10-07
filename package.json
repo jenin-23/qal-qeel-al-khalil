@@ -1,0 +1,26 @@
+{
+  "name": "qal-qeel-al-khalil",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify:001": "node scripts/verify-issue-text.mjs",
+    "screenshots": "node scripts/screenshots.mjs",
+    "test": "npm run build && npm run verify:001 && npm run test:smoke",
+    "test:smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "node-html-parser": "^9.0.4",
+    "pixelmatch": "^8.0.0",
+    "playwright": "^1.63.0",
+    "pngjs": "^7.0.0",
+    "typescript": "^6.0.3"
+  }
+}

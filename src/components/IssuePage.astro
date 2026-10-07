@@ -1,0 +1,51 @@
+---
+/* One page of one issue: shell + that page's blocks. */
+import type { Issue, PageKey } from '../lib/types';
+import IssueLayout from '../layouts/IssueLayout.astro';
+import Blocks from './blocks/Blocks.astro';
+import BirthdayDialogs from './entertainment/BirthdayDialogs.astro';
+import { issueUrl } from '../lib/url';
+
+interface Props {
+  issue: Issue;
+  pageKey: PageKey;
+}
+const { issue, pageKey } = Astro.props;
+const page = issue.pages[pageKey]!;
+const n = issue.meta.number;
+
+const usesHoroscope = page.blocks.some((b) => b.type === 'entertainment' && b.modules.includes('horoscope'));
+const ent = issue.entertainment;
+
+// Entertainment data for the browser — only this issue's, only on this page.
+const entertainmentData = {
+  issue: n,
+  birthday: issue.birthday && {
+    month: issue.birthday.month,
+    invalidToast: issue.birthday.invalidToast,
+    fallbackToast: issue.birthday.fallbackToast ?? null,
+  },
+  predictions: ent?.horoscope?.predictions ?? null,
+  coin: ent?.coin?.results ?? null,
+  quiz: ent?.quiz ? { results: ent.quiz.results, emptyToast: ent.quiz.emptyToast } : null,
+};
+const hasEntertainment = page.blocks.some((b) => b.type === 'entertainment');
+const canonical = new URL(issueUrl(n, pageKey), Astro.site).href;
+---
+<IssueLayout
+  issue={issue}
+  pageKey={pageKey}
+  docTitle={page.docTitle}
+  ticker={page.ticker}
+  footerTagline={page.footerTagline}
+  canonical={canonical}
+>
+  <Blocks blocks={page.blocks} issue={issue} pageKey={pageKey} />
+
+  <Fragment slot="dialogs">
+    {usesHoroscope && issue.birthday && <BirthdayDialogs birthday={issue.birthday} issue={issue} />}
+    {hasEntertainment && (
+      <script type="application/json" id="entertainment-data" set:html={JSON.stringify(entertainmentData)} />
+    )}
+  </Fragment>
+</IssueLayout>

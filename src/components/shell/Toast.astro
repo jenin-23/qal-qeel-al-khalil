@@ -1,0 +1,7 @@
+---
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+<div class="toast" id="copyToast" role="status" aria-live="polite" aria-atomic="true">{text}</div>

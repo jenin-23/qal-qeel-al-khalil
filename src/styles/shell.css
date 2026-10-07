@@ -1,0 +1,194 @@
+/* Masthead */
+.masthead{
+  background:linear-gradient(180deg, rgba(255,253,249,.98), rgba(248,241,231,.98));
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.masthead-grid{
+  display:grid;
+  grid-template-columns:1.15fr 1.7fr 1.15fr;
+  gap:16px;
+  align-items:center;
+  padding:18px 22px;
+}
+
+.meta-box{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  font-family:var(--font-ui);
+}
+
+.meta-box strong{
+  color:var(--ink);
+  font-size:15px;
+  font-weight:700;
+}
+
+.meta-label{
+  font-size:12px;
+  color:#8b7b6d;
+}
+
+.meta-left{
+  text-align:left;
+}
+
+.brand-box{
+  text-align:center;
+  border-inline:1px solid var(--line);
+  padding-inline:16px;
+}
+
+.brand{
+  margin:0;
+  font-family:var(--font-display);
+  font-size:clamp(30px, 4vw, 48px);
+  line-height:1.05;
+  font-weight:700;
+  color:var(--red-dark);
+}
+
+.tagline{
+  margin:6px 0 0;
+  font-size:14px;
+  color:var(--muted);
+  font-family:var(--font-ui);
+}
+
+/* Nav */
+.site-nav{
+  border-top:1px solid var(--line);
+  background:rgba(255,250,244,.9);
+}
+
+.nav-wrap{
+  padding:11px 16px;
+}
+
+.nav-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fffdfa;
+  font-family:var(--font-ui);
+  font-size:14px;
+  font-weight:700;
+  transition:.18s ease;
+}
+
+.nav-link:hover{
+  color:var(--red);
+  border-color:#b89d84;
+  transform:translateY(-1px);
+}
+
+.nav-link.primary{
+  background:var(--red);
+  border-color:var(--red);
+  color:#fff;
+}
+
+/* Ticker */
+.ticker-wrap{
+  padding:12px 0 0;
+}
+
+.ticker{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:rgba(255,253,249,.98);
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.ticker-label{
+  flex:0 0 auto;
+  padding:12px 16px;
+  background:var(--red);
+  color:#fff;
+  font-family:var(--font-ui);
+  font-size:13px;
+  font-weight:700;
+}
+
+.ticker-viewport{
+  overflow:hidden;
+  white-space:nowrap;
+  width:100%;
+}
+
+/* Seamless loop: the line set is rendered twice (the copy is aria-hidden)
+   and each copy slides by exactly its own width, so copy 2 lands where
+   copy 1 started. --ticker-duration is set per ticker from its length. */
+.ticker-track{
+  display:inline-flex;
+  align-items:center;
+  padding-inline:16px;
+  min-width:max-content;
+  font-family:var(--font-ui);
+  font-size:14px;
+  color:#4f463f;
+}
+
+.ticker-group{
+  display:inline-flex;
+  gap:24px;
+  align-items:center;
+  padding-inline-end:24px;
+  animation:tickerMove var(--ticker-duration, 70s) linear infinite;
+}
+
+/* separator between the last line of a set and the first of the next */
+.ticker-group::after{
+  content:"•" / "";
+}
+
+.ticker:hover .ticker-group,
+.ticker:focus-within .ticker-group{
+  animation-play-state:paused;
+}
+
+@keyframes tickerMove{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .ticker-group{
+    animation:none;
+  }
+
+  .ticker-group[data-ticker-clone]{
+    display:none;
+  }
+
+  .ticker-group::after{
+    content:none;
+  }
+
+  /* still reachable: swipe / scroll sideways instead of auto-scrolling */
+  .ticker-viewport{
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+}
+

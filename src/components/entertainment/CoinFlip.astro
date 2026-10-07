@@ -1,0 +1,27 @@
+---
+import type { CoinDef } from '../../lib/types';
+
+interface Props { def: CoinDef }
+const { def } = Astro.props;
+---
+<article class="story-card">
+  <div class="story-content">
+    <div class="section-heading">
+      <h2>{def.heading}</h2>
+      <p>{def.sub}</p>
+    </div>
+
+    <div class="coin-area">
+      <button class="coin-button" id="flipCoinBtn" type="button">{def.button}</button>
+
+      <div class="coin-wrapper">
+        <div class="coin" id="coin">
+          <div class="coin-face">{def.faces[0]}</div>
+          <div class="coin-face coin-back">{def.faces[1]}</div>
+        </div>
+      </div>
+
+      <div class="coin-result" id="coinResult" aria-live="polite">{def.initialResult}</div>
+    </div>
+  </div>
+</article>

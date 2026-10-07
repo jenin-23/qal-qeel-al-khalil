@@ -1,0 +1,9 @@
+---
+import type { NoteBlock } from '../../lib/types';
+interface Props { block: NoteBlock; as?: 'section' | 'article' }
+const { block, as: Tag = 'section' } = Astro.props;
+---
+<Tag class="home-note-card">
+  <div class="home-note-title">{block.title}</div>
+  <p set:html={block.html} />
+</Tag>

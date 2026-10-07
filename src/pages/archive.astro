@@ -1,0 +1,56 @@
+---
+/* ------------------------------------------------------------------ *
+ * The archive: the newspaper-wide index of every issue, newest last
+ * (matching the original register order 001 → 002 → 003 …).
+ * Published issues come from the registry; upcoming placeholders from
+ * src/universe/archive.ts until an issue with that number is published.
+ * ------------------------------------------------------------------ */
+import IssueLayout from '../layouts/IssueLayout.astro';
+import Hero from '../components/blocks/Hero.astro';
+import Note from '../components/blocks/Note.astro';
+import IssueCard from '../components/archive/IssueCard.astro';
+import { issues, latestIssue } from '../lib/issues';
+import { issueUrl, archiveUrl } from '../lib/url';
+import { archivePage, upcoming } from '../universe/archive';
+import type { ArchiveCard } from '../lib/types';
+
+const shell = latestIssue();
+
+type Entry = { number: string; card: ArchiveCard; href?: string; dateLabel?: string };
+const listed: Entry[] = issues
+  .filter((i) => i.meta.archive)
+  .map((i) => ({
+    number: i.meta.number,
+    card: i.meta.archive!,
+    href: issueUrl(i.meta.number),
+    dateLabel: i.meta.releaseDateLabel,
+  }));
+const numbers = new Set(listed.map((e) => e.number));
+const entries: Entry[] = [
+  ...listed,
+  ...upcoming.filter((u) => !numbers.has(u.number)).map((u) => ({ number: u.number, card: u })),
+].sort((a, b) => a.number.localeCompare(b.number));
+---
+<IssueLayout
+  issue={shell}
+  pageKey="archive"
+  docTitle={archivePage.docTitle}
+  ticker={archivePage.ticker}
+  footerTagline={archivePage.footerTagline}
+  canonical={new URL(archiveUrl(), Astro.site).href}
+>
+  <Hero block={archivePage.hero} />
+
+  <section class="toc-card">
+    <div class="section-heading">
+      <h2>{archivePage.listHeading}</h2>
+      <p>{archivePage.listSub}</p>
+    </div>
+
+    <div class="archive-list better-archive-list">
+      {entries.map((e) => <IssueCard number={e.number} card={e.card} href={e.href} dateLabel={e.dateLabel} />)}
+    </div>
+  </section>
+
+  {archivePage.notes.map((note) => <Note block={note} />)}
+</IssueLayout>

@@ -1,0 +1,48 @@
+/* CONTACT PAGE */
+.contact-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.contact-form{
+  display:grid;
+  gap:14px;
+}
+
+.form-field{
+  display:grid;
+  gap:6px;
+}
+
+.form-field label{
+  font-family:var(--font-ui);
+  font-size:14px;
+  font-weight:700;
+  color:#5a4f45;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fffdfa;
+  font-size:16px;
+  color:var(--ink);
+}
+
+.contact-note{
+  margin-top:12px;
+  font-size:14px;
+  color:#6a5f55;
+  line-height:1.7;
+}
+
+@media (max-width: 900px){
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+}

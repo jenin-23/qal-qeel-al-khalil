@@ -1,0 +1,9 @@
+---
+import type { NoteGridBlock } from '../../lib/types';
+import Note from './Note.astro';
+interface Props { block: NoteGridBlock }
+const { block } = Astro.props;
+---
+<section class="about-extra-grid">
+  {block.notes.map((note) => <Note block={note} as="article" />)}
+</section>

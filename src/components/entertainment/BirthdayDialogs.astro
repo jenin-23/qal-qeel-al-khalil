@@ -1,0 +1,71 @@
+---
+/* ------------------------------------------------------------------ *
+ * Birthday gate + the issue's birthday-month easter egg.
+ * The birthday is remembered in the browser (scripts/birthday.ts) and
+ * shared by all issues; each issue only decides which month it greets.
+ * ------------------------------------------------------------------ */
+import type { BirthdayDef, Issue } from '../../lib/types';
+import { BIRTHDAY_STORAGE_KEY } from '../../scripts/storage-keys';
+
+interface Props { birthday: BirthdayDef; issue: Issue }
+const { birthday, issue } = Astro.props;
+const [dayLabel, monthLabel, yearLabel] = birthday.gate.labels;
+---
+<dialog class="modal" id="birthdayModal" aria-labelledby="birthdayTitle" data-locked>
+  <div class="modal-card">
+    <button class="modal-close" type="button" aria-label={issue.ui.closeLabel} data-close hidden>×</button>
+    <h2 id="birthdayTitle">{birthday.gate.title}</h2>
+    <p>{birthday.gate.text}</p>
+
+    <form id="birthdayForm">
+      <div class="birthday-grid">
+        <div class="birthday-field">
+          <label for="birthDay">{dayLabel}</label>
+          <input id="birthDay" type="number" inputmode="numeric" required />
+        </div>
+
+        <div class="birthday-field">
+          <label for="birthMonth">{monthLabel}</label>
+          <input id="birthMonth" type="number" inputmode="numeric" required />
+        </div>
+
+        <div class="birthday-field">
+          <label for="birthYear">{yearLabel}</label>
+          <input id="birthYear" type="number" inputmode="numeric" required />
+        </div>
+      </div>
+
+      <div style="margin-top:15px">
+        <button class="coin-button">{birthday.gate.submit}</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+<!-- Open the gate before first paint when no birthday is stored (no flash either way). -->
+<script is:inline define:vars={{ key: BIRTHDAY_STORAGE_KEY }}>
+  (function () {
+    var gate = document.getElementById('birthdayModal');
+    try {
+      var b = JSON.parse(localStorage.getItem(key) || 'null');
+      if (b && b.day && b.month && b.year) return;
+    } catch (e) {}
+    gate.showModal();
+    document.body.style.overflow = 'hidden';
+  })();
+</script>
+
+{birthday.monthModal && (
+  <dialog class="modal" id="birthdayMonthModal" aria-labelledby="birthdayMonthTitle">
+    <div class="modal-card">
+      <h2 id="birthdayMonthTitle">{birthday.monthModal.title}</h2>
+      <p set:html={birthday.monthModal.html} />
+
+      <div class="story-actions centered-actions">
+        <button class="story-toggle-btn" type="button" data-close>
+          <span class="more-text">{birthday.monthModal.buttonMore}</span>
+          <span class="less-text">{birthday.monthModal.buttonLess}</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}

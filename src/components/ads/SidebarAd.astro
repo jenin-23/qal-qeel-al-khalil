@@ -1,0 +1,18 @@
+---
+import type { SidebarAd } from '../../lib/types';
+
+interface Props {
+  ad: SidebarAd;
+}
+const { ad } = Astro.props;
+---
+<div class="ad-flyer">
+  <div class="ad-brand">{ad.brand}</div>
+  <div class="ad-body" set:html={ad.html} />
+  <div class="ad-cta">{ad.cta}</div>
+  <div class="ad-phones">
+    {ad.phones.map((p) => (
+      <button class="copy-phone-btn" type="button" data-phone={p.phone}>{p.label}</button>
+    ))}
+  </div>
+</div>

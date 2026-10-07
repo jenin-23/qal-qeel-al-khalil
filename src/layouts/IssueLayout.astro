@@ -1,0 +1,85 @@
+---
+/* ------------------------------------------------------------------ *
+ * The permanent newspaper shell. Every page of every issue (and the
+ * archive) renders inside it, so shared parts can no longer drift:
+ * masthead, nav, ticker, footer, toast, coming-soon modal, popup ads.
+ * ------------------------------------------------------------------ */
+import '../styles/index.css';
+import type { Issue, TickerDef } from '../lib/types';
+import { editionOf } from '../lib/issues';
+import { popupDefaults } from '../universe/defaults';
+import Masthead from '../components/shell/Masthead.astro';
+import Ticker from '../components/shell/Ticker.astro';
+import Footer from '../components/shell/Footer.astro';
+import ComingSoonModal from '../components/shell/ComingSoonModal.astro';
+import Toast from '../components/shell/Toast.astro';
+import IssueSwitcher from '../components/shell/IssueSwitcher.astro';
+import PopupAdHost from '../components/ads/PopupAdHost.astro';
+import { newspaper } from '../universe/newspaper';
+
+interface Props {
+  issue: Issue;
+  /** Page key for nav/footer highlighting ('archive' for the archive). */
+  pageKey: string;
+  docTitle: string;
+  ticker: TickerDef;
+  footerTagline?: string | null;
+  canonical?: string;
+}
+
+const { issue, pageKey, docTitle, ticker, footerTagline, canonical } = Astro.props;
+const edition = editionOf(issue);
+const popup = issue.ads.popup;
+
+// Everything the browser scripts need, scoped to this issue only.
+const clientData = {
+  issue: issue.meta.number,
+  ui: issue.ui,
+  popup: {
+    enabled: popup.enabled && popup.pool.length > 0,
+    firstDelay: popup.firstDelay ?? popupDefaults.firstDelay,
+    repeatDelay: popup.repeatDelay ?? popupDefaults.repeatDelay,
+    minAfterNavigation: popup.minAfterNavigation ?? popupDefaults.minAfterNavigation,
+    ids: popup.pool.map((ad) => ad.id),
+  },
+};
+---
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{docTitle}</title>
+  {canonical && <link rel="canonical" href={canonical} />}
+  {edition.previous && <link rel="prev" href={edition.previous.url} />}
+  {edition.next && <link rel="next" href={edition.next.url} />}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Cairo:wght@400;600;700&display=swap" />
+</head>
+<body data-page={pageKey} data-issue={issue.meta.number}>
+  <div class="site-shell">
+    <Masthead issue={issue} pageKey={pageKey} />
+    {newspaper.features.issueSwitcher && <IssueSwitcher edition={edition} />}
+    <Ticker ticker={ticker} />
+
+    <main class="news-main">
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+
+    <Footer issue={issue} pageKey={pageKey} tagline={footerTagline} />
+  </div>
+
+  <ComingSoonModal ui={issue.ui} />
+  <Toast text={issue.ui.toastInitial} />
+  <PopupAdHost issue={issue} />
+  <slot name="dialogs" />
+
+  <script type="application/json" id="issue-data" set:html={JSON.stringify(clientData)} />
+  <script>
+    import '../scripts/main';
+  </script>
+</body>
+</html>

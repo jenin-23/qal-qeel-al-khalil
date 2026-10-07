@@ -1,0 +1,33 @@
+---
+import type { QuizDef } from '../../lib/types';
+
+interface Props { def: QuizDef }
+const { def } = Astro.props;
+---
+<article class="story-card">
+  <div class="story-content">
+    <div class="section-heading">
+      <h2>{def.heading}</h2>
+      <p>{def.sub}</p>
+    </div>
+
+    <form id="quizForm">
+      <div class="quiz-grid">
+        {def.questions.map((q) => (
+          <div class="quiz-question" role="group" aria-labelledby={`${q.name}-title`}>
+            <h3 id={`${q.name}-title`}>{q.title}</h3>
+            {q.options.map((o) => (
+              <label><input type="radio" name={q.name} value={o.value} /> {o.label}</label>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div class="quiz-actions">
+        <button class="coin-button">{def.submit}</button>
+      </div>
+    </form>
+
+    <div id="quizResult" class="quiz-result" aria-live="polite">{def.initialResult}</div>
+  </div>
+</article>

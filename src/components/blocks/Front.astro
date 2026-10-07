@@ -1,0 +1,24 @@
+---
+import type { FrontBlock } from '../../lib/types';
+interface Props { block: FrontBlock }
+const { block } = Astro.props;
+const { lead } = block;
+---
+<section class="news-hero">
+  <article class="lead-story">
+    <div class="lead-kicker">{lead.kicker}</div>
+    <h1 class="lead-title">
+      <a href={`#${lead.articleId}`}>{lead.title}</a>
+    </h1>
+    <p class="lead-subtitle">{lead.subtitle}</p>
+  </article>
+
+  <aside class="headline-stack">
+    {block.headlines.map((h) => (
+      <a class="headline-chip" href={`#${h.articleId}`}>
+        <span class="chip-label">{h.label}</span>
+        <span class="chip-title">{h.title}</span>
+      </a>
+    ))}
+  </aside>
+</section>

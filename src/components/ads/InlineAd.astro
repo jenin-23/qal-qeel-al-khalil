@@ -1,0 +1,16 @@
+---
+import type { InlineAd } from '../../lib/types';
+import AdImage from './AdImage.astro';
+
+interface Props {
+  ad: InlineAd;
+  label: string;
+}
+const { ad, label } = Astro.props;
+---
+<aside class="inline-ad" aria-label={label}>
+  <figure>
+    <AdImage ad={ad} sizes="(max-width: 980px) 100vw, 860px" />
+    {ad.caption && <figcaption>{ad.caption}</figcaption>}
+  </figure>
+</aside>

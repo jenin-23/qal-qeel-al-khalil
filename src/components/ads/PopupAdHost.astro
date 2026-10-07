@@ -1,0 +1,34 @@
+---
+/* ------------------------------------------------------------------ *
+ * Popup image ads for the current issue. Renders nothing while the
+ * issue's pool is empty; add ads to src/issues/NNN/ads.ts → popup.pool.
+ * Each ad waits in a <template>, so its image only downloads when shown.
+ * Timing/rotation lives in scripts/popup-ads.ts.
+ * ------------------------------------------------------------------ */
+import type { Issue } from '../../lib/types';
+import AdImage from './AdImage.astro';
+
+interface Props {
+  issue: Issue;
+}
+const { issue } = Astro.props;
+const { popup } = issue.ads;
+const { ui } = issue;
+const active = popup.enabled && popup.pool.length > 0;
+---
+{active && (
+  <dialog class="modal" id="popupAd" aria-label={ui.popupAd.ariaLabel}>
+    <div class="modal-card popup-ad-card">
+      <button class="modal-close" type="button" aria-label={ui.closeLabel} data-close>×</button>
+      <div class="popup-ad-slot"></div>
+      <div class="story-actions centered-actions">
+        <button class="story-toggle-btn" type="button" data-close>{ui.popupAd.dismiss}</button>
+      </div>
+    </div>
+  </dialog>
+)}
+{active && popup.pool.map((ad) => (
+  <template data-popup-ad={ad.id}>
+    <AdImage ad={ad} sizes="(max-width: 640px) 92vw, 520px" loading="eager" />
+  </template>
+))}

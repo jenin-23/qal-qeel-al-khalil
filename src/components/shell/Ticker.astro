@@ -1,0 +1,42 @@
+---
+import type { TickerDef } from '../../lib/types';
+import { TICKER_PX_PER_SECOND } from '../../universe/defaults';
+
+interface Props {
+  ticker: TickerDef;
+}
+const { ticker } = Astro.props;
+
+// First guess at the loop duration (≈7px per character at 14px Cairo);
+// scripts/ticker.ts measures the real width and corrects it.
+const chars = ticker.items.join('').length + ticker.items.length * 6;
+const estimate = Math.max(20, Math.round((chars * 7) / TICKER_PX_PER_SECOND));
+const items = ticker.items;
+---
+<section class="ticker-wrap" aria-label={ticker.ariaLabel ?? undefined}>
+  <div class="container">
+    <div class="ticker">
+      <div class="ticker-label">{ticker.label}</div>
+      <div class="ticker-viewport">
+        <div class="ticker-track" style={`--ticker-duration:${estimate}s`}>
+          <div class="ticker-group">
+            {items.map((item, i) => (
+              <>
+                {i > 0 && <span>•</span>}
+                <span>{item}</span>
+              </>
+            ))}
+          </div>
+          <div class="ticker-group" aria-hidden="true" data-ticker-clone>
+            {items.map((item, i) => (
+              <>
+                {i > 0 && <span>•</span>}
+                <span>{item}</span>
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,10 @@
+---
+import type { ProseBlock } from '../../lib/types';
+interface Props { block: ProseBlock }
+const { block } = Astro.props;
+---
+<article class="story-card">
+  <div class="story-content">
+    <div class="story-body no-collapse" set:html={block.html} />
+  </div>
+</article>

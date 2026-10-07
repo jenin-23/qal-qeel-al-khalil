@@ -1,0 +1,22 @@
+---
+/* ------------------------------------------------------------------ *
+ * Edition switcher — architecture only, not designed yet.
+ * Enabled by newspaper.features.issueSwitcher (off). It receives the
+ * reader's position in the run of issues; the labels and look still
+ * need an editorial/visual decision before it is switched on.
+ * ------------------------------------------------------------------ */
+import type { Edition } from '../../lib/issues';
+
+interface Props {
+  edition: Edition;
+}
+const { edition } = Astro.props;
+---
+<nav class="issue-switcher" aria-label="issue">
+  <div class="container">
+    {edition.previous && <a href={edition.previous.url} rel="prev">{edition.previous.number}</a>}
+    <a href={edition.archiveUrl}>{edition.current}</a>
+    {edition.next && <a href={edition.next.url} rel="next">{edition.next.number}</a>}
+    {!edition.isLatest && <a href={edition.latest.url}>{edition.latest.number}</a>}
+  </div>
+</nav>

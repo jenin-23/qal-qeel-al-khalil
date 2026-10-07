@@ -1,0 +1,26 @@
+---
+import type { Block, Issue, PageKey } from '../../lib/types';
+import Hero from './Hero.astro';
+import Note from './Note.astro';
+import NoteGrid from './NoteGrid.astro';
+import Prose from './Prose.astro';
+import Contact from './Contact.astro';
+import Front from './Front.astro';
+import Toc from './Toc.astro';
+import Articles from './Articles.astro';
+import Entertainment from './Entertainment.astro';
+
+interface Props { blocks: Block[]; issue: Issue; pageKey: PageKey }
+const { blocks, issue, pageKey } = Astro.props;
+---
+{blocks.map((block) =>
+  block.type === 'hero' ? <Hero block={block} />
+  : block.type === 'note' ? <Note block={block} />
+  : block.type === 'note-grid' ? <NoteGrid block={block} />
+  : block.type === 'prose' ? <Prose block={block} />
+  : block.type === 'contact' ? <Contact block={block} />
+  : block.type === 'front' ? <Front block={block} />
+  : block.type === 'toc' ? <Toc block={block} />
+  : block.type === 'articles' ? <Articles block={block} issue={issue} pageKey={pageKey} />
+  : <Entertainment block={block} issue={issue} />
+)}

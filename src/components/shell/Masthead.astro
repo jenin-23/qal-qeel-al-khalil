@@ -1,0 +1,65 @@
+---
+import type { Issue } from '../../lib/types';
+import { newspaper } from '../../universe/newspaper';
+import { issueUrl, archiveUrl } from '../../lib/url';
+import { hasPage } from '../../lib/issues';
+
+interface Props {
+  issue: Issue;
+  pageKey: string;
+}
+const { issue, pageKey } = Astro.props;
+const { meta } = issue;
+const n = meta.number;
+
+// Nav is truthful per issue: real link when this issue has the page,
+// "coming soon" when the universe marks it so, otherwise omitted.
+const items = newspaper.nav.flatMap((item) => {
+  if (item.key === 'archive') return [{ ...item, href: archiveUrl(), coming: false }];
+  if (item.key === 'home' || hasPage(issue, item.key)) return [{ ...item, href: issueUrl(n, item.key), coming: false }];
+  if (item.comingSoon) return [{ ...item, href: '#', coming: true }];
+  return [];
+});
+---
+<header class="topbar">
+  <div class="container">
+    <div class="masthead">
+      <div class="masthead-grid">
+        <div class="meta-box">
+          <span class="meta-label">{newspaper.masthead.issueNumberLabel}</span>
+          <strong>{n}</strong>
+          <span>{meta.city}</span>
+        </div>
+
+        <div class="brand-box">
+          <div class="brand">{newspaper.name}</div>
+          <p class="tagline">{newspaper.tagline}</p>
+        </div>
+
+        <div class="meta-box meta-left">
+          <span class="meta-label">{newspaper.masthead.releaseDateLabel}</span>
+          <strong>{meta.releaseDateLabel}</strong>
+          <span>{meta.priceLine}</span>
+        </div>
+      </div>
+
+      <nav class="site-nav">
+        <div class="nav-wrap">
+          <div class="nav-links">
+            {items.map((item) =>
+              item.coming ? (
+                <a class="nav-link" href="#" role="button" data-coming>{item.label}</a>
+              ) : (
+                <a
+                  class:list={['nav-link', { primary: item.key === pageKey }]}
+                  href={item.href}
+                  aria-current={item.key === pageKey ? 'page' : undefined}
+                >{item.label}</a>
+              )
+            )}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>

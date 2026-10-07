@@ -1,0 +1,24 @@
+---
+/* The fatwa desk and its mufti are recurring institutions (universe);
+   the question and ruling belong to the issue. */
+import type { FatwaDef } from '../../lib/types';
+import { institution, person } from '../../universe/institutions';
+
+interface Props { def: FatwaDef }
+const { def } = Astro.props;
+const desk = institution(def.desk);
+const author = person(def.author ?? desk.resident ?? '');
+---
+<article class="story-card ent-fatwa-big">
+  <div class="story-content">
+    <div class="section-heading">
+      <h2>{desk.title}</h2>
+      <p>{author.name}</p>
+    </div>
+
+    <div class="fatwa-card">
+      <h3>{def.question}</h3>
+      <Fragment set:html={def.html} />
+    </div>
+  </div>
+</article>

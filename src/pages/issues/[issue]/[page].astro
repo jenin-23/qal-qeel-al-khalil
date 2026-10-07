@@ -1,0 +1,16 @@
+---
+/* Every non-home page an issue defines: /issues/001/news.html, … */
+import type { GetStaticPaths } from 'astro';
+import IssuePage from '../../../components/IssuePage.astro';
+import { issues, getIssue } from '../../../lib/issues';
+
+export const getStaticPaths = (() =>
+  issues.flatMap((i) =>
+    Object.keys(i.pages)
+      .filter((page) => page !== 'home')
+      .map((page) => ({ params: { issue: i.meta.number, page } })),
+  )) satisfies GetStaticPaths;
+
+const issue = getIssue(Astro.params.issue!);
+---
+<IssuePage issue={issue} pageKey={Astro.params.page!} />

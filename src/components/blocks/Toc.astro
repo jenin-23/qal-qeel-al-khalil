@@ -1,0 +1,15 @@
+---
+import type { TocBlock } from '../../lib/types';
+interface Props { block: TocBlock }
+const { block } = Astro.props;
+---
+<section class="toc-card">
+  <div class="section-heading">
+    <h2>{block.heading}</h2>
+    <p>{block.sub}</p>
+  </div>
+
+  <div class="toc-links">
+    {block.items.map((item) => <a href={`#${item.articleId}`}>{item.title}</a>)}
+  </div>
+</section>

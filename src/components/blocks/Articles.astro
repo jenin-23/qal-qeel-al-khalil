@@ -1,0 +1,41 @@
+---
+/* Article list. With sidebar ads → the news layout (ads column + articles);
+   without → the plain articles grid. Inline image ads slot in after the
+   article they name in ads.inline. */
+import type { ArticlesBlock, Issue, PageKey } from '../../lib/types';
+import StoryCard from '../article/StoryCard.astro';
+import SidebarAd from '../ads/SidebarAd.astro';
+import InlineAd from '../ads/InlineAd.astro';
+
+interface Props { block: ArticlesBlock; issue: Issue; pageKey: PageKey }
+const { block, issue, pageKey } = Astro.props;
+
+const articles = block.ids.map((id) => issue.articles.find((a) => a.id === id)!);
+const sidebarAds = block.sidebar ? issue.ads.sidebar[pageKey] ?? [] : [];
+const inlineAfter = (id: string) => issue.ads.inline.filter((ad) => ad.page === pageKey && ad.after === id);
+---
+{block.sidebar ? (
+  <section class="news-page-layout single-left-sidebar">
+    <aside class="news-sidebar left-ads-sidebar">
+      {sidebarAds.map((ad) => <SidebarAd ad={ad} />)}
+    </aside>
+
+    <div class="news-articles-column">
+      {articles.map((article) => (
+        <Fragment>
+          <StoryCard article={article} issue={issue} />
+          {inlineAfter(article.id).map((ad) => <InlineAd ad={ad} label={issue.ui.inlineAdLabel} />)}
+        </Fragment>
+      ))}
+    </div>
+  </section>
+) : (
+  <section class="articles-grid">
+    {articles.map((article) => (
+      <Fragment>
+        <StoryCard article={article} issue={issue} />
+        {inlineAfter(article.id).map((ad) => <InlineAd ad={ad} label={issue.ui.inlineAdLabel} />)}
+      </Fragment>
+    ))}
+  </section>
+)}

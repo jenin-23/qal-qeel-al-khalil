@@ -1,0 +1,11 @@
+---
+import type { GetStaticPaths } from 'astro';
+import IssuePage from '../../../components/IssuePage.astro';
+import { issues, getIssue } from '../../../lib/issues';
+
+export const getStaticPaths = (() =>
+  issues.filter((i) => i.pages.home).map((i) => ({ params: { issue: i.meta.number } }))) satisfies GetStaticPaths;
+
+const issue = getIssue(Astro.params.issue!);
+---
+<IssuePage issue={issue} pageKey="home" />

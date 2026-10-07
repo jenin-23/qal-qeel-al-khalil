@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import type { ArticleImage, ArticlePlaceholder } from '../../lib/types';
+
+interface Props {
+  image?: ArticleImage | ArticlePlaceholder;
+}
+const { image } = Astro.props;
+const isPlaceholder = image && 'placeholder' in image;
+const img = image && !isPlaceholder ? (image as ArticleImage) : undefined;
+const ratio = img?.ratio ?? 'fixed';
+---
+{isPlaceholder && (
+  <div class="story-image image-placeholder">
+    <div class="image-placeholder-label">{(image as ArticlePlaceholder).placeholder}</div>
+  </div>
+)}
+{img && (
+  <figure
+    class:list={['story-image', { 'is-cartoon': img.variant === 'cartoon', 'has-caption': img.caption }]}
+    data-ratio={ratio}
+    style={ratio !== 'fixed' ? `--ratio:${ratio}` : undefined}
+  >
+    <Image
+      src={img.src}
+      alt={img.alt}
+      class:list={['story-img', img.position ?? 'center']}
+      widths={[480, 860, 1200]}
+      sizes="(max-width: 980px) 100vw, 860px"
+    />
+    {img.caption && <figcaption class="story-caption">{img.caption}</figcaption>}
+  </figure>
+)}
