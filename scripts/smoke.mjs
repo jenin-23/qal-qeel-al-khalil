@@ -1,5 +1,6 @@
 /* ------------------------------------------------------------------ *
- * Interaction smoke test against dist/ (run `npm run build` first).
+ * Interaction smoke test against dist/ (run `npm run build` first),
+ * or against the live site: SITE_URL=https://jenin-23.github.io npm run test:smoke
  * Exercises the shared systems in a real browser.
  * ------------------------------------------------------------------ */
 import fs from 'node:fs';
@@ -22,7 +23,9 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 await new Promise((r) => server.listen(0, r));
-const url = (p) => `http://localhost:${server.address().port}${BASE}${p}`;
+const ORIGIN = process.env.SITE_URL?.replace(/\/$/, '') ?? `http://localhost:${server.address().port}`;
+const url = (p) => `${ORIGIN}${BASE}${p}`;
+console.log(`testing ${ORIGIN}${BASE}/`);
 
 let failed = 0;
 const check = (cond, msg) => {
@@ -35,12 +38,22 @@ const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } })
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
+// every asset (fonts, images, scripts, styles) must load
+const broken = [];
+page.on('response', (r) => {
+  const t = r.request().resourceType();
+  if (['stylesheet', 'script', 'image', 'font'].includes(t) && r.status() >= 400) broken.push(`${r.status()} ${r.url()}`);
+});
+page.on('requestfailed', (r) => {
+  if (!r.url().startsWith('data:')) broken.push(`failed ${r.url()}`);
+});
 
 // --- entertainment: gate, validation, April greeting, memory
 await page.goto(url('/issues/001/entertainment.html'));
 check(await page.locator('#birthdayModal').evaluate((d) => d.open), 'birthday gate opens on first visit');
 await page.keyboard.press('Escape');
 await page.keyboard.press('Escape');
+await page.waitForTimeout(150); // a force-closed gate would have reopened or stayed shut by now
 check(await page.locator('#birthdayModal').evaluate((d) => d.open), 'gate survives Escape (twice)');
 await page.fill('#birthDay', '31');
 await page.fill('#birthMonth', '2');
@@ -144,6 +157,7 @@ await ctx.grantPermissions(['clipboard-read', 'clipboard-write']);
 for (let i = 0; i < 3; i++) await page.locator('#tat3eem-story .reaction-btn').nth(i).click();
 check((await page.locator('#copyToast').textContent()) === 'تم تسجيل انطباعك التحريري.', 'repeated toasts stay responsive');
 
+check(broken.length === 0, `all fonts, images, scripts and styles loaded${broken.length ? ': ' + broken.slice(0, 5).join(' | ') : ''}`);
 check(errors.length === 0, `no script errors${errors.length ? ': ' + errors.join(' | ') : ''}`);
 
 // --- reduced motion: no entrance motion, no ticker movement, all content visible

@@ -11,7 +11,7 @@ interface Props { birthday: BirthdayDef; issue: Issue }
 const { birthday, issue } = Astro.props;
 const [dayLabel, monthLabel, yearLabel] = birthday.gate.labels;
 ---
-<dialog class="modal" id="birthdayModal" aria-labelledby="birthdayTitle" data-locked>
+<dialog class="modal" id="birthdayModal" aria-labelledby="birthdayTitle" data-locked closedby="none">
   <div class="modal-card">
     <button class="modal-close" type="button" aria-label={issue.ui.closeLabel} data-close hidden>×</button>
     <h2 id="birthdayTitle">{birthday.gate.title}</h2>

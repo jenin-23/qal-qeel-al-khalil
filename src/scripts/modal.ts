@@ -28,6 +28,8 @@ export function closeDialog(dialog: HTMLDialogElement): void {
 
 export function setLocked(dialog: HTMLDialogElement, locked: boolean): void {
   dialog.toggleAttribute('data-locked', locked);
+  // closedby="none": the browser itself refuses Escape (even a repeated one)
+  dialog.setAttribute('closedby', locked ? 'none' : 'any');
   dialog.querySelectorAll<HTMLElement>('.modal-close[data-close]').forEach((btn) => {
     btn.hidden = locked;
   });
@@ -54,7 +56,8 @@ function wire(dialog: HTMLDialogElement): void {
   });
 
   dialog.addEventListener('close', () => {
-    // Browsers may force-close on a repeated Escape; a locked gate reopens.
+    // Browsers without closedby may force-close on a repeated Escape;
+    // a locked gate reopens.
     if (dialog.hasAttribute('data-locked')) {
       dialog.showModal();
       return;
