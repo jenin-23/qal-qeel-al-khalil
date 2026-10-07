@@ -32,32 +32,34 @@ URLs:
 
 | URL | What |
 |---|---|
-|  | **مكتبة قال قيل**: the library. Every public issue stands on the shelf as a newspaper. |
-|  | The structured, chronological archive. |
-|  | Issue 001, permanently. |
-|  | While 002 is in editing: the newsroom proof (unfinished on purpose). |
+| `/` | **مكتبة قال قيل**: the library. Every public issue stands on the shelf as a newspaper. |
+| `/archive.html` | The structured, chronological archive. |
+| `/issues/001/…` | Issue 001, permanently. |
+| `/issues/002/` | While 002 is in editing: the newsroom proof (unfinished on purpose). |
 
-Old links such as  redirect to .
+Old links such as `/news.html#eslam-story` redirect to `/issues/001/news.html#eslam-story`.
 
 ## Issue statuses
 
-| status | Library shelf |  |
+| status | Library shelf | `/issues/NNN/` |
 |---|---|---|
-|  | not shown (only ) | dev preview only |
-|  | an unfinished copy (loose sheets, proof marks, «قيد التحرير») | the newsroom proof |
-|  | a finished newspaper | the full issue |
-|  | a finished newspaper | the full issue, forever |
+| `draft` | not shown (only `npm run dev`) | dev preview only |
+| `editing` | an unfinished copy (loose sheets, proof marks, «قيد التحرير») | the newsroom proof |
+| `published` | a finished newspaper | the full issue |
+| `archived` | a finished newspaper | the full issue, forever |
 
-Issue 001 is ; Issue 002 is .
+Issue 001 is `published`; Issue 002 is `editing`.
 
 ### While an issue is in editing
 
-The proof at  uses newsroom wording only ()
+The proof at `/issues/NNN/` uses newsroom wording only (`src/universe/newsroom.ts`)
 and invents nothing. To leak real material gradually, add it to the issue's
- (see ):
+`construction` (see `src/issues/002/index.ts`):
 
-- : , ,  (cropped/blurred), ,
-  , , , - : real counts only, e.g. 
+- `teasers`: `headline`, `redacted-headline`, `image` (cropped/blurred), `quote`,
+  `sections`, `ad`, `classified`, `snippet`
+- `progress`: real counts only, e.g. `{ articles: { done: 2, total: 6 } }`
+
 ## Starting a new issue
 
 1. `src/issues/002/index.ts` exists in `editing` (it shows as the newsroom proof).
