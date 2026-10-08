@@ -10,16 +10,24 @@ plain static HTML; small vanilla-TypeScript modules add the interactions.
 
 ```sh
 npm install
-npm run dev        # http://localhost:4321/qal-qeel-al-khalil/  (drafts visible here)
-npm run build      # production site in dist/  (published issues only)
-npm run preview    # serve dist/ locally
+npm run setup:hooks     # once per clone: the guard that keeps drafts out of the public repository
+npm run dev             # newsroom preview, drafts included, marked DEV: http://localhost:4321/qal-qeel-al-khalil/
+npm run build:drafts    # newsroom build → dist-preview/ (never deployed); serve with npm run preview:drafts
+npm run build           # PRODUCTION build → dist/ (released issues only) + draft-leak check
+npm run preview         # serve the production build locally
 ```
+
+**Editorial workflow** (private drafts, branches, releasing an issue):
+[docs/EDITORIAL_WORKFLOW.md](docs/EDITORIAL_WORKFLOW.md). In short: `main` is
+production and is public; unreleased issues live in `src/issues/NNN/edition/`
+on the private `develop` branch, and production builds never read them.
 
 ## Where things live
 
 | Path | What |
 |---|---|
 | `src/issues/NNN/` | **Everything written for one issue**: metadata, articles, ads, horoscope, birthday month, fatwa, tickers. |
+| `src/issues/NNN/edition/` | **Private**: the full text of an issue that is not released yet (on `develop` only; never in production). |
 | `src/universe/` | What stays the same across issues: the paper's name and tagline, navigation, recurring institutions (e.g. الشيخ البحبحاني), the archive page. |
 | `src/components/`, `src/layouts/` | The newspaper shell and building blocks. They contain no editorial text. |
 | `src/styles/` | The press theme ("an old Arabic newspaper that became interactive"). `tokens.css` holds colours, fonts and the type scale. |
@@ -44,12 +52,14 @@ Old links such as `/news.html#eslam-story` redirect to `/issues/001/news.html#es
 
 | status | Library shelf | `/issues/NNN/` |
 |---|---|---|
-| `draft` | not shown (only `npm run dev`) | dev preview only |
+| `draft` | not shown (newsroom builds only) | newsroom builds only |
 | `editing` | an unfinished copy (loose sheets, proof marks, «قيد التحرير») | the newsroom proof |
 | `published` | a finished newspaper | the full issue |
 | `archived` | a finished newspaper | the full issue, forever |
 
-Issue 001 is `published`; Issue 002 is `editing`.
+Issue 001 is `published`; Issue 002 is `editing`. Articles and private editions
+also carry an editorial status (`draft` · `review` · `published`); see
+[docs/EDITORIAL_WORKFLOW.md](docs/EDITORIAL_WORKFLOW.md).
 
 ### While an issue is in editing
 
@@ -63,16 +73,16 @@ and invents nothing. To leak real material gradually, add it to the issue's
 
 ## Starting a new issue
 
-1. `src/issues/002/index.ts` exists in `editing` (it shows as the newsroom proof).
-   Use `src/issues/001/` as the model: split it into `issue.ts`, `pages.ts`,
-   `articles.ts` + `articles/<id>.html`, `ads.ts`, `birthday.ts`,
-   `entertainment.ts`.
-2. Put images in `src/assets/images/issue-002/` and import them in the
-   issue's files. Every image needs Arabic `alt` text (the build fails otherwise).
-3. Preview with `npm run dev` at `/issues/002/`.
-4. Publish: set `status: 'published'` and add `meta.archive` (its archive card).
-   The unfinished copy on the shelf becomes a finished newspaper; Issue 001
-   stays at `/issues/001/` (optionally mark it `archived`).
+1. The public shell `src/issues/NNN/index.ts` is in `editing` (readers see the
+   newsroom proof).
+2. The real content is written privately, on `develop`, in
+   `src/issues/NNN/edition/`: `index.ts` (pages, headlines, layout),
+   `articles/<id>.html` (bodies, verbatim) and `images/`. Every image needs
+   Arabic `alt` text (the build fails otherwise). Use `src/issues/001/` as the model.
+3. Preview with `npm run dev` at `/issues/NNN/`. The issue reads as a full
+   newspaper there, marked DEV.
+4. Release only with the editor's approval, following "Releasing an issue" in
+   [docs/EDITORIAL_WORKFLOW.md](docs/EDITORIAL_WORKFLOW.md).
 
 The build validates each issue: 12 horoscope predictions, exactly three
 reactions per article, known article ids, alt text, popup timing ranges.
@@ -94,7 +104,8 @@ reactions per article, known article ids, alt text, popup timing ranges.
 npm run verify:001   # Issue 001's words, attributes, phone numbers, anchors and data are unchanged
 npm run test:smoke   # browser tests: every page, dialogs, keyboard, reduced motion, mobile overflow, legacy URLs
 npm run check        # TypeScript / Astro
-npm test             # build + verify:001 + smoke
+npm run verify:production  # draft-leak check of dist/ (also part of npm run build)
+npm test             # build (+ leak check) + verify:001 + smoke
 npm run screenshots  # compare every page with tests/visual-baseline (add --update to re-baseline)
 ```
 
@@ -102,9 +113,11 @@ The browser tests need Chromium once: `npx playwright install chromium`.
 
 ## Deployment
 
-Pushing to `main` runs `.github/workflows/deploy.yml`: build, `verify:001`,
-then deploy to GitHub Pages (Pages source: **GitHub Actions**; repository
-variable `DEPLOY_ENABLED=true`).
+Pushing to `main` runs `.github/workflows/deploy.yml`: the source check (no
+unreleased issue), the production build with its draft-leak check, `verify:001`,
+then deploy to GitHub Pages (Pages source: **GitHub Actions**; environment
+`github-pages` accepts `main` only; repository variable `DEPLOY_ENABLED=true`).
+No other branch and no pull request ever deploys.
 
 ## Navigation contexts
 

@@ -1,6 +1,9 @@
-# Builds the site and publishes it to GitHub Pages.
-# INACTIVE until the repository's Pages source is switched to "GitHub Actions"
-# (Settings → Pages). Until then this workflow only builds and verifies.
+# Builds the PRODUCTION edition and publishes it to GitHub Pages.
+#
+# Production = the `main` branch only. Pages is set to "GitHub Actions"
+# and the github-pages environment only accepts deployments from main.
+# Unreleased work (develop, feature branches) is never pushed to this
+# public repository at all: see docs/EDITORIAL_WORKFLOW.md.
 name: Build & deploy
 
 on:
@@ -28,6 +31,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Production carries no unreleased issue (source)
+        run: node scripts/pre-push.mjs --check HEAD
+      # astro build + scripts/verify-production.mjs (draft-leak check on dist/)
       - run: npm run build
       - name: Issue 001 must stay frozen
         run: npm run verify:001
@@ -36,9 +42,9 @@ jobs:
           path: dist
 
   deploy:
-    # Only deploys from main, and only once Pages is set to "GitHub Actions"
-    # and the DEPLOY_ENABLED repository variable is set to true.
-    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    # Only a push to main deploys (never a pull request or another branch),
+    # and only while the DEPLOY_ENABLED repository variable is true.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     needs: build
     runs-on: ubuntu-latest
     environment:

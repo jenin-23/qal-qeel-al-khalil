@@ -1,0 +1,57 @@
+---
+/* ------------------------------------------------------------------ *
+ * Newsroom builds only (`npm run dev`, `npm run build:drafts`): a small
+ * stamp so the private preview is never mistaken for the public site.
+ * Not rendered at all in production; hidden when printing. Its styles
+ * are inline so that production stylesheets carry none of them.
+ * ------------------------------------------------------------------ */
+import type { EditorialStatus } from '../../lib/types';
+
+interface Props {
+  /** the editorial state of the issue on this page, when it is unreleased */
+  status?: EditorialStatus;
+  issueNumber?: string;
+}
+const { status, issueNumber } = Astro.props;
+const STATE: Record<EditorialStatus, string> = { draft: 'مسودة', review: 'قيد المراجعة', published: 'معتمد' };
+---
+<p class="dev-mark" data-dev-mark>
+  <span lang="en">DEV</span> نسخة التطوير · غير منشورة{status && issueNumber && ` · العدد ${issueNumber}: ${STATE[status]}`}
+</p>
+
+<style is:inline>
+  .dev-mark {
+    position: fixed;
+    inset-block-start: 6px;
+    inset-inline-end: 6px;
+    z-index: 2147483000;
+    margin: 0;
+    padding: 2px 8px;
+    border: 1px solid #8b1d1d;
+    border-radius: 2px;
+    background: rgb(250 244 230 / 0.92);
+    color: #8b1d1d;
+    font: 600 11px/1.6 'Noto Naskh Arabic', sans-serif;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  }
+  .dev-mark span {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    margin-inline-end: 4px;
+  }
+  /* the per-article state line (StoryCard) */
+  .dev-article-state {
+    display: inline-block;
+    margin: 0 0 6px;
+    padding: 0 6px;
+    border: 1px dashed #8b1d1d;
+    color: #8b1d1d;
+    font: 600 11px/1.7 'Noto Naskh Arabic', sans-serif;
+  }
+  .dev-article-state span { font-family: ui-monospace, monospace; }
+  @media print {
+    .dev-mark, .dev-article-state { display: none !important; }
+  }
+</style>

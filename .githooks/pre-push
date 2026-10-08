@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuses to push unreleased issues to the public repository (scripts/pre-push.mjs).
+exec node "$(git rev-parse --show-toplevel)/scripts/pre-push.mjs" "$@"

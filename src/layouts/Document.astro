@@ -7,6 +7,8 @@
 import '../styles/index.css';
 import PressEffects from '../components/press/PressEffects.astro';
 import Radio from '../components/radio/Radio.astro';
+import DevMark from '../components/shell/DevMark.astro';
+import { PREVIEW, issues } from '../lib/issues';
 
 interface Props {
   docTitle: string;
@@ -25,6 +27,9 @@ interface Props {
 const { docTitle, pageKey, issueNumber, canonical, noindex = false, eggs, extraFonts = [], radio = 'desk' } = Astro.props;
 // one render-blocking font stylesheet only: a second one disables cross-page View Transitions
 const FAMILIES = ['Amiri:ital,wght@0,400;0,700;1,400', 'Noto+Naskh+Arabic:wght@400;500;600;700', 'Cairo:wght@500;700', 'Lalezar', ...extraFonts];
+// newsroom builds: marked in the tab and on the page, and never indexed
+const unreleased = issueNumber ? issues.find((i) => i.meta.number === issueNumber)?.meta.preview : undefined;
+const title = PREVIEW ? `[تطوير] ${docTitle}` : docTitle;
 const fontHref = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => 'family=' + f).join('&')}&display=swap`;
 ---
 <!DOCTYPE html>
@@ -32,9 +37,9 @@ const fontHref = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => 'famil
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{docTitle}</title>
+  <title>{title}</title>
   {canonical && <link rel="canonical" href={canonical} />}
-  {noindex && <meta name="robots" content="noindex" />}
+  {(noindex || PREVIEW) && <meta name="robots" content="noindex" />}
   <slot name="head" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,6 +47,7 @@ const fontHref = `https://fonts.googleapis.com/css2?${FAMILIES.map((f) => 'famil
 </head>
 <body data-page={pageKey} data-issue={issueNumber} data-eggs={eggs?.join(' ')}>
   <PressEffects />
+  {PREVIEW && <DevMark status={unreleased} issueNumber={issueNumber} />}
   <slot />
   {radio === 'desk' && <Radio variant="desk" />}
   <script>

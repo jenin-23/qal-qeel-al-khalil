@@ -4,13 +4,17 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/verify-production.mjs",
     "preview": "astro preview",
+    "build:drafts": "node scripts/newsroom.mjs build",
+    "preview:drafts": "node scripts/newsroom.mjs preview",
     "check": "astro check",
     "verify:001": "node scripts/verify-issue-text.mjs",
+    "verify:production": "node scripts/verify-production.mjs",
     "screenshots": "node scripts/screenshots.mjs",
     "test": "npm run build && npm run verify:001 && npm run test:smoke",
-    "test:smoke": "node scripts/smoke.mjs"
+    "test:smoke": "node scripts/smoke.mjs",
+    "setup:hooks": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "astro": "^7.3.6"

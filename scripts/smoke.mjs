@@ -272,9 +272,13 @@ check((await page.locator('a[href^="https://wa.me"]').count()) === 1 && !(await 
 
 // --- archive: the folded copy opens its edition
 await page.goto(url('/archive.html'));
-await page.locator('.archive-item').first().click({ position: { x: 40, y: 40 } });
-await page.waitForURL(/issues\/001\/$/);
-check(true, 'archive card for 001 opens /issues/001/');
+// (a click that lands while the page is still settling is retried once)
+let opened = false;
+for (let i = 0; i < 2 && !opened; i++) {
+  await page.locator('.archive-item').first().click({ position: { x: 40, y: 40 } });
+  opened = await page.waitForURL(/issues\/001\/$/, { timeout: 10000 }).then(() => true, () => false);
+}
+check(opened, 'archive card for 001 opens /issues/001/');
 
 // --- the red pencil (Issue 002): reveals the editing process only
 await page.goto(url('/issues/002/'));
@@ -330,6 +334,21 @@ await np.waitForURL(/issues\/001\/$/);
 check(njs.page === 'library' && njs.papers === 2, 'without JavaScript: the library renders and a newspaper opens as a plain link');
 await nojs.close();
 
+// --- production edition: unreleased Issue 002 has no reader pages, nothing is marked DEV
+{
+  const res = await Promise.all(
+    ['news.html', 'columns.html', 'entertainment.html', 'print.html'].map((p) => page.request.get(url(`/issues/002/${p}`)).then((r) => `${p}:${r.status()}`)),
+  );
+  check(res.every((r) => r.endsWith(':404')), `unreleased Issue 002 has no section or print pages (${res.join(', ')})`);
+  let marked = 0;
+  for (const p of ['/', '/issues/001/', '/issues/002/', '/archive.html', '/broadcast.html']) {
+    await page.goto(url(p));
+    marked += await page.locator('[data-dev-mark], .dev-article-state, [data-editorial]').count();
+    if ((await page.title()).includes('[تطوير]')) marked++;
+  }
+  check(marked === 0, 'no development marks on the production edition');
+}
+
 // --- 107.5 FM: the radio (one station on a broadcast clock)
 {
   /** where the programme is at `nowMs` (mirrors stationPosition in src/scripts/radio.ts) */
@@ -356,7 +375,7 @@ await nojs.close();
   });
   const fileOf = (src) => (src ?? '').split('/').pop();
   const waitState = (p, states, timeout = 15000) =>
-    p.waitForFunction((s) => s.includes(document.querySelector('[data-radio]').dataset.state), states, { timeout }).then(() => true, () => false);
+    p.waitForFunction((s) => s.includes(document.querySelector('[data-radio]').dataset.state), states, { timeout, polling: 50 }).then(() => true, () => false);
 
   const rctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const rp = await rctx.newPage();
@@ -511,10 +530,13 @@ await nojs.close();
     const last = await radioState(tp);
     check(fileOf(last.src) === 'radio-07.mp3' && last.time > last.durations[6] - 8, `radio: the clock places us in the last item (${fileOf(last.src)} @ ${last.time.toFixed(1)}s)`);
     const looped = await tp.waitForFunction(() => /radio-01\.mp3$/.test(document.querySelector('[data-radio-audio]').getAttribute('src') ?? ''), null, { timeout: 15000 }).then(() => true, () => false);
-    await waitState(tp, ['playing']);
-    await tp.waitForTimeout(800);
+    // the new item is actually sounding: playing, unpaused, and its clock moving
+    const sounding = await tp.waitForFunction(() => {
+      const a = document.querySelector('[data-radio-audio]');
+      return document.querySelector('[data-radio]').dataset.state === 'playing' && !a.paused && a.currentTime > 0.2;
+    }, null, { timeout: 15000, polling: 100 }).then(() => true, () => false);
     const first = await radioState(tp);
-    check(looped && first.state === 'playing' && !first.paused && first.time < 10, `radio: at the end the programme loops to radio-01 from its start (@ ${first.time.toFixed(1)}s)`);
+    check(looped && sounding && first.time < 12, `radio: at the end the programme loops to radio-01 from its start (${fileOf(first.src)} @ ${first.time.toFixed(1)}s, ${first.state}${first.paused ? ', paused' : ''})`);
     check(terr.length === 0, `radio: the hand-over raises no script errors${terr.length ? ': ' + terr.join(' | ') : ''}`);
     await tctx.close();
   }

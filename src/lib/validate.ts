@@ -68,6 +68,11 @@ export function validateIssue(issue: Issue): void {
   }
 
   if (issue.meta.status === 'published' || issue.meta.status === 'archived') {
+    // a released issue carries released articles only
+    const unreleased = issue.articles.filter((a) => a.status && a.status !== 'published');
+    if (unreleased.length && !issue.meta.preview) {
+      fail(`articles not approved for release: ${unreleased.map((a) => `${a.id} (${a.status})`).join(', ')}`);
+    }
     if (!issue.pages.home) fail('a published issue needs a home page');
     if (!issue.meta.archive) fail('a published issue needs meta.archive for the archive card');
     if (!issue.meta.releaseDateLabel) fail('a published issue needs meta.releaseDateLabel');

@@ -3,6 +3,7 @@ import type { Article, Issue } from '../../lib/types';
 import { issueUrl } from '../../lib/url';
 import ArticleFigure from './ArticleFigure.astro';
 import Reactions from './Reactions.astro';
+import { PREVIEW } from '../../lib/issues';
 
 interface Props {
   article: Article;
@@ -10,11 +11,15 @@ interface Props {
 }
 const { article, issue } = Astro.props;
 const bodyId = `${article.id}-body`;
+// newsroom builds only: where this article stands editorially
+const STATE = { draft: 'مسودة', review: 'قيد المراجعة' } as const;
+const editorial = PREVIEW && issue.meta.preview ? STATE[(article.status ?? 'draft') as keyof typeof STATE] : undefined;
 ---
-<article class="story-card" id={article.id}>
+<article class="story-card" id={article.id} data-editorial={editorial ? article.status ?? 'draft' : undefined}>
   <ArticleFigure image={article.image} />
 
   <div class="story-content">
+    {editorial && <p class="dev-article-state">{editorial} · <span lang="en">{article.id}</span></p>}
     <div class="story-meta">{article.meta}</div>
     <h2 class="story-title">{article.title}</h2>
 
@@ -36,3 +41,4 @@ const bodyId = `${article.id}-body`;
     </div>
   </div>
 </article>
+

@@ -17,10 +17,24 @@ export type PageKey = 'home' | 'news' | 'columns' | 'entertainment' | 'about' | 
  */
 export type IssueStatus = 'draft' | 'editing' | 'published' | 'archived';
 
+/**
+ * Editorial status of unreleased work: an issue's private edition, or
+ * one article in it. Unreleased work exists only in development builds
+ * (`npm run dev`, `npm run build:drafts`); production never reads it.
+ * See docs/EDITORIAL_WORKFLOW.md.
+ *
+ * draft      being written or laid out
+ * review     finished, waiting for the editor's approval
+ * published  approved and released (only after an explicit release)
+ */
+export type EditorialStatus = 'draft' | 'review' | 'published';
+
 export interface IssueMeta {
   /** Zero-padded issue number, also the URL segment: /issues/001/ */
   number: string;
   status: IssueStatus;
+  /** Set only in newsroom builds, on an unreleased issue shown from its private edition. */
+  preview?: EditorialStatus;
   year: number;
   /** Publication month (1-12). */
   month: number;
@@ -186,6 +200,8 @@ export interface Article {
   /** Extra action links rendered next to the copy button. */
   links?: { label: string; page: PageKey }[];
   reactions?: { label: string; options: string[] };
+  /** Omitted = published. A production build refuses draft/review articles. */
+  status?: EditorialStatus;
 }
 
 /* ---- ads --------------------------------------------------------- */
@@ -316,6 +332,23 @@ export interface Issue {
   contributors?: Contributor[];
   /** Easter eggs enabled for this issue (ids from src/universe/eggs.ts). */
   eggs?: string[];
+}
+
+/**
+ * The private, full edition of an unreleased issue
+ * (src/issues/NNN/edition/index.ts). Development builds merge it into the
+ * issue; production builds never load it (see astro.config.mjs).
+ */
+export interface IssueEdition {
+  status: EditorialStatus;
+  /** Masthead details decided for this edition (release date label, …). */
+  meta?: Partial<Omit<IssueMeta, 'number' | 'status'>>;
+  ui?: Partial<IssueUI>;
+  pages: Partial<Record<PageKey, PageDef>>;
+  articles: Article[];
+  ads?: IssueAds;
+  birthday?: BirthdayDef;
+  entertainment?: EntertainmentDef;
 }
 
 /* ---- an issue in the newsroom (status: 'editing') ----------------- */
